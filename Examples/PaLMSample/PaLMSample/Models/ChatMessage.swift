@@ -29,7 +29,7 @@ struct ChatMessage: Identifiable, Equatable {
 
 extension ChatMessage {
   static var samples: [ChatMessage] = [
-    .init(message: "Hi - this is Bard. What can I do for you today?", participant: .system),
+    .init(message: "Hi - this is PaLM. What can I do for you today?", participant: .system),
     .init(message: "Tell me a joke about a tiger.", participant: .user)
   ]
 
