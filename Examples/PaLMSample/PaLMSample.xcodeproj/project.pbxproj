@@ -15,11 +15,11 @@
 		88391CA029D2392600C54BCE /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391C9F29D2392600C54BCE /* MessageView.swift */; };
 		88391CA229D23AB100C54BCE /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391CA129D23AB100C54BCE /* ConversationViewModel.swift */; };
 		88391CA529D241A000C54BCE /* BouncingDots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391CA429D241A000C54BCE /* BouncingDots.swift */; };
-		88ACFE2629F85B4D002A0EBC /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 88ACFE2529F85B4D002A0EBC /* GoogleGenerativeAI */; };
 		88BFC51629D35B3900319EC5 /* PaLM-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 88BFC51529D35B3900319EC5 /* PaLM-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8810D7752A00580E00D4BAF4 /* generative-ai-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "generative-ai-swift"; path = ../..; sourceTree = "<group>"; };
 		88391C8429D2186200C54BCE /* PaLMSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaLMSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88391C8729D2186200C54BCE /* PaLMSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaLMSampleApp.swift; sourceTree = "<group>"; };
 		88391C8929D2186200C54BCE /* ConversationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationScreen.swift; sourceTree = "<group>"; };
@@ -29,7 +29,6 @@
 		88391C9F29D2392600C54BCE /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		88391CA129D23AB100C54BCE /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
 		88391CA429D241A000C54BCE /* BouncingDots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BouncingDots.swift; sourceTree = "<group>"; };
-		88ACFE2429F85B34002A0EBC /* generative-ai-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "generative-ai-swift"; path = ../..; sourceTree = "<group>"; };
 		88BFC51529D35B3900319EC5 /* PaLM-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PaLM-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -38,17 +37,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88ACFE2629F85B4D002A0EBC /* GoogleGenerativeAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8810D7742A00580E00D4BAF4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				8810D7752A00580E00D4BAF4 /* generative-ai-swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		88391C7B29D2186200C54BCE = {
 			isa = PBXGroup;
 			children = (
-				88ACFE2329F85B34002A0EBC /* Packages */,
+				8810D7742A00580E00D4BAF4 /* Packages */,
 				88391C8629D2186200C54BCE /* PaLMSample */,
 				88391C8529D2186200C54BCE /* Products */,
 				88391C9729D2196400C54BCE /* Frameworks */,
@@ -126,14 +132,6 @@
 			path = Screens;
 			sourceTree = "<group>";
 		};
-		88ACFE2329F85B34002A0EBC /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				88ACFE2429F85B34002A0EBC /* generative-ai-swift */,
-			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -152,7 +150,6 @@
 			);
 			name = PaLMSample;
 			packageProductDependencies = (
-				88ACFE2529F85B4D002A0EBC /* GoogleGenerativeAI */,
 			);
 			productName = PaLMSample;
 			productReference = 88391C8429D2186200C54BCE /* PaLMSample.app */;
@@ -437,13 +434,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		88ACFE2529F85B4D002A0EBC /* GoogleGenerativeAI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = GoogleGenerativeAI;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 88391C7C29D2186200C54BCE /* Project object */;
 }
