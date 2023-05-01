@@ -15,6 +15,7 @@
 		88391CA029D2392600C54BCE /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391C9F29D2392600C54BCE /* MessageView.swift */; };
 		88391CA229D23AB100C54BCE /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391CA129D23AB100C54BCE /* ConversationViewModel.swift */; };
 		88391CA529D241A000C54BCE /* BouncingDots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88391CA429D241A000C54BCE /* BouncingDots.swift */; };
+		88B72DB72A005B9A002725BC /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 88B72DB62A005B9A002725BC /* GoogleGenerativeAI */; };
 		88BFC51629D35B3900319EC5 /* PaLM-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 88BFC51529D35B3900319EC5 /* PaLM-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88B72DB72A005B9A002725BC /* GoogleGenerativeAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +152,7 @@
 			);
 			name = PaLMSample;
 			packageProductDependencies = (
+				88B72DB62A005B9A002725BC /* GoogleGenerativeAI */,
 			);
 			productName = PaLMSample;
 			productReference = 88391C8429D2186200C54BCE /* PaLMSample.app */;
@@ -434,6 +437,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		88B72DB62A005B9A002725BC /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GoogleGenerativeAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 88391C7C29D2186200C54BCE /* Project object */;
 }
