@@ -25,7 +25,7 @@ let package = Package(
       targets: ["GoogleGenerativeAI"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/kean/Get", from: "1.0.2"),
+    .package(url: "https://github.com/kean/Get", from: "2.0.0"),
     .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0"),
   ],
   targets: [

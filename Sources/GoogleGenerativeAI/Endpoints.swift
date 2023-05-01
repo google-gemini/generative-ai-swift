@@ -38,7 +38,7 @@ extension API.V1beta1 {
 
     /// Generates a response from the model given an input `MessagePrompt`.
     public func post(_ body: GenerateMessageRequest? = nil) -> Request<GenerateMessageResponse> {
-      Request(method: "POST", url: path, body: body, id: "generativelanguage.models.generateMessage")
+      Request(path: path, method: .post, body: body, id: "generativelanguage.models.generateMessage")
     }
   }
 }
@@ -54,13 +54,13 @@ extension API.V1beta1 {
 
     /// Lists models available through the API.
     public func get(parameters: GetParameters? = nil) -> Request<ListModelsResponse> {
-      Request(method: "GET", url: path, query: parameters?.asQuery, id: "generativelanguage.models.list")
+      Request(path: path, method: .get, query: parameters?.asQuery, id: "generativelanguage.models.list")
     }
 
     /// Gets information about a specific Model.
     public func get(name: String) -> Request<Model> {
       let modelPath = path.appending("/\(name)")
-      return Request(method: "GET", url: modelPath, id: "generativelanguage.models.get")
+      return Request(path: modelPath, method: .get, id: "generativelanguage.models.get")
     }
 
     public struct GetParameters {
