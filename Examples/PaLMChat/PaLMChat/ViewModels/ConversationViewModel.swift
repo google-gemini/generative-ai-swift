@@ -20,6 +20,8 @@ class ConversationViewModel: ObservableObject {
   @Published
   var messages = [ChatMessage]()
 
+  var history = [Message]()
+
   private var apiKey: String {
     get {
       guard let filePath = Bundle.main.path(forResource: "PaLM-Info", ofType: "plist") else {
@@ -50,12 +52,25 @@ class ConversationViewModel: ObservableObject {
     messages.append(systemMessage)
 
     do {
-      let response = try await palmClient?.generateMessage(with: userMessage.message)
+      var response: GenerateMessageResponse?
+      if history.isEmpty {
+        response = try await palmClient?.chat(prompt: userMessage.message)
+      }
+      else {
+        history.append(Message(content: userMessage.message, author: "0"))
+        response = try await palmClient?.chat(messages: history)
+      }
+
       if let candidate = response?.candidates?.first, let text = candidate.content {
         systemMessage.message = text
         systemMessage.pending = false
         messages.removeLast()
         messages.append(systemMessage)
+
+        if let historicMessages = response?.messages {
+          history = historicMessages
+          history.append(candidate)
+        }
       }
     }
     catch {
