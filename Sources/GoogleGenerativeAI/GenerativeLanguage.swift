@@ -15,6 +15,7 @@
 import Foundation
 import Get
 
+/// The API client for the PaLM API.
 public class GenerativeLanguage {
   private(set) var apiKey: String
 
@@ -27,6 +28,9 @@ public class GenerativeLanguage {
 
   var session = URLSession.shared
 
+  /// Initializes the PalM API client.
+  ///
+  /// - Parameter apiKey: The API key to use.
   public init(apiKey: String) {
     self.apiKey = apiKey
   }
