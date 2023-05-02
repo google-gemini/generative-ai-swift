@@ -17,11 +17,14 @@ import GoogleGenerativeAI
 
 @MainActor
 class ConversationViewModel: ObservableObject {
-  @Published
-  var messages = [ChatMessage]()
 
-  var history = [Message]()
+  /// This array holds both the user's and the system's chat messages
+  @Published var messages = [ChatMessage]()
 
+  // Chat history. This is used by the LLM to provide a coherent conversation with the user.
+  private var history = [Message]()
+
+  /// Fetch the API key from `PaLM-Info.plist`
   private var apiKey: String {
     get {
       guard let filePath = Bundle.main.path(forResource: "PaLM-Info", ofType: "plist") else {
@@ -32,7 +35,7 @@ class ConversationViewModel: ObservableObject {
         fatalError("Couldn't find key 'API_KEY' in 'PaLM-Info.plist'.")
       }
       if (value.starts(with: "_")) {
-        fatalError("Follow the instructions at https://docs.google.com/document/d/1jSxGYIe_8gR0FQwML3dVx1t5pZSouUy2RtUFl4-KzrY to get a PaLM API key.")
+        fatalError("Follow the instructions at https://developers.generativeai.google/tutorials/setup to get a PaLM API key.")
       }
       return value
     }
@@ -45,23 +48,30 @@ class ConversationViewModel: ObservableObject {
   }
 
   func sendMessage(_ text: String) async {
+    // first, add the user's message to the chat
     let userMessage = ChatMessage(message: text, participant: .user)
     messages.append(userMessage)
 
+    // add an empty (pending) chat message to show the bouncing dots animatin
+    // while we wait for a response from the backend
     var systemMessage = ChatMessage(message: "", participant: .system, pending: true)
     messages.append(systemMessage)
 
     do {
       var response: GenerateMessageResponse?
+
       if history.isEmpty {
+        // this is the user's first message
         response = try await palmClient?.chat(prompt: userMessage.message)
       }
       else {
+        // send previous chat messages *and* the user's new message to the backend
         history.append(Message(content: userMessage.message, author: "0"))
         response = try await palmClient?.chat(messages: history)
       }
 
       if let candidate = response?.candidates?.first, let text = candidate.content {
+        // remove bouncing dots and insert a chat message with the backend's response into the chat
         systemMessage.message = text
         systemMessage.pending = false
         messages.removeLast()
@@ -74,6 +84,7 @@ class ConversationViewModel: ObservableObject {
       }
     }
     catch {
+      // display error message as a chat bubble
       let errorMessage = ChatMessage(message: error.localizedDescription, participant: .system)
       messages.removeLast()
       messages.append(errorMessage)
