@@ -39,9 +39,17 @@ extension GenerativeLanguage: APIClientDelegate {
 }
 
 extension GenerativeLanguage: GenerativeLanguageProtocol {
-  public func generateMessage(with prompt: String, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
-    let message = Message(content: prompt)
-    let messagePrompt = MessagePrompt(messages: [message])
+  public func chat(prompt: String, context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
+    try await chat(messages: [Message(content: prompt)],
+                   context: context,
+                   examples: examples,
+                   model: model,
+                   temperature: temperature,
+                   candidateCount: candidateCount)
+  }
+
+  public func chat(messages: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
+    let messagePrompt = MessagePrompt(messages: messages, context: context, examples: examples)
     let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)
 
     let request = API.v1beta1.generateMessage(model).post(messageRequest)

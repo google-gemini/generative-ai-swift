@@ -15,7 +15,8 @@
 import Foundation
 
 public protocol GenerativeLanguageProtocol {
-  func generateMessage(with prompt: String, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
+  func chat(prompt: String, context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
+  func chat(messages: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
   func listModels() async throws -> ListModelsResponse?
   func getModel(name: String) async throws -> Model?
 }
