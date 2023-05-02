@@ -15,7 +15,7 @@
 import SwiftUI
 
 @main
-struct PaLMSampleApp: App {
+struct PaLMChatApp: App {
   var body: some Scene {
     WindowGroup {
       ConversationScreen()
