@@ -22,16 +22,13 @@ class ConversationViewModel: ObservableObject {
 
   private var apiKey: String {
     get {
-      // 1
       guard let filePath = Bundle.main.path(forResource: "PaLM-Info", ofType: "plist") else {
         fatalError("Couldn't find file 'PaLM-Info.plist'.")
       }
-      // 2
       let plist = NSDictionary(contentsOfFile: filePath)
       guard let value = plist?.object(forKey: "API_KEY") as? String else {
         fatalError("Couldn't find key 'API_KEY' in 'PaLM-Info.plist'.")
       }
-      // 3
       if (value.starts(with: "_")) {
         fatalError("Follow the instructions at https://docs.google.com/document/d/1jSxGYIe_8gR0FQwML3dVx1t5pZSouUy2RtUFl4-KzrY to get a PaLM API key.")
       }
