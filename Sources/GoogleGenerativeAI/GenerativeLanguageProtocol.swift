@@ -70,6 +70,28 @@ public protocol GenerativeLanguageProtocol {
   /// - Returns: A response from the model.
   func chat(messages: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
 
+  /// Generates a response from the model given an input message.
+  /// - Parameters:
+  ///   - prompt: The free-form input text given to the model as a prompt. Given a prompt, the model will
+  ///     generate a number of `TextCompletion` candidates it predicts as the completion of the input text.
+  ///   - model: The name of the model to use.
+  ///   - temperature: Controls the randomness of the output. Note: The default value varies by model, see
+  ///     the `temperature` attribute of the `Model` returned the `getModel` method. Values can range
+  ///     from [0.0,1.0], inclusive. A value closer to 1.0 will produce responses that are more varied
+  ///     and creative, while a value closer to 0.0 will typically result in more straightforward responses
+  ///     from the model.
+  ///   - candidateCount: Number of generated responses to return. This value must be between [1, 8],
+  ///   inclusive. If unset, this will default to 1.
+  /// - Returns: A response from the model.
+  func generateText(with prompt: String, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateTextResponse?
+
+  /// Generates an embedding from the model given an input message.
+  /// - Parameters:
+  ///   - text: The free-form input text that the model will turn into an embedding.
+  ///   - model: The name of the model to use.
+  /// - Returns: A response from the model.
+  func generateEmbeddings(from text: String, model: String) async throws -> EmbedTextResponse?
+
   /// Lists models available through the API.
   /// - Returns: A list of models.
   func listModels() async throws -> ListModelsResponse?

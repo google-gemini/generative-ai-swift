@@ -17,62 +17,95 @@ import Get
 import URLQueryEncoder
 
 extension API {
-  public static var v1beta1: V1beta1 {
-    V1beta1(path: "/v1beta1")
+  static var v1beta2: V1beta2 {
+    V1beta2(path: "/v1beta2")
   }
 
-  public struct V1beta1 {
-    /// Path: `/v1beta1`
-    public let path: String
+  struct V1beta2 {
+    /// Path: `/v1beta2`
+    let path: String
   }
 }
 
-extension API.V1beta1 {
-  public func generateMessage(_ model: String) -> GenerateMessage {
+extension API.V1beta2 {
+  func generateMessage(_ model: String) -> GenerateMessage {
     GenerateMessage(path: "\(path)/\(model):generateMessage")
   }
 
-  public struct GenerateMessage {
-    /// Path: `/v1beta1/{+model}:generateMessage`
-    public let path: String
+  struct GenerateMessage {
+    /// Path: `/v1beta2/{+model}:generateMessage`
+    let path: String
 
     /// Generates a response from the model given an input `MessagePrompt`.
-    public func post(_ body: GenerateMessageRequest? = nil) -> Request<GenerateMessageResponse> {
+    func post(_ body: GenerateMessageRequest? = nil) -> Request<GenerateMessageResponse> {
       Request(path: path, method: .post, body: body, id: "generativelanguage.models.generateMessage")
     }
   }
 }
 
-extension API.V1beta1 {
-  public var models: Models {
+extension API.V1beta2 {
+  func generateText(_ model: String) -> GenerateText {
+    GenerateText(path: "\(path)/\(model):generateText")
+  }
+
+  struct GenerateText {
+    /// Path: `/v1beta2/{+model}:generateText`
+    let path: String
+
+    /// Generates a response from the model given an input `MessagePrompt`.
+    func post(_ body: GenerateTextRequest? = nil) -> Request<GenerateTextResponse> {
+      Request(path: path, method: .post, body: body, id: "generativelanguage.models.generateText")
+    }
+  }
+}
+
+extension API.V1beta2 {
+  func embedText(_ model: String) -> EmbedText {
+    EmbedText(path: "\(path)/\(model):embedText")
+  }
+
+  struct EmbedText {
+    /// Path: `/v1beta2/{+model}:generateText`
+    let path: String
+
+    /// Generates a response from the model given an input `MessagePrompt`.
+    func post(_ body: EmbedTextRequest? = nil) -> Request<EmbedTextResponse> {
+      Request(path: path, method: .post, body: body, id: "generativelanguage.models.embedText")
+    }
+  }
+}
+
+
+extension API.V1beta2 {
+  var models: Models {
     Models(path: path + "/models")
   }
 
-  public struct Models {
-    /// Path: `/v1beta1/models`
-    public let path: String
+  struct Models {
+    /// Path: `/v1beta2/models`
+    let path: String
 
     /// Lists models available through the API.
-    public func get(parameters: GetParameters? = nil) -> Request<ListModelsResponse> {
+    func get(parameters: GetParameters? = nil) -> Request<ListModelsResponse> {
       Request(path: path, method: .get, query: parameters?.asQuery, id: "generativelanguage.models.list")
     }
 
     /// Gets information about a specific Model.
-    public func get(name: String) -> Request<Model> {
+    func get(name: String) -> Request<Model> {
       let modelPath = path.appending("/\(name)")
       return Request(path: modelPath, method: .get, id: "generativelanguage.models.get")
     }
 
-    public struct GetParameters {
-      public var pageSize: Int?
-      public var pageToken: String?
+    struct GetParameters {
+      var pageSize: Int?
+      var pageToken: String?
 
-      public init(pageSize: Int? = nil, pageToken: String? = nil) {
+      init(pageSize: Int? = nil, pageToken: String? = nil) {
         self.pageSize = pageSize
         self.pageToken = pageToken
       }
 
-      public var asQuery: [(String, String?)] {
+      var asQuery: [(String, String?)] {
         let encoder = URLQueryEncoder()
         encoder.encode(pageSize, forKey: "pageSize")
         encoder.encode(pageToken, forKey: "pageToken")

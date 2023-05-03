@@ -56,19 +56,34 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
     let messagePrompt = MessagePrompt(context: context, examples: examples, messages: messages)
     let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)
 
-    let request = API.v1beta1.generateMessage(model).post(messageRequest)
+    let request = API.v1beta2.generateMessage(model).post(messageRequest)
+    let response = try await apiClient.send(request)
+    return response.value
+  }
+
+  public func generateText(with prompt: String, model: String = "models/text-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateTextResponse? {
+    let textPrompt = TextPrompt(text: prompt)
+    let textRequest = GenerateTextRequest(temperature: temperature, candidateCount: Int32(candidateCount), prompt: textPrompt)
+    let request = API.v1beta2.generateText(model).post(textRequest)
+    let response = try await apiClient.send(request)
+    return response.value
+  }
+
+  public func generateEmbeddings(from text: String, model: String = "models/text-bison-001") async throws -> EmbedTextResponse? {
+    let embedTextRequest = EmbedTextRequest(text: text)
+    let request = API.v1beta2.embedText(model).post(embedTextRequest)
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func listModels() async throws -> ListModelsResponse? {
-    let request = API.v1beta1.models.get()
+    let request = API.v1beta2.models.get()
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func getModel(name: String) async throws -> Model? {
-    let request = API.v1beta1.models.get(name: name)
+    let request = API.v1beta2.models.get(name: name)
     let response = try await apiClient.send(request)
     return response.value
   }
