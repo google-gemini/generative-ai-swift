@@ -17,22 +17,22 @@
 
 import Foundation
 
-/// A collection of source attributions for a piece of content.
-public struct CitationMetadata: Codable {
-  /// Citations to sources for a specific response.
-  public var citationSources: [CitationSource]?
+/// A response from `CountMessageTokens`. It returns the model's `token_count` for the `prompt`.
+public struct CountMessageTokensResponse: Codable {
+  /// The number of tokens that the `model` tokenizes the `prompt` into. Always non-negative.
+  public var tokenCount: Int32?
 
-  public init(citationSources: [CitationSource]? = nil) {
-    self.citationSources = citationSources
+  public init(tokenCount: Int32? = nil) {
+    self.tokenCount = tokenCount
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.citationSources = try values.decodeIfPresent([CitationSource].self, forKey: "citationSources")
+    self.tokenCount = try values.decodeIfPresent(Int32.self, forKey: "tokenCount")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(citationSources, forKey: "citationSources")
+    try values.encodeIfPresent(tokenCount, forKey: "tokenCount")
   }
 }

@@ -26,7 +26,7 @@ struct Plugin: CommandPlugin {
         process.executableURL = URL(fileURLWithPath: createAPI.path.string)
         process.arguments = [
             "generate",
-            "generativelanguage.json",
+            "palm-v1beta2.json",
             "--output", "OpenAPI",
             "--config", ".create-api.yml"
         ]

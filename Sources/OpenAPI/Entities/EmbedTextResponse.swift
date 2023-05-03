@@ -17,22 +17,22 @@
 
 import Foundation
 
-/// A collection of source attributions for a piece of content.
-public struct CitationMetadata: Codable {
-  /// Citations to sources for a specific response.
-  public var citationSources: [CitationSource]?
+/// The response to a EmbedTextRequest.
+public struct EmbedTextResponse: Codable {
+  /// A list of floats representing the embedding.
+  public var embedding: Embedding?
 
-  public init(citationSources: [CitationSource]? = nil) {
-    self.citationSources = citationSources
+  public init(embedding: Embedding? = nil) {
+    self.embedding = embedding
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.citationSources = try values.decodeIfPresent([CitationSource].self, forKey: "citationSources")
+    self.embedding = try values.decodeIfPresent(Embedding.self, forKey: "embedding")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(citationSources, forKey: "citationSources")
+    try values.encodeIfPresent(embedding, forKey: "embedding")
   }
 }

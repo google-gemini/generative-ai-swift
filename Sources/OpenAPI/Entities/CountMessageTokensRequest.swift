@@ -17,22 +17,22 @@
 
 import Foundation
 
-/// A collection of source attributions for a piece of content.
-public struct CitationMetadata: Codable {
-  /// Citations to sources for a specific response.
-  public var citationSources: [CitationSource]?
+/// Counts the number of tokens in the `prompt` sent to a model. Models may tokenize text differently, so each model may return a different `token_count`.
+public struct CountMessageTokensRequest: Codable {
+  /// All of the structured input text passed to the model as a prompt. A `MessagePrompt` contains a structured set of fields that provide context for the conversation, examples of user input/model output message pairs that prime the model to respond in different ways, and the conversation history or list of messages representing the alternating turns of the conversation between the user and the model.
+  public var prompt: MessagePrompt?
 
-  public init(citationSources: [CitationSource]? = nil) {
-    self.citationSources = citationSources
+  public init(prompt: MessagePrompt? = nil) {
+    self.prompt = prompt
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.citationSources = try values.decodeIfPresent([CitationSource].self, forKey: "citationSources")
+    self.prompt = try values.decodeIfPresent(MessagePrompt.self, forKey: "prompt")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(citationSources, forKey: "citationSources")
+    try values.encodeIfPresent(prompt, forKey: "prompt")
   }
 }

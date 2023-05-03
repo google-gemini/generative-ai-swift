@@ -17,22 +17,22 @@
 
 import Foundation
 
-/// A collection of source attributions for a piece of content.
-public struct CitationMetadata: Codable {
-  /// Citations to sources for a specific response.
-  public var citationSources: [CitationSource]?
+/// The response from the model, including candidate completions.
+public struct GenerateTextResponse: Codable {
+  /// Candidate responses from the model.
+  public var candidates: [TextCompletion]?
 
-  public init(citationSources: [CitationSource]? = nil) {
-    self.citationSources = citationSources
+  public init(candidates: [TextCompletion]? = nil) {
+    self.candidates = candidates
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.citationSources = try values.decodeIfPresent([CitationSource].self, forKey: "citationSources")
+    self.candidates = try values.decodeIfPresent([TextCompletion].self, forKey: "candidates")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(citationSources, forKey: "citationSources")
+    try values.encodeIfPresent(candidates, forKey: "candidates")
   }
 }

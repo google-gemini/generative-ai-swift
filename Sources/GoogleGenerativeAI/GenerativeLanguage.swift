@@ -53,7 +53,7 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
   }
 
   public func chat(messages: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
-    let messagePrompt = MessagePrompt(messages: messages, context: context, examples: examples)
+    let messagePrompt = MessagePrompt(context: context, examples: examples, messages: messages)
     let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)
 
     let request = API.v1beta1.generateMessage(model).post(messageRequest)
