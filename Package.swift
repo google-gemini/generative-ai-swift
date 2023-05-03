@@ -18,15 +18,15 @@ import PackageDescription
 
 let package = Package(
   name: "GoogleGenerativeAI",
-  platforms: [.iOS(.v16), .macOS(.v13), .watchOS(.v8), .tvOS(.v15)],
+  platforms: [.iOS(.v13), .macOS(.v12), .watchOS(.v7), .tvOS(.v13)],
   products: [
     .library(
       name: "GoogleGenerativeAI",
       targets: ["GoogleGenerativeAI"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/kean/Get", from: "2.0.0"),
-    .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0"),
+    .package(url: "https://github.com/kean/Get", .upToNextMajor(from: "2.0.0")),
+    .package(url: "https://github.com/CreateAPI/URLQueryEncoder", exact: "0.2.1"),
   ],
   targets: [
     .target(
