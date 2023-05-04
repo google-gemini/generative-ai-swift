@@ -1,7 +1,6 @@
 module: GenerativeLanguage
 generate:
 - entities
-# - paths
 - enums
 indentation: spaces
 spaceWidth: 2
