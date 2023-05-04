@@ -45,7 +45,8 @@ public protocol GenerativeLanguageProtocol {
   /// Generates a chat response from the model.
   ///
   /// - Parameters:
-  ///   - messages: A snapshot of the recent conversation history sorted chronologically. Turns
+  ///   - prompt: The prompt. This usually is the user's first message.
+  ///   - history: A snapshot of the recent conversation history sorted chronologically. Turns
   ///     alternate between two authors. If the total input size exceeds the model's `input_token_limit`
   ///     the input will be truncated: The oldest items will be dropped from `messages`.
   ///   - context: Text that should be provided to the model first to ground the response. If not empty,
@@ -68,7 +69,7 @@ public protocol GenerativeLanguageProtocol {
   ///   - candidateCount: The number of generated response messages to return. This value must be
   ///     between `[1, 10]`, inclusive.
   /// - Returns: A response from the model.
-  func chat(messages: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse
+  func chat(prompt: String, history: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse
 
   /// Generates a response from the model given an input message.
   /// - Parameters:
