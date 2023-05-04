@@ -28,11 +28,11 @@ extension API {
 }
 
 extension API.V1beta2 {
-  func generateMessage(_ model: String) -> GenerateMessage {
-    GenerateMessage(path: "\(path)/\(model):generateMessage")
+  func generateMessage(_ model: String) -> GenerateMessageResource {
+    GenerateMessageResource(path: "\(path)/\(model):generateMessage")
   }
 
-  struct GenerateMessage {
+  struct GenerateMessageResource {
     /// Path: `/v1beta2/{+model}:generateMessage`
     let path: String
 
@@ -44,11 +44,11 @@ extension API.V1beta2 {
 }
 
 extension API.V1beta2 {
-  func generateText(_ model: String) -> GenerateText {
-    GenerateText(path: "\(path)/\(model):generateText")
+  func generateText(_ model: String) -> GenerateTextResource {
+    GenerateTextResource(path: "\(path)/\(model):generateText")
   }
 
-  struct GenerateText {
+  struct GenerateTextResource {
     /// Path: `/v1beta2/{+model}:generateText`
     let path: String
 
@@ -60,11 +60,11 @@ extension API.V1beta2 {
 }
 
 extension API.V1beta2 {
-  func embedText(_ model: String) -> EmbedText {
-    EmbedText(path: "\(path)/\(model):embedText")
+  func embedText(_ model: String) -> EmbedTextResource {
+    EmbedTextResource(path: "\(path)/\(model):embedText")
   }
 
-  struct EmbedText {
+  struct EmbedTextResource {
     /// Path: `/v1beta2/{+model}:generateText`
     let path: String
 
@@ -77,16 +77,16 @@ extension API.V1beta2 {
 
 
 extension API.V1beta2 {
-  var models: Models {
-    Models(path: path + "/models")
+  var models: ModelsResource {
+    ModelsResource(path: path + "/models")
   }
 
-  struct Models {
+  struct ModelsResource {
     /// Path: `/v1beta2/models`
     let path: String
 
     /// Lists models available through the API.
-    func get(parameters: GetParameters? = nil) -> Request<ListModelsResponse> {
+    func get(parameters: Parameters? = nil) -> Request<ListModelsResponse> {
       Request(path: path, method: .get, query: parameters?.asQuery, id: "generativelanguage.models.list")
     }
 
@@ -96,7 +96,7 @@ extension API.V1beta2 {
       return Request(path: modelPath, method: .get, id: "generativelanguage.models.get")
     }
 
-    struct GetParameters {
+    struct Parameters {
       var pageSize: Int?
       var pageToken: String?
 
