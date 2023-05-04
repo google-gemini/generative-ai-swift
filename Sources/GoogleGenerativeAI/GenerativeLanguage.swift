@@ -45,7 +45,7 @@ extension GenerativeLanguage: APIClientDelegate {
 }
 
 extension GenerativeLanguage: GenerativeLanguageProtocol {
-  public func chat(prompt: String, context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
+  public func chat(prompt: String, context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
     try await chat(messages: [Message(content: prompt)],
                    context: context,
                    examples: examples,
@@ -54,7 +54,7 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
                    candidateCount: candidateCount)
   }
 
-  public func chat(messages: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse? {
+  public func chat(messages: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
     let messagePrompt = MessagePrompt(context: context, examples: examples, messages: messages)
     let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)
 
@@ -63,7 +63,7 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
     return response.value
   }
 
-  public func generateText(with prompt: String, model: String = "models/text-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateTextResponse? {
+  public func generateText(with prompt: String, model: String = "models/text-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateTextResponse {
     let textPrompt = TextPrompt(text: prompt)
     let textRequest = GenerateTextRequest(temperature: temperature, candidateCount: Int32(candidateCount), prompt: textPrompt)
     let request = API.v1beta2.generateText(model).post(textRequest)
@@ -71,20 +71,20 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
     return response.value
   }
 
-  public func generateEmbeddings(from text: String, model: String = "models/text-bison-001") async throws -> EmbedTextResponse? {
+  public func generateEmbeddings(from text: String, model: String = "models/text-bison-001") async throws -> EmbedTextResponse {
     let embedTextRequest = EmbedTextRequest(text: text)
     let request = API.v1beta2.embedText(model).post(embedTextRequest)
     let response = try await apiClient.send(request)
     return response.value
   }
 
-  public func listModels() async throws -> ListModelsResponse? {
+  public func listModels() async throws -> ListModelsResponse {
     let request = API.v1beta2.models.get()
     let response = try await apiClient.send(request)
     return response.value
   }
 
-  public func getModel(name: String) async throws -> Model? {
+  public func getModel(name: String) async throws -> Model {
     let request = API.v1beta2.models.get(name: name)
     let response = try await apiClient.send(request)
     return response.value

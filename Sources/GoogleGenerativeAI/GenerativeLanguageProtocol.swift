@@ -40,7 +40,7 @@ public protocol GenerativeLanguageProtocol {
   ///   - candidateCount: The number of generated response messages to return. This value must be
   ///     between `[1, 10]`, inclusive.
   /// - Returns: A response from the model.
-  func chat(prompt: String, context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
+  func chat(prompt: String, context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse
 
   /// Generates a chat response from the model.
   ///
@@ -68,7 +68,7 @@ public protocol GenerativeLanguageProtocol {
   ///   - candidateCount: The number of generated response messages to return. This value must be
   ///     between `[1, 10]`, inclusive.
   /// - Returns: A response from the model.
-  func chat(messages: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse?
+  func chat(messages: [Message], context: String?, examples: [Example]?, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateMessageResponse
 
   /// Generates a response from the model given an input message.
   /// - Parameters:
@@ -83,21 +83,21 @@ public protocol GenerativeLanguageProtocol {
   ///   - candidateCount: Number of generated responses to return. This value must be between [1, 8],
   ///   inclusive. If unset, this will default to 1.
   /// - Returns: A response from the model.
-  func generateText(with prompt: String, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateTextResponse?
+  func generateText(with prompt: String, model: String, temperature: Float, candidateCount: Int) async throws -> GenerateTextResponse
 
   /// Generates an embedding from the model given an input message.
   /// - Parameters:
   ///   - text: The free-form input text that the model will turn into an embedding.
   ///   - model: The name of the model to use.
   /// - Returns: A response from the model.
-  func generateEmbeddings(from text: String, model: String) async throws -> EmbedTextResponse?
+  func generateEmbeddings(from text: String, model: String) async throws -> EmbedTextResponse
 
   /// Lists models available through the API.
   /// - Returns: A list of models.
-  func listModels() async throws -> ListModelsResponse?
+  func listModels() async throws -> ListModelsResponse
 
   /// Gets information about a specific Model.
   /// - Parameter name: The model to get information about
   /// - Returns: Information about the model.
-  func getModel(name: String) async throws -> Model?
+  func getModel(name: String) async throws -> Model
 }
