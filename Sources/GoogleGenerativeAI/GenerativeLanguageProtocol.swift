@@ -19,7 +19,7 @@ public protocol GenerativeLanguageProtocol {
   /// Generates a chat response from the model.
   /// 
   /// - Parameters:
-  ///   - prompt: The prompt. This usually is the user's first message.
+  ///   - prompt: The user's message.
   ///   - context: Text that should be provided to the model first to ground the response. If not empty,
   ///     this `context` will be given to the model first before the `examples` and `prompt`. When using
   ///     a `context` be sure to provide it with every request to maintain continuity. This parameter can
@@ -45,7 +45,7 @@ public protocol GenerativeLanguageProtocol {
   /// Generates a chat response from the model.
   ///
   /// - Parameters:
-  ///   - prompt: The prompt. This usually is the user's first message.
+  ///   - prompt: The user's message.
   ///   - history: A snapshot of the recent conversation history sorted chronologically. Turns
   ///     alternate between two authors. If the total input size exceeds the model's `input_token_limit`
   ///     the input will be truncated: The oldest items will be dropped from `messages`.
