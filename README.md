@@ -7,7 +7,7 @@ Once you've added the Swift package to your Swift application, you can call the 
 ```swift
 import GoogleGenerativeAI
 let palmClient = GenerativeLanguage(apiKey: "YOUR API KEY")
-response = try await palmClient.chat(prompt: "Hello")
+response = try await palmClient.chat(message: "Hello")
 ```
 
 ## Contributing
