@@ -52,3 +52,6 @@ xcuserdata/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,xcode
+
+# This file contains the PaLM API key - don't check it in
+PaLM-Info.plist
