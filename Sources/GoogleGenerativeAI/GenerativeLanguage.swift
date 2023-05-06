@@ -45,8 +45,8 @@ extension GenerativeLanguage: APIClientDelegate {
 }
 
 extension GenerativeLanguage: GenerativeLanguageProtocol {
-  public func chat(prompt: String, context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
-    try await chat(prompt: prompt,
+  public func chat(message: String, context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
+    try await chat(message: message,
                    history: [Message](),
                    context: context,
                    examples: examples,
@@ -55,9 +55,9 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
                    candidateCount: candidateCount)
   }
 
-  public func chat(prompt: String, history: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
+  public func chat(message: String, history: [Message], context: String? = nil, examples: [Example]? = nil, model: String = "models/chat-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateMessageResponse {
     var messages = history
-    messages.append(Message(content: prompt, author: "0"))
+    messages.append(Message(content: message, author: "0"))
 
     let messagePrompt = MessagePrompt(context: context, examples: examples, messages: messages)
     let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)

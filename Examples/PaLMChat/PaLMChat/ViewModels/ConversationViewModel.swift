@@ -62,11 +62,11 @@ class ConversationViewModel: ObservableObject {
 
       if history.isEmpty {
         // this is the user's first message
-        response = try await palmClient?.chat(prompt: userMessage.message)
+        response = try await palmClient?.chat(message: userMessage.message)
       }
       else {
         // send previous chat messages *and* the user's new message to the backend
-        response = try await palmClient?.chat(prompt: userMessage.message, history: history)
+        response = try await palmClient?.chat(message: userMessage.message, history: history)
       }
 
       if let candidate = response?.candidates?.first, let text = candidate.content {
