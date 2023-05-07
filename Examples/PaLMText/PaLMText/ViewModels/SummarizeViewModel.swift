@@ -59,7 +59,6 @@ class SummarizeViewModel: ObservableObject {
         let response = try await palmClient?.generateText(with: prompt)
         inProgress = false
 
-        // TODO: rename output to content to match with the chat API
         if let candidate = response?.candidates?.first, let text = candidate.output {
           outputText = text
         }
