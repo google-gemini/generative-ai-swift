@@ -20,7 +20,7 @@ This repository contains a few sample apps. To try them out, follow these steps:
     ```swift
     git clone https://github.com/google/generative-ai-swift
     ```
-1. Follow the instructions on the [setup page](https://generativeai.devsite.corp.google.com/tutorials/setup) to obtain an API key.
+1. Follow the instructions on the [setup page](https://developers.generativeai.google/tutorials/setup) to obtain an API key.
 1. Open and build one of the examples in the `Examples` folder.
 1. Paste the API key into the `API_KEY` property in the `PaLM-Info.plist` file.
 1. Run the app.
@@ -72,7 +72,7 @@ if let candidate = response?.candidates?.first, let text = candidate.output {
 
 ## Documentation
 
-You can find the documentation for the PaLM API at https://developers.generativeai.google/guide
+You can find the documentation for the PaLM API at https://developers.generativeai.google.com/guide
 
 
 ## Contributing
