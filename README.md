@@ -70,6 +70,10 @@ if let candidate = response?.candidates?.first, let text = candidate.output {
 ```
 
 
+## Documentation
+
+You can find the documentation for the PaLM API at https://developers.generativeai.google/guide
+
 ## Contributing
 
 See [Contributing](docs/CONTRIBUTING.md) for more information on contributing to the Generative AI SDK for Swift.
