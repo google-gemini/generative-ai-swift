@@ -18,7 +18,7 @@ import PackageDescription
 
 let package = Package(
   name: "GoogleGenerativeAI",
-  platforms: [.iOS(.v16), .macOS(.v13), .watchOS(.v7), .tvOS(.v13)],
+  platforms: [.iOS(.v13), .macOS(.v12), .watchOS(.v7), .tvOS(.v13)],
   products: [
     .library(
       name: "GoogleGenerativeAI",
