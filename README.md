@@ -54,7 +54,7 @@ client.
 
 Now you're ready to call the PaLM API's methods. 
 
-> Note: All API methods are asynchronous, so you need to call them using Swift's
+> **Note**: All API methods are asynchronous, so you need to call them using Swift's
 async/await.
 
 For example, here is how you can call the `generateText` method to summarize a Wikipedia article:
