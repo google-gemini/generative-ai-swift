@@ -37,7 +37,8 @@ struct BouncingDots: View {
         .offset(y: dot1YOffset)
         .onAppear {
           withAnimation(self.animation.delay(0.0)) {
-            self.dot1YOffset = -5          }
+            self.dot1YOffset = -5
+          }
         }
       Circle()
         .fill(Color.white)
