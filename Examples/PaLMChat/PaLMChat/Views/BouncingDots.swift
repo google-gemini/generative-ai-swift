@@ -14,8 +14,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct BouncingDots: View {
   @State
   private var dot1YOffset: CGFloat = 0.0
