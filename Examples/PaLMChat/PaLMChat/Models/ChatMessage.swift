@@ -26,7 +26,6 @@ struct ChatMessage: Identifiable, Equatable {
   var pending = false
 }
 
-
 extension ChatMessage {
   static var samples: [ChatMessage] = [
     .init(message: "Hi - this is PaLM. What can I do for you today?", participant: .system),
