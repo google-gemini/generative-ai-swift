@@ -21,7 +21,7 @@ public class GenerativeLanguage {
   private(set) var apiKey: String
 
   private lazy var apiClient: APIClient = {
-    let baseURL = URL(string: "https://generativelanguage.googleapis.com")!
+    let baseURL = URL(string: "https://generativelanguage.googleapis.com")
     return APIClient(baseURL: baseURL) { configuration in
       configuration.sessionConfiguration.httpAdditionalHeaders = ["x-goog-api-client": "genai-swift/0.1.0"]
       configuration.sessionConfiguration.httpAdditionalHeaders = ["x-goog-api-key": apiKey]
