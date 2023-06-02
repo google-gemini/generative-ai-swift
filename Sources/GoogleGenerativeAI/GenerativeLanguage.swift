@@ -69,7 +69,7 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
     return response.value
   }
 
-  public func generateEmbeddings(from text: String, model: String = "models/text-bison-001") async throws -> EmbedTextResponse {
+  public func generateEmbeddings(from text: String, model: String = "models/embedding-gecko-001") async throws -> EmbedTextResponse {
     let embedTextRequest = EmbedTextRequest(text: text)
     let request = API.v1beta2.embedText(model).post(embedTextRequest)
     let response = try await apiClient.send(request)
