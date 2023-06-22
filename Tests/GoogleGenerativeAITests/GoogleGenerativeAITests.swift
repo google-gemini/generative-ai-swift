@@ -56,6 +56,6 @@ final class GenerativeLanguageTests: XCTestCase {
     let model = "chat-bison-001"
 
     let result = try await client.getModel(name: model)
-    print(result.displayName ?? [])
+    print(result.displayName ?? "")
   }
 }
