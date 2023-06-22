@@ -25,11 +25,19 @@ final class GenerativeLanguageTests: XCTestCase {
     XCTAssertEqual(client.apiKey, apiKey)
   }
 
-  func testGenerateMessage() async throws {
+  func testGenerateText() async throws {
     let client = GenerativeLanguage(apiKey: apiKey)
-    let model = "models/chat-bison-001"
+    let model = "models/text-bison-001"
 
     let result = try await client.generateText(with: "Say something nice", model: model)
+    print(result)
+  }
+    
+  func testChat() async throws {
+    let client = GenerativeLanguage(apiKey: apiKey)
+    let model = "models/chat-bison-001"
+      
+    let result = try await client.chat(message: "Say something nice", model: model)
     print(result)
   }
 
