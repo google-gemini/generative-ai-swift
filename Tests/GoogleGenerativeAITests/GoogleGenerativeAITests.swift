@@ -40,6 +40,14 @@ final class GenerativeLanguageTests: XCTestCase {
     let result = try await client.chat(message: "Say something nice", model: model)
     print(result)
   }
+  
+  func testGenerateEmbeddings() async throws {
+    let client = GenerativeLanguage(apiKey: apiKey)
+    let model = "models/embedding-gecko-001"
+      
+    let result = try await client.generateEmbeddings(from: "Say something nice", model: model)
+    print(result)
+  }
 
   func testListModels() async throws {
     let client = GenerativeLanguage(apiKey: apiKey)
