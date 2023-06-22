@@ -19,13 +19,11 @@ final class GenerativeLanguageTests: XCTestCase {
   var client: GenerativeLanguage!
   
   override func setUp() {
-    super.setUp()
-    
-    let apiKey = "<INSERT-YOUR-API-KEY>"
-    client = GenerativeLanguage(apiKey: apiKey)
+    super.setUp()    
+    client = GenerativeLanguage(apiKey: TestAPIKey.apiKey)
     
     XCTAssertNotNil(client)
-    XCTAssertEqual(client.apiKey, apiKey)
+    XCTAssertEqual(client.apiKey, TestAPIKey.apiKey)
   }
   
   func testGenerateText() async throws {
