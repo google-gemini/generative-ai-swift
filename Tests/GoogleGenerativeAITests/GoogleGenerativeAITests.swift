@@ -19,7 +19,7 @@ final class GenerativeLanguageTests: XCTestCase {
   var client: GenerativeLanguage!
   
   override func setUp() {
-    super.setUp()    
+    super.setUp()
     client = GenerativeLanguage(apiKey: TestAPIKey.apiKey)
     
     XCTAssertNotNil(client)
@@ -28,33 +28,33 @@ final class GenerativeLanguageTests: XCTestCase {
   
   func testGenerateText() async throws {
     let model = "models/text-bison-001"
-
+    
     let result = try await client.generateText(with: "Say something nice", model: model)
     print(result)
   }
-    
+  
   func testChat() async throws {
     let model = "models/chat-bison-001"
-      
+    
     let result = try await client.chat(message: "Say something nice", model: model)
     print(result)
   }
   
   func testGenerateEmbeddings() async throws {
     let model = "models/embedding-gecko-001"
-      
+    
     let result = try await client.generateEmbeddings(from: "Say something nice", model: model)
     print(result)
   }
-
+  
   func testListModels() async throws {
     let result = try await client.listModels()
     print(result.models ?? [])
   }
-
+  
   func testGetModel() async throws {
     let model = "chat-bison-001"
-
+    
     let result = try await client.getModel(name: model)
     print(result.displayName ?? "")
   }
