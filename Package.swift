@@ -39,7 +39,11 @@ let package = Package(
     ),
     .testTarget(
       name: "GoogleGenerativeAITests",
-      dependencies: ["GoogleGenerativeAI"]),
+      dependencies: ["GoogleGenerativeAI"],
+      resources: [
+        .copy("PaLM-Info.plist"),
+      ]
+    ),
     .binaryTarget(
       name: "create-api",
       url: "https://github.com/CreateAPI/CreateAPI/releases/download/0.1.1/create-api.artifactbundle.zip",
