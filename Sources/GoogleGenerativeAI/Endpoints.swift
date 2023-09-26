@@ -24,12 +24,23 @@ extension API {
   struct V1beta2 {
     /// Path: `/v1beta2`
     let path: String
+      
+    enum Resource: String, Identifiable {
+      case generateMessage
+      case generateText
+      case embedText
+      case list
+      case get
+          
+      var baseID: String { "generativelanguage.models" }
+      var id: String { "\(baseID).\(self.rawValue)" }
+    }
   }
 }
 
 extension API.V1beta2 {
   func generateMessage(_ model: String) -> GenerateMessageResource {
-    GenerateMessageResource(path: "\(path)/\(model):generateMessage")
+    GenerateMessageResource(path: "\(path)/\(model):\(Resource.generateMessage.rawValue)")
   }
 
   struct GenerateMessageResource {
@@ -38,14 +49,14 @@ extension API.V1beta2 {
 
     /// Generates a response from the model given an input `MessagePrompt`.
     func post(_ body: GenerateMessageRequest? = nil) -> Request<GenerateMessageResponse> {
-      Request(path: path, method: .post, body: body, id: "generativelanguage.models.generateMessage")
+      Request(path: path, method: .post, body: body, id: Resource.generateMessage.id)
     }
   }
 }
 
 extension API.V1beta2 {
   func generateText(_ model: String) -> GenerateTextResource {
-    GenerateTextResource(path: "\(path)/\(model):generateText")
+    GenerateTextResource(path: "\(path)/\(model):\(Resource.generateText.rawValue)")
   }
 
   struct GenerateTextResource {
@@ -54,14 +65,14 @@ extension API.V1beta2 {
 
     /// Generates a response from the model given an input `MessagePrompt`.
     func post(_ body: GenerateTextRequest? = nil) -> Request<GenerateTextResponse> {
-      Request(path: path, method: .post, body: body, id: "generativelanguage.models.generateText")
+      Request(path: path, method: .post, body: body, id: Resource.generateText.id)
     }
   }
 }
 
 extension API.V1beta2 {
   func embedText(_ model: String) -> EmbedTextResource {
-    EmbedTextResource(path: "\(path)/\(model):embedText")
+    EmbedTextResource(path: "\(path)/\(model):\(Resource.embedText.rawValue)")
   }
 
   struct EmbedTextResource {
@@ -70,7 +81,7 @@ extension API.V1beta2 {
 
     /// Generates a response from the model given an input `MessagePrompt`.
     func post(_ body: EmbedTextRequest? = nil) -> Request<EmbedTextResponse> {
-      Request(path: path, method: .post, body: body, id: "generativelanguage.models.embedText")
+      Request(path: path, method: .post, body: body, id: Resource.embedText.id)
     }
   }
 }
@@ -87,13 +98,13 @@ extension API.V1beta2 {
 
     /// Lists models available through the API.
     func get(parameters: Parameters? = nil) -> Request<ListModelsResponse> {
-      Request(path: path, method: .get, query: parameters?.asQuery, id: "generativelanguage.models.list")
+      Request(path: path, method: .get, query: parameters?.asQuery, id: Resource.list.id)
     }
 
     /// Gets information about a specific Model.
     func get(name: String) -> Request<Model> {
       let modelPath = path.appending("/\(name)")
-      return Request(path: modelPath, method: .get, id: "generativelanguage.models.get")
+      return Request(path: modelPath, method: .get, id: Resource.get.id)
     }
 
     struct Parameters {

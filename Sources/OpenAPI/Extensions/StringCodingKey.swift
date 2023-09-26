@@ -19,7 +19,7 @@ import Foundation
 
 struct StringCodingKey: CodingKey, ExpressibleByStringLiteral {
   private let string: String
-  private let int: Int?
+  private var int: Int?
 
   var stringValue: String { string }
 
