@@ -32,7 +32,7 @@ extension API {
       case list
       case get
           
-      var baseID: String { "generativelanguage.models" }
+      private var baseID: String { "generativelanguage.models" }
       var id: String { "\(baseID).\(self.rawValue)" }
     }
   }
