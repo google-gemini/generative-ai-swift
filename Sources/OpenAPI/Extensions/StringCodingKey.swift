@@ -19,9 +19,9 @@ import Foundation
 
 struct StringCodingKey: CodingKey, ExpressibleByStringLiteral {
   private let string: String
-  private var int: Int?
+  private let int: Int?
 
-  var stringValue: String { return string }
+  var stringValue: String { string }
 
   init(string: String) {
     self.string = string
@@ -31,7 +31,7 @@ struct StringCodingKey: CodingKey, ExpressibleByStringLiteral {
     self.string = stringValue
   }
 
-  var intValue: Int? { return int }
+  var intValue: Int? { int }
 
   init?(intValue: Int) {
     self.string = String(describing: intValue)
