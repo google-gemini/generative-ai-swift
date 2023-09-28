@@ -17,5 +17,6 @@
 
 import Foundation
 import Get
+import URLQueryEncoder
 
 public enum API {}

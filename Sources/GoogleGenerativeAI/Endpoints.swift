@@ -17,23 +17,23 @@ import Get
 import URLQueryEncoder
 
 extension API {
-  static var v1beta2: V1beta2 {
-    V1beta2(path: "/v1beta2")
+  static var v1beta3: V1beta3 {
+    V1beta3(path: "/v1beta3")
   }
 
-  struct V1beta2 {
-    /// Path: `/v1beta2`
+  struct V1beta3 {
+    /// Path: `/v1beta3`
     let path: String
   }
 }
 
-extension API.V1beta2 {
+extension API.V1beta3 {
   func generateMessage(_ model: String) -> GenerateMessageResource {
     GenerateMessageResource(path: "\(path)/\(model):generateMessage")
   }
 
   struct GenerateMessageResource {
-    /// Path: `/v1beta2/{+model}:generateMessage`
+    /// Path: `/v1beta3/{+model}:generateMessage`
     let path: String
 
     /// Generates a response from the model given an input `MessagePrompt`.
@@ -43,13 +43,13 @@ extension API.V1beta2 {
   }
 }
 
-extension API.V1beta2 {
+extension API.V1beta3 {
   func generateText(_ model: String) -> GenerateTextResource {
     GenerateTextResource(path: "\(path)/\(model):generateText")
   }
 
   struct GenerateTextResource {
-    /// Path: `/v1beta2/{+model}:generateText`
+    /// Path: `/v1beta3/{+model}:generateText`
     let path: String
 
     /// Generates a response from the model given an input `MessagePrompt`.
@@ -59,13 +59,13 @@ extension API.V1beta2 {
   }
 }
 
-extension API.V1beta2 {
+extension API.V1beta3 {
   func embedText(_ model: String) -> EmbedTextResource {
     EmbedTextResource(path: "\(path)/\(model):embedText")
   }
 
   struct EmbedTextResource {
-    /// Path: `/v1beta2/{+model}:generateText`
+    /// Path: `/v1beta3/{+model}:generateText`
     let path: String
 
     /// Generates a response from the model given an input `MessagePrompt`.
@@ -76,13 +76,13 @@ extension API.V1beta2 {
 }
 
 
-extension API.V1beta2 {
+extension API.V1beta3 {
   var models: ModelsResource {
     ModelsResource(path: path + "/models")
   }
 
   struct ModelsResource {
-    /// Path: `/v1beta2/models`
+    /// Path: `/v1beta3/models`
     let path: String
 
     /// Lists models available through the API.

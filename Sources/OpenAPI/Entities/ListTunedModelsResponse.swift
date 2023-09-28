@@ -17,27 +17,27 @@
 
 import Foundation
 
-/// Response from `ListModel` containing a paginated list of Models.
-public struct ListModelsResponse: Codable {
+/// Response from `ListTunedModels` containing a paginated list of Models.
+public struct ListTunedModelsResponse: Codable {
   /// A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.
   public var nextPageToken: String?
   /// The returned Models.
-  public var models: [Model]?
+  public var tunedModels: [TunedModel]?
 
-  public init(nextPageToken: String? = nil, models: [Model]? = nil) {
+  public init(nextPageToken: String? = nil, tunedModels: [TunedModel]? = nil) {
     self.nextPageToken = nextPageToken
-    self.models = models
+    self.tunedModels = tunedModels
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
     self.nextPageToken = try values.decodeIfPresent(String.self, forKey: "nextPageToken")
-    self.models = try values.decodeIfPresent([Model].self, forKey: "models")
+    self.tunedModels = try values.decodeIfPresent([TunedModel].self, forKey: "tunedModels")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
     try values.encodeIfPresent(nextPageToken, forKey: "nextPageToken")
-    try values.encodeIfPresent(models, forKey: "models")
+    try values.encodeIfPresent(tunedModels, forKey: "tunedModels")
   }
 }

@@ -1,0 +1,2054 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://generativelanguage.googleapis.com/"
+    }
+  ],
+  "info": {
+    "title": "Generative Language API",
+    "description": "The PaLM API allows developers to build generative AI applications using the PaLM model. Large Language Models (LLMs) are a powerful, versatile type of machine learning model that enables computers to comprehend and generate natural language through a series of prompts. The PaLM API is based on Google's next generation LLM, PaLM. It excels at a variety of different tasks like code generation, reasoning, and writing. You can use the PaLM API to build generative AI applications for use cases like content generation, dialogue agents, summarization and classification systems, and more.",
+    "contact": {
+      "name": "Google",
+      "url": "https://google.com"
+    },
+    "version": "v1beta3"
+  },
+  "paths": {
+    "/v1beta3/{+model}:generateText": {
+      "post": {
+        "description": "Generates a response from the model given an input message.",
+        "operationId": "generativelanguage.models.generateText",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateTextResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The name of the `Model` or `TunedModel` to use for generating the completion. Examples: models/text-bison-001 tunedModels/sentence-translator-u3b7m",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTextRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/tunedModels": {
+      "post": {
+        "description": "Creates a tuned model. Intermediate tuning progress (if any) is accessed through the [google.longrunning.Operations] service. Status and results can be accessed through the Operations service. Example: GET /v1/tunedModels/az2mb0bpw6i/operations/000-111-222",
+        "operationId": "generativelanguage.tunedModels.create",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tunedModelId",
+            "in": "query",
+            "description": "Optional. The unique id for the tuned model if specified. This value should be up to 40 characters, the first character must be a letter, the last could be a letter or a number. The id must match the regular expression: [a-z]([a-z0-9-]{0,38}[a-z0-9])?.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TunedModel"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Lists tuned models owned by the user.",
+        "operationId": "generativelanguage.tunedModels.list",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListTunedModelsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Optional. The maximum number of `TunedModels` to return (per page). The service may return fewer tuned models. If unspecified, at most 10 tuned models will be returned. This method returns at most 1000 models per page, even if you pass a larger page_size.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Optional. A filter is a full text search over the tuned model's description and display name. By default, results will not include tuned models shared with everyone. Additional operators: - owner:me - writers:me - readers:me - readers:everyone Examples: \"owner:me\" returns all tuned models to which caller has owner role \"readers:me\" returns all tuned models to which caller has reader role \"readers:everyone\" returns all tuned models that are shared with everyone",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Optional. A page token, received from a previous `ListTunedModels` call. Provide the `page_token` returned by one request as an argument to the next request to retrieve the next page. When paginating, all other parameters provided to `ListTunedModels` must match the call that provided the page token.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+name}": {
+      "patch": {
+        "description": "Updates the permission.",
+        "operationId": "generativelanguage.tunedModels.permissions.patch",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Output only. The permission name. A unique name will be generated on create. Example: tunedModels/{tuned_model}permssions/{permission} Output only.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "description": "Required. The list of fields to update. Accepted ones: - role (`Permission.role` field)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Permission"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes the permission.",
+        "operationId": "generativelanguage.tunedModels.permissions.delete",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Required. The resource name of the permission. Format: `tunedModels/{tuned_model}/permissions/{permission}`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ]
+      },
+      "get": {
+        "description": "Gets information about a specific Model.",
+        "operationId": "generativelanguage.models.get",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Required. The resource name of the model. This name should match a model name returned by the `ListModels` method. Format: `models/{model}`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+name}:transferOwnership": {
+      "post": {
+        "description": "Transfers ownership of the tuned model. This is the only way to change ownership of the tuned model. The current owner will be downgraded to writer role.",
+        "operationId": "generativelanguage.tunedModels.transferOwnership",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferOwnershipResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Required. The resource name of the tuned model to transfer ownership . Format: `tunedModels/my-model-id`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferOwnershipRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+parent}/permissions": {
+      "post": {
+        "description": "Create a permission to a specific resource.",
+        "operationId": "generativelanguage.tunedModels.permissions.create",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "in": "path",
+            "description": "Required. The parent resource of the `Permission`. Format: tunedModels/{tuned_model}",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Permission"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Lists permissions for the specific resource.",
+        "operationId": "generativelanguage.tunedModels.permissions.list",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPermissionsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "in": "path",
+            "description": "Required. The parent resource of the permissions. Format: tunedModels/{tuned_model}",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Optional. A page token, received from a previous `ListPermissions` call. Provide the `page_token` returned by one request as an argument to the next request to retrieve the next page. When paginating, all other parameters provided to `ListPermissions` must match the call that provided the page token.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Optional. The maximum number of `Permission`s to return (per page). The service may return fewer permissions. If unspecified, at most 10 permissions will be returned. This method returns at most 1000 permissions per page, even if you pass larger page_size.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "tunedModels"
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/models": {
+      "get": {
+        "description": "Lists models available through the API.",
+        "operationId": "generativelanguage.models.list",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "The maximum number of `Models` to return (per page). The service may return fewer models. If unspecified, at most 50 models will be returned per page. This method returns at most 1000 models per page, even if you pass a larger page_size.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "A page token, received from a previous `ListModels` call. Provide the `page_token` returned by one request as an argument to the next request to retrieve the next page. When paginating, all other parameters provided to `ListModels` must match the call that provided the page token.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+model}:countMessageTokens": {
+      "post": {
+        "description": "Runs a model's tokenizer on a string and returns the token count.",
+        "operationId": "generativelanguage.models.countMessageTokens",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountMessageTokensResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The model's resource name. This serves as an ID for the Model to use. This name should match a model name returned by the `ListModels` method. Format: `models/{model}`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountMessageTokensRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+model}:embedText": {
+      "post": {
+        "description": "Generates an embedding from the model given an input message.",
+        "operationId": "generativelanguage.models.embedText",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbedTextResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The model name to use with the format model=models/{model}.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbedTextRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+model}:batchEmbedText": {
+      "post": {
+        "description": "Generates multiple embeddings from the model given input text in a synchronous call.",
+        "operationId": "generativelanguage.models.batchEmbedText",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchEmbedTextResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The name of the `Model` to use for generating the embedding. Examples: models/embedding-gecko-001",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchEmbedTextRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+model}:countTextTokens": {
+      "post": {
+        "description": "Runs a model's tokenizer on a text and returns the token count.",
+        "operationId": "generativelanguage.models.countTextTokens",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountTextTokensResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The model's resource name. This serves as an ID for the Model to use. This name should match a model name returned by the `ListModels` method. Format: `models/{model}`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountTextTokensRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    },
+    "/v1beta3/{+model}:generateMessage": {
+      "post": {
+        "description": "Generates a response from the model given an input `MessagePrompt`.",
+        "operationId": "generativelanguage.models.generateMessage",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateMessageResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "description": "Required. The name of the model to use. Format: `name=models/{model}`.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "models"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateMessageRequest"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/_.xgafv"
+        },
+        {
+          "$ref": "#/components/parameters/callback"
+        },
+        {
+          "$ref": "#/components/parameters/quotaUser"
+        },
+        {
+          "$ref": "#/components/parameters/fields"
+        },
+        {
+          "$ref": "#/components/parameters/upload_protocol"
+        },
+        {
+          "$ref": "#/components/parameters/uploadType"
+        },
+        {
+          "$ref": "#/components/parameters/key"
+        },
+        {
+          "$ref": "#/components/parameters/oauth_token"
+        },
+        {
+          "$ref": "#/components/parameters/alt"
+        },
+        {
+          "$ref": "#/components/parameters/prettyPrint"
+        },
+        {
+          "$ref": "#/components/parameters/access_token"
+        }
+      ]
+    }
+  },
+  "tags": [
+    {
+      "name": "tunedModels"
+    },
+    {
+      "name": "models"
+    }
+  ],
+  "externalDocs": {
+    "url": "https://developers.generativeai.google/api"
+  },
+  "components": {
+    "schemas": {
+      "TunedModel": {
+        "description": "A fine-tuned model created using ModelService.CreateTunedModel.",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Optional. A short description of this model."
+          },
+          "topP": {
+            "description": "Optional. For Nucleus sampling. Nucleus sampling considers the smallest set of tokens whose probability sum is at least `top_p`. This value specifies default to be the one used by the base model while creating the model.",
+            "format": "float",
+            "type": "number"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "Output only. The timestamp when this model was updated.",
+            "readOnly": true,
+            "format": "google-datetime"
+          },
+          "tuningTask": {
+            "$ref": "#/components/schemas/TuningTask",
+            "description": "Required. The tuning task that creates the tuned model."
+          },
+          "tunedModelSource": {
+            "$ref": "#/components/schemas/TunedModelSource",
+            "description": "Optional. TunedModel to use as the starting point for training the new model."
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float",
+            "description": "Optional. Controls the randomness of the output. Values can range over `[0.0,1.0]`, inclusive. A value closer to `1.0` will produce responses that are more varied, while a value closer to `0.0` will typically result in less surprising responses from the model. This value specifies default to be the one used by the base model while creating the model."
+          },
+          "createTime": {
+            "format": "google-datetime",
+            "description": "Output only. The timestamp when this model was created.",
+            "type": "string",
+            "readOnly": true
+          },
+          "baseModel": {
+            "type": "string",
+            "description": "Immutable. The name of the `Model` to tune. Example: `models/text-bison-001`"
+          },
+          "name": {
+            "type": "string",
+            "description": "Output only. The tuned model name. A unique name will be generated on create. Example: `tunedModels/az2mb0bpw6i` If display_name is set on create, the id portion of the name will be set by concatenating the words of the display_name with hyphens and adding a random portion for uniqueness. Example: display_name = \"Sentence Translator\" name = \"tunedModels/sentence-translator-u3b7m\"",
+            "readOnly": true
+          },
+          "topK": {
+            "description": "Optional. For Top-k sampling. Top-k sampling considers the set of `top_k` most probable tokens. This value specifies default to be used by the backend while making the call to the model. This value specifies default to be the one used by the base model while creating the model.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "displayName": {
+            "description": "Optional. The name to display for this model in user interfaces. The display name must be up to 40 characters including spaces.",
+            "type": "string"
+          },
+          "state": {
+            "description": "Output only. The state of the tuned model.",
+            "type": "string",
+            "enum": [
+              "STATE_UNSPECIFIED",
+              "CREATING",
+              "ACTIVE",
+              "FAILED"
+            ],
+            "readOnly": true
+          }
+        }
+      },
+      "Permission": {
+        "description": "Permission resource grants user, group or the rest of the world access to the PaLM API resource (e.g. a tuned model, file). A role is a collection of permitted operations that allows users to perform specific actions on PaLM API resources. To make them available to users, groups, or service accounts, you assign roles. When you assign a role, you grant permissions that the role contains. There are three concentric roles. Each role is a superset of the previous role's permitted operations: - reader can use the resource (e.g. tuned model) for inference - writer has reader's permissions and additionally can edit and share - owner has writer's permissions and additionally can delete",
+        "properties": {
+          "name": {
+            "readOnly": true,
+            "description": "Output only. The permission name. A unique name will be generated on create. Example: tunedModels/{tuned_model}permssions/{permission} Output only.",
+            "type": "string"
+          },
+          "emailAddress": {
+            "description": "Optional. Immutable. The email address of the user of group which this permission refers. Field is not set when permission's grantee type is EVERYONE.",
+            "type": "string"
+          },
+          "granteeType": {
+            "description": "Required. Immutable. The type of the grantee.",
+            "type": "string",
+            "enum": [
+              "GRANTEE_TYPE_UNSPECIFIED",
+              "USER",
+              "GROUP",
+              "EVERYONE"
+            ]
+          },
+          "role": {
+            "enum": [
+              "ROLE_UNSPECIFIED",
+              "OWNER",
+              "WRITER",
+              "READER"
+            ],
+            "description": "Required. The role granted by this permission.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EmbedTextResponse": {
+        "description": "The response to a EmbedTextRequest.",
+        "properties": {
+          "embedding": {
+            "$ref": "#/components/schemas/Embedding",
+            "description": "Output only. The embedding generated from the input text.",
+            "readOnly": true
+          }
+        },
+        "type": "object"
+      },
+      "ListPermissionsResponse": {
+        "type": "object",
+        "description": "Response from `ListPermissions` containing a paginated list of permissions.",
+        "properties": {
+          "nextPageToken": {
+            "type": "string",
+            "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages."
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            },
+            "description": "Returned permissions."
+          }
+        }
+      },
+      "Status": {
+        "properties": {
+          "code": {
+            "description": "The status code, which should be an enum value of google.rpc.Code.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+            "type": "string"
+          },
+          "details": {
+            "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "description": "Properties of the object. Contains field @type with type URL."
+              }
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors)."
+      },
+      "SafetyFeedback": {
+        "description": "Safety feedback for an entire request. This field is populated if content in the input and/or response is blocked due to safety settings. SafetyFeedback may not exist for every HarmCategory. Each SafetyFeedback will return the safety settings used by the request as well as the lowest HarmProbability that should be allowed in order to return a result.",
+        "type": "object",
+        "properties": {
+          "rating": {
+            "description": "Safety rating evaluated from content.",
+            "$ref": "#/components/schemas/SafetyRating"
+          },
+          "setting": {
+            "$ref": "#/components/schemas/SafetySetting",
+            "description": "Safety settings applied to the request."
+          }
+        }
+      },
+      "TunedModelSource": {
+        "description": "Tuned model as a source for training a new model.",
+        "properties": {
+          "baseModel": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Output only. The name of the base `Model` this `TunedModel` was tuned from. Example: `models/text-bison-001`"
+          },
+          "tunedModel": {
+            "type": "string",
+            "description": "Immutable. The name of the `TunedModel` to use as the starting point for training the new model. Example: `tunedModels/my-tuned-model`"
+          }
+        },
+        "type": "object"
+      },
+      "Example": {
+        "description": "An input/output example used to instruct the Model. It demonstrates how the model should respond or format its response.",
+        "properties": {
+          "input": {
+            "description": "Required. An example of an input `Message` from the user.",
+            "$ref": "#/components/schemas/Message"
+          },
+          "output": {
+            "$ref": "#/components/schemas/Message",
+            "description": "Required. An example of what the model should output given the input."
+          }
+        },
+        "type": "object"
+      },
+      "GenerateTextRequest": {
+        "description": "Request to generate a text completion response from the model.",
+        "properties": {
+          "safetySettings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetySetting"
+            },
+            "description": "A list of unique `SafetySetting` instances for blocking unsafe content. that will be enforced on the `GenerateTextRequest.prompt` and `GenerateTextResponse.candidates`. There should not be more than one setting for each `SafetyCategory` type. The API will block any prompts and responses that fail to meet the thresholds set by these settings. This list overrides the default settings for each `SafetyCategory` specified in the safety_settings. If there is no `SafetySetting` for a given `SafetyCategory` provided in the list, the API will use the default safety setting for that category."
+          },
+          "candidateCount": {
+            "description": "Optional. Number of generated responses to return. This value must be between [1, 8], inclusive. If unset, this will default to 1.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "stopSequences": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The set of character sequences (up to 5) that will stop output generation. If specified, the API will stop at the first appearance of a stop sequence. The stop sequence will not be included as part of the response."
+          },
+          "topK": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Optional. The maximum number of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Top-k sampling considers the set of `top_k` most probable tokens. Defaults to 40. Note: The default value varies by model, see the `Model.top_k` attribute of the `Model` returned the `getModel` function."
+          },
+          "prompt": {
+            "description": "Required. The free-form input text given to the model as a prompt. Given a prompt, the model will generate a TextCompletion response it predicts as the completion of the input text.",
+            "$ref": "#/components/schemas/TextPrompt"
+          },
+          "maxOutputTokens": {
+            "type": "integer",
+            "description": "Optional. The maximum number of tokens to include in a candidate. If unset, this will default to output_token_limit specified in the `Model` specification.",
+            "format": "int32"
+          },
+          "topP": {
+            "type": "number",
+            "description": "Optional. The maximum cumulative probability of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Tokens are sorted based on their assigned probabilities so that only the most likely tokens are considered. Top-k sampling directly limits the maximum number of tokens to consider, while Nucleus sampling limits number of tokens based on the cumulative probability. Note: The default value varies by model, see the `Model.top_p` attribute of the `Model` returned the `getModel` function.",
+            "format": "float"
+          },
+          "temperature": {
+            "format": "float",
+            "type": "number",
+            "description": "Optional. Controls the randomness of the output. Note: The default value varies by model, see the `Model.temperature` attribute of the `Model` returned the `getModel` function. Values can range from [0.0,1.0], inclusive. A value closer to 1.0 will produce responses that are more varied and creative, while a value closer to 0.0 will typically result in more straightforward responses from the model."
+          }
+        },
+        "type": "object"
+      },
+      "ListModelsResponse": {
+        "properties": {
+          "nextPageToken": {
+            "type": "string",
+            "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages."
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            },
+            "description": "The returned Models."
+          }
+        },
+        "type": "object",
+        "description": "Response from `ListModel` containing a paginated list of Models."
+      },
+      "CitationMetadata": {
+        "type": "object",
+        "properties": {
+          "citationSources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CitationSource"
+            },
+            "description": "Citations to sources for a specific response."
+          }
+        },
+        "description": "A collection of source attributions for a piece of content."
+      },
+      "SafetySetting": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "HARM_CATEGORY_UNSPECIFIED",
+              "HARM_CATEGORY_DEROGATORY",
+              "HARM_CATEGORY_TOXICITY",
+              "HARM_CATEGORY_VIOLENCE",
+              "HARM_CATEGORY_SEXUAL",
+              "HARM_CATEGORY_MEDICAL",
+              "HARM_CATEGORY_DANGEROUS"
+            ],
+            "description": "Required. The category for this setting."
+          },
+          "threshold": {
+            "description": "Required. Controls the probability threshold at which harm is blocked.",
+            "type": "string",
+            "enum": [
+              "HARM_BLOCK_THRESHOLD_UNSPECIFIED",
+              "BLOCK_LOW_AND_ABOVE",
+              "BLOCK_MEDIUM_AND_ABOVE",
+              "BLOCK_ONLY_HIGH",
+              "BLOCK_NONE"
+            ]
+          }
+        },
+        "type": "object",
+        "description": "Safety setting, affecting the safety-blocking behavior. Passing a safety setting for a category changes the allowed proability that content is blocked."
+      },
+      "SafetyRating": {
+        "type": "object",
+        "description": "Safety rating for a piece of content. The safety rating contains the category of harm and the harm probability level in that category for a piece of content. Content is classified for safety across a number of harm categories and the probability of the harm classification is included here.",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Required. The category for this rating.",
+            "enum": [
+              "HARM_CATEGORY_UNSPECIFIED",
+              "HARM_CATEGORY_DEROGATORY",
+              "HARM_CATEGORY_TOXICITY",
+              "HARM_CATEGORY_VIOLENCE",
+              "HARM_CATEGORY_SEXUAL",
+              "HARM_CATEGORY_MEDICAL",
+              "HARM_CATEGORY_DANGEROUS"
+            ]
+          },
+          "probability": {
+            "enum": [
+              "HARM_PROBABILITY_UNSPECIFIED",
+              "NEGLIGIBLE",
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ],
+            "description": "Required. The probability of harm for this content.",
+            "type": "string"
+          }
+        }
+      },
+      "GenerateTextResponse": {
+        "properties": {
+          "candidates": {
+            "description": "Candidate responses from the model.",
+            "items": {
+              "$ref": "#/components/schemas/TextCompletion"
+            },
+            "type": "array"
+          },
+          "safetyFeedback": {
+            "items": {
+              "$ref": "#/components/schemas/SafetyFeedback"
+            },
+            "type": "array",
+            "description": "Returns any safety feedback related to content filtering."
+          },
+          "filters": {
+            "description": "A set of content filtering metadata for the prompt and response text. This indicates which `SafetyCategory`(s) blocked a candidate from this response, the lowest `HarmProbability` that triggered a block, and the HarmThreshold setting for that category. This indicates the smallest change to the `SafetySettings` that would be necessary to unblock at least 1 response. The blocking is configured by the `SafetySettings` in the request (or the default `SafetySettings` of the API).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContentFilter"
+            }
+          }
+        },
+        "description": "The response from the model, including candidate completions.",
+        "type": "object"
+      },
+      "TextCompletion": {
+        "description": "Output text returned from a model.",
+        "properties": {
+          "citationMetadata": {
+            "description": "Output only. Citation information for model-generated `output` in this `TextCompletion`. This field may be populated with attribution information for any text included in the `output`.",
+            "readOnly": true,
+            "$ref": "#/components/schemas/CitationMetadata"
+          },
+          "output": {
+            "readOnly": true,
+            "type": "string",
+            "description": "Output only. The generated text returned from the model."
+          },
+          "safetyRatings": {
+            "items": {
+              "$ref": "#/components/schemas/SafetyRating"
+            },
+            "type": "array",
+            "description": "Ratings for the safety of a response. There is at most one rating per category."
+          }
+        },
+        "type": "object"
+      },
+      "CountTextTokensRequest": {
+        "properties": {
+          "prompt": {
+            "description": "Required. The free-form input text given to the model as a prompt.",
+            "$ref": "#/components/schemas/TextPrompt"
+          }
+        },
+        "type": "object",
+        "description": "Counts the number of tokens in the `prompt` sent to a model. Models may tokenize text differently, so each model may return a different `token_count`."
+      },
+      "CountTextTokensResponse": {
+        "description": "A response from `CountTextTokens`. It returns the model's `token_count` for the `prompt`.",
+        "type": "object",
+        "properties": {
+          "tokenCount": {
+            "type": "integer",
+            "description": "The number of tokens that the `model` tokenizes the `prompt` into. Always non-negative.",
+            "format": "int32"
+          }
+        }
+      },
+      "EmbedTextRequest": {
+        "type": "object",
+        "description": "Request to get a text embedding from the model.",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Required. The free-form input text that the model will turn into an embedding."
+          }
+        }
+      },
+      "BatchEmbedTextRequest": {
+        "description": "Batch request to get a text embedding from the model.",
+        "type": "object",
+        "properties": {
+          "texts": {
+            "description": "Required. The free-form input texts that the model will turn into an embedding. The current limit is 100 texts, over which an error will be thrown.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "TuningSnapshot": {
+        "description": "Record for a single tuning step.",
+        "type": "object",
+        "properties": {
+          "computeTime": {
+            "description": "Output only. The timestamp when this metric was computed.",
+            "type": "string",
+            "format": "google-datetime",
+            "readOnly": true
+          },
+          "meanLoss": {
+            "readOnly": true,
+            "format": "float",
+            "description": "Output only. The mean loss of the training examples for this step.",
+            "type": "number"
+          },
+          "step": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Output only. The tuning step.",
+            "format": "int32"
+          },
+          "epoch": {
+            "description": "Output only. The epoch this step was part of.",
+            "format": "int32",
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      },
+      "Hyperparameters": {
+        "type": "object",
+        "description": "Hyperparameters controlling the tuning process.",
+        "properties": {
+          "batchSize": {
+            "description": "Immutable. The batch size hyperparameter for tuning. If not set, a default of 16 or 64 will be used based on the number of training examples.",
+            "type": "integer",
+            "format": "int32"
+          },
+          "learningRate": {
+            "description": "Immutable. The learning rate hyperparameter for tuning. If not set, a default of 0.0002 or 0.002 will be calculated based on the number of training examples.",
+            "type": "number",
+            "format": "float"
+          },
+          "epochCount": {
+            "format": "int32",
+            "type": "integer",
+            "description": "Immutable. The number of training epochs. An epoch is one pass through the training data. If not set, a default of 10 will be used."
+          }
+        }
+      },
+      "CountMessageTokensResponse": {
+        "description": "A response from `CountMessageTokens`. It returns the model's `token_count` for the `prompt`.",
+        "properties": {
+          "tokenCount": {
+            "format": "int32",
+            "type": "integer",
+            "description": "The number of tokens that the `model` tokenizes the `prompt` into. Always non-negative."
+          }
+        },
+        "type": "object"
+      },
+      "Embedding": {
+        "description": "A list of floats representing the embedding.",
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "The embedding values.",
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
+      },
+      "TransferOwnershipRequest": {
+        "properties": {
+          "emailAddress": {
+            "description": "Required. The email address of the user to whom the tuned model is being transferred to.",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "Request to transfer the ownership of the tuned model."
+      },
+      "ContentFilter": {
+        "description": "Content filtering metadata associated with processing a single request. ContentFilter contains a reason and an optional supporting string. The reason may be unspecified.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A string that describes the filtering behavior in more detail."
+          },
+          "reason": {
+            "enum": [
+              "BLOCKED_REASON_UNSPECIFIED",
+              "SAFETY",
+              "OTHER"
+            ],
+            "description": "The reason content was blocked during request processing.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TextPrompt": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Required. The prompt text."
+          }
+        },
+        "type": "object",
+        "description": "Text given to the model as a prompt. The Model will use this TextPrompt to Generate a text completion."
+      },
+      "TuningExample": {
+        "description": "A single example for tuning.",
+        "type": "object",
+        "properties": {
+          "textInput": {
+            "description": "Optional. Text model input.",
+            "type": "string"
+          },
+          "output": {
+            "type": "string",
+            "description": "Required. The expected model output."
+          }
+        }
+      },
+      "TransferOwnershipResponse": {
+        "properties": {},
+        "description": "Response from `TransferOwnership`.",
+        "type": "object"
+      },
+      "Model": {
+        "properties": {
+          "inputTokenLimit": {
+            "description": "Maximum number of input tokens allowed for this model.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "topK": {
+            "format": "int32",
+            "description": "For Top-k sampling. Top-k sampling considers the set of `top_k` most probable tokens. This value specifies default to be used by the backend while making the call to the model.",
+            "type": "integer"
+          },
+          "topP": {
+            "description": "For Nucleus sampling. Nucleus sampling considers the smallest set of tokens whose probability sum is at least `top_p`. This value specifies default to be used by the backend while making the call to the model.",
+            "format": "float",
+            "type": "number"
+          },
+          "name": {
+            "description": "Required. The resource name of the `Model`. Format: `models/{model}` with a `{model}` naming convention of: * \"{base_model_id}-{version}\" Examples: * `models/chat-bison-001`",
+            "type": "string"
+          },
+          "outputTokenLimit": {
+            "description": "Maximum number of output tokens available for this model.",
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "The human-readable name of the model. E.g. \"Chat Bison\". The name can be up to 128 characters long and can consist of any UTF-8 characters."
+          },
+          "baseModelId": {
+            "description": "Required. The name of the base model, pass this to the generation request. Examples: * `chat-bison`",
+            "type": "string"
+          },
+          "version": {
+            "type": "string",
+            "description": "Required. The version number of the model. This represents the major version"
+          },
+          "supportedGenerationMethods": {
+            "items": {
+              "type": "string"
+            },
+            "description": "The model's supported generation methods. The method names are defined as Pascal case strings, such as `generateMessage` which correspond to API methods.",
+            "type": "array"
+          },
+          "description": {
+            "type": "string",
+            "description": "A short description of the model."
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float",
+            "description": "Controls the randomness of the output. Values can range over `[0.0,1.0]`, inclusive. A value closer to `1.0` will produce responses that are more varied, while a value closer to `0.0` will typically result in less surprising responses from the model. This value specifies default to be used by the backend while making the call to the model."
+          }
+        },
+        "description": "Information about a Generative Language Model.",
+        "type": "object"
+      },
+      "BatchEmbedTextResponse": {
+        "description": "The response to a EmbedTextRequest.",
+        "properties": {
+          "embeddings": {
+            "description": "Output only. The embeddings generated from the input text.",
+            "readOnly": true,
+            "items": {
+              "$ref": "#/components/schemas/Embedding"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CreateTunedModelMetadata": {
+        "description": "Metadata about the state and progress of creating a tuned model returned from the long-running operation",
+        "type": "object",
+        "properties": {
+          "tunedModel": {
+            "type": "string",
+            "description": "Name of the tuned model associated with the tuning operation."
+          },
+          "completedSteps": {
+            "type": "integer",
+            "description": "The number of steps completed.",
+            "format": "int32"
+          },
+          "completedPercent": {
+            "type": "number",
+            "format": "float",
+            "description": "The completed percentage for the tuning operation."
+          },
+          "totalSteps": {
+            "description": "The total number of tuning steps.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TuningSnapshot"
+            },
+            "description": "Metrics collected during tuning."
+          }
+        }
+      },
+      "GenerateMessageRequest": {
+        "properties": {
+          "prompt": {
+            "description": "Required. The structured textual input given to the model as a prompt. Given a prompt, the model will return what it predicts is the next message in the discussion.",
+            "$ref": "#/components/schemas/MessagePrompt"
+          },
+          "topP": {
+            "format": "float",
+            "type": "number",
+            "description": "Optional. The maximum cumulative probability of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Nucleus sampling considers the smallest set of tokens whose probability sum is at least `top_p`."
+          },
+          "candidateCount": {
+            "format": "int32",
+            "description": "Optional. The number of generated response messages to return. This value must be between `[1, 8]`, inclusive. If unset, this will default to `1`.",
+            "type": "integer"
+          },
+          "temperature": {
+            "format": "float",
+            "description": "Optional. Controls the randomness of the output. Values can range over `[0.0,1.0]`, inclusive. A value closer to `1.0` will produce responses that are more varied, while a value closer to `0.0` will typically result in less surprising responses from the model.",
+            "type": "number"
+          },
+          "topK": {
+            "format": "int32",
+            "type": "integer",
+            "description": "Optional. The maximum number of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Top-k sampling considers the set of `top_k` most probable tokens."
+          }
+        },
+        "type": "object",
+        "description": "Request to generate a message response from the model."
+      },
+      "ListTunedModelsResponse": {
+        "description": "Response from `ListTunedModels` containing a paginated list of Models.",
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.",
+            "type": "string"
+          },
+          "tunedModels": {
+            "description": "The returned Models.",
+            "items": {
+              "$ref": "#/components/schemas/TunedModel"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "CitationSource": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "description": "Optional. URI that is attributed as a source for a portion of the text.",
+            "type": "string"
+          },
+          "license": {
+            "description": "Optional. License for the GitHub project that is attributed as a source for segment. License info is required for code citations.",
+            "type": "string"
+          },
+          "endIndex": {
+            "description": "Optional. End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer",
+            "description": "Optional. Start of segment of the response that is attributed to this source. Index indicates the start of the segment, measured in bytes.",
+            "format": "int32"
+          }
+        },
+        "description": "A citation to a source for a portion of a specific response."
+      },
+      "Message": {
+        "description": "The base unit of structured text. A `Message` includes an `author` and the `content` of the `Message`. The `author` is used to tag messages when they are fed to the model as text.",
+        "properties": {
+          "citationMetadata": {
+            "description": "Output only. Citation information for model-generated `content` in this `Message`. If this `Message` was generated as output from the model, this field may be populated with attribution information for any text included in the `content`. This field is used only on output.",
+            "$ref": "#/components/schemas/CitationMetadata",
+            "readOnly": true
+          },
+          "content": {
+            "description": "Required. The text content of the structured `Message`.",
+            "type": "string"
+          },
+          "author": {
+            "type": "string",
+            "description": "Optional. The author of this Message. This serves as a key for tagging the content of this Message when it is fed to the model as text. The author can be any alphanumeric string."
+          }
+        },
+        "type": "object"
+      },
+      "CountMessageTokensRequest": {
+        "type": "object",
+        "description": "Counts the number of tokens in the `prompt` sent to a model. Models may tokenize text differently, so each model may return a different `token_count`.",
+        "properties": {
+          "prompt": {
+            "$ref": "#/components/schemas/MessagePrompt",
+            "description": "Required. The prompt, whose token count is to be returned."
+          }
+        }
+      },
+      "TuningTask": {
+        "properties": {
+          "trainingData": {
+            "description": "Required. Input only. Immutable. The model training data.",
+            "$ref": "#/components/schemas/Dataset"
+          },
+          "completeTime": {
+            "type": "string",
+            "format": "google-datetime",
+            "readOnly": true,
+            "description": "Output only. The timestamp when tuning this model completed."
+          },
+          "startTime": {
+            "format": "google-datetime",
+            "description": "Output only. The timestamp when tuning this model started.",
+            "type": "string",
+            "readOnly": true
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TuningSnapshot"
+            },
+            "description": "Output only. Metrics collected during tuning.",
+            "readOnly": true
+          },
+          "hyperparameters": {
+            "description": "Immutable. Hyperparameters controlling the tuning process. If not provided, default values will be used.",
+            "$ref": "#/components/schemas/Hyperparameters"
+          }
+        },
+        "description": "Tuning tasks that create tuned models.",
+        "type": "object"
+      },
+      "Empty": {
+        "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+        "properties": {},
+        "type": "object"
+      },
+      "Dataset": {
+        "properties": {
+          "examples": {
+            "$ref": "#/components/schemas/TuningExamples",
+            "description": "Optional. Inline examples."
+          }
+        },
+        "type": "object",
+        "description": "Dataset for training or validation."
+      },
+      "Operation": {
+        "description": "This resource represents a long-running operation that is the result of a network API call.",
+        "type": "object",
+        "properties": {
+          "done": {
+            "type": "boolean",
+            "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available."
+          },
+          "name": {
+            "type": "string",
+            "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`."
+          },
+          "response": {
+            "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
+            "additionalProperties": {
+              "description": "Properties of the object. Contains field @type with type URL."
+            },
+            "type": "object"
+          },
+          "error": {
+            "description": "The error result of the operation in case of failure or cancellation.",
+            "$ref": "#/components/schemas/Status"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "description": "Properties of the object. Contains field @type with type URL."
+            },
+            "type": "object",
+            "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any."
+          }
+        }
+      },
+      "TuningExamples": {
+        "description": "A set of tuning examples. Can be training or validatation data.",
+        "type": "object",
+        "properties": {
+          "examples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TuningExample"
+            },
+            "description": "Required. The examples. Example input can be for text or discuss, but all examples in a set must be of the same type."
+          }
+        }
+      },
+      "GenerateMessageResponse": {
+        "description": "The response from the model. This includes candidate messages and conversation history in the form of chronologically-ordered messages.",
+        "type": "object",
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "type": "array",
+            "description": "The conversation history used by the model."
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "type": "array",
+            "description": "Candidate response messages from the model."
+          },
+          "filters": {
+            "description": "A set of content filtering metadata for the prompt and response text. This indicates which `SafetyCategory`(s) blocked a candidate from this response, the lowest `HarmProbability` that triggered a block, and the HarmThreshold setting for that category.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContentFilter"
+            }
+          }
+        }
+      },
+      "MessagePrompt": {
+        "description": "All of the structured input text passed to the model as a prompt. A `MessagePrompt` contains a structured set of fields that provide context for the conversation, examples of user input/model output message pairs that prime the model to respond in different ways, and the conversation history or list of messages representing the alternating turns of the conversation between the user and the model.",
+        "properties": {
+          "examples": {
+            "description": "Optional. Examples of what the model should generate. This includes both user input and the response that the model should emulate. These `examples` are treated identically to conversation messages except that they take precedence over the history in `messages`: If the total input size exceeds the model's `input_token_limit` the input will be truncated. Items will be dropped from `messages` before `examples`.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Example"
+            }
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "type": "array",
+            "description": "Required. A snapshot of the recent conversation history sorted chronologically. Turns alternate between two authors. If the total input size exceeds the model's `input_token_limit` the input will be truncated: The oldest items will be dropped from `messages`."
+          },
+          "context": {
+            "description": "Optional. Text that should be provided to the model first to ground the response. If not empty, this `context` will be given to the model first before the `examples` and `messages`. When using a `context` be sure to provide it with every request to maintain continuity. This field can be a description of your prompt to the model to help provide context and guide the responses. Examples: \"Translate the phrase from English to French.\" or \"Given a statement, classify the sentiment as happy, sad or neutral.\" Anything included in this field will take precedence over message history if the total input size exceeds the model's `input_token_limit` and the input request is truncated.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "parameters": {
+      "callback": {
+        "name": "callback",
+        "in": "query",
+        "description": "JSONP",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "quotaUser": {
+        "name": "quotaUser",
+        "in": "query",
+        "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "fields": {
+        "name": "fields",
+        "in": "query",
+        "description": "Selector specifying which fields to include in a partial response.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "upload_protocol": {
+        "name": "upload_protocol",
+        "in": "query",
+        "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "uploadType": {
+        "name": "uploadType",
+        "in": "query",
+        "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "key": {
+        "name": "key",
+        "in": "query",
+        "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "oauth_token": {
+        "name": "oauth_token",
+        "in": "query",
+        "description": "OAuth 2.0 token for the current user.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "alt": {
+        "name": "alt",
+        "in": "query",
+        "description": "Data format for response.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "json",
+            "media",
+            "proto"
+          ],
+          "default": "json"
+        }
+      },
+      "prettyPrint": {
+        "name": "prettyPrint",
+        "in": "query",
+        "description": "Returns response with indentations and line breaks.",
+        "schema": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "access_token": {
+        "name": "access_token",
+        "in": "query",
+        "description": "OAuth access token.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "_.xgafv": {
+        "name": "$.xgafv",
+        "in": "query",
+        "description": "V1 error format.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "1",
+            "2"
+          ]
+        }
+      }
+    },
+    "requestBodies": {
+      "Permission": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          }
+        }
+      }
+    }
+  }
+}

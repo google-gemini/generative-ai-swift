@@ -17,27 +17,27 @@
 
 import Foundation
 
-/// Response from `ListModel` containing a paginated list of Models.
-public struct ListModelsResponse: Codable {
-  /// A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.
-  public var nextPageToken: String?
-  /// The returned Models.
-  public var models: [Model]?
+/// Tuned model as a source for training a new model.
+public struct TunedModelSource: Codable {
+  /// Output only. The name of the base `Model` this `TunedModel` was tuned from. Example: `models/text-bison-001`
+  public var baseModel: String?
+  /// Immutable. The name of the `TunedModel` to use as the starting point for training the new model. Example: `tunedModels/my-tuned-model`
+  public var tunedModel: String?
 
-  public init(nextPageToken: String? = nil, models: [Model]? = nil) {
-    self.nextPageToken = nextPageToken
-    self.models = models
+  public init(baseModel: String? = nil, tunedModel: String? = nil) {
+    self.baseModel = baseModel
+    self.tunedModel = tunedModel
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.nextPageToken = try values.decodeIfPresent(String.self, forKey: "nextPageToken")
-    self.models = try values.decodeIfPresent([Model].self, forKey: "models")
+    self.baseModel = try values.decodeIfPresent(String.self, forKey: "baseModel")
+    self.tunedModel = try values.decodeIfPresent(String.self, forKey: "tunedModel")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(nextPageToken, forKey: "nextPageToken")
-    try values.encodeIfPresent(models, forKey: "models")
+    try values.encodeIfPresent(baseModel, forKey: "baseModel")
+    try values.encodeIfPresent(tunedModel, forKey: "tunedModel")
   }
 }

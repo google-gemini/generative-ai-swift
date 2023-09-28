@@ -19,25 +19,30 @@ import Foundation
 
 /// The response from the model. This includes candidate messages and conversation history in the form of chronologically-ordered messages.
 public struct GenerateMessageResponse: Codable {
-  /// Candidate response messages from the model.
-  public var candidates: [Message]?
   /// The conversation history used by the model.
   public var messages: [Message]?
+  /// Candidate response messages from the model.
+  public var candidates: [Message]?
+  /// A set of content filtering metadata for the prompt and response text. This indicates which `SafetyCategory`(s) blocked a candidate from this response, the lowest `HarmProbability` that triggered a block, and the HarmThreshold setting for that category.
+  public var filters: [ContentFilter]?
 
-  public init(candidates: [Message]? = nil, messages: [Message]? = nil) {
-    self.candidates = candidates
+  public init(messages: [Message]? = nil, candidates: [Message]? = nil, filters: [ContentFilter]? = nil) {
     self.messages = messages
+    self.candidates = candidates
+    self.filters = filters
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.candidates = try values.decodeIfPresent([Message].self, forKey: "candidates")
     self.messages = try values.decodeIfPresent([Message].self, forKey: "messages")
+    self.candidates = try values.decodeIfPresent([Message].self, forKey: "candidates")
+    self.filters = try values.decodeIfPresent([ContentFilter].self, forKey: "filters")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(candidates, forKey: "candidates")
     try values.encodeIfPresent(messages, forKey: "messages")
+    try values.encodeIfPresent(candidates, forKey: "candidates")
+    try values.encodeIfPresent(filters, forKey: "filters")
   }
 }

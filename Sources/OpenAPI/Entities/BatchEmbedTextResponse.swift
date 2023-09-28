@@ -17,27 +17,22 @@
 
 import Foundation
 
-/// Response from `ListModel` containing a paginated list of Models.
-public struct ListModelsResponse: Codable {
-  /// A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.
-  public var nextPageToken: String?
-  /// The returned Models.
-  public var models: [Model]?
+/// The response to a EmbedTextRequest.
+public struct BatchEmbedTextResponse: Codable {
+  /// Output only. The embeddings generated from the input text.
+  public var embeddings: [Embedding]?
 
-  public init(nextPageToken: String? = nil, models: [Model]? = nil) {
-    self.nextPageToken = nextPageToken
-    self.models = models
+  public init(embeddings: [Embedding]? = nil) {
+    self.embeddings = embeddings
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.nextPageToken = try values.decodeIfPresent(String.self, forKey: "nextPageToken")
-    self.models = try values.decodeIfPresent([Model].self, forKey: "models")
+    self.embeddings = try values.decodeIfPresent([Embedding].self, forKey: "embeddings")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(nextPageToken, forKey: "nextPageToken")
-    try values.encodeIfPresent(models, forKey: "models")
+    try values.encodeIfPresent(embeddings, forKey: "embeddings")
   }
 }

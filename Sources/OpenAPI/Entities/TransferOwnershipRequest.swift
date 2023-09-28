@@ -17,27 +17,22 @@
 
 import Foundation
 
-/// Response from `ListModel` containing a paginated list of Models.
-public struct ListModelsResponse: Codable {
-  /// A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.
-  public var nextPageToken: String?
-  /// The returned Models.
-  public var models: [Model]?
+/// Request to transfer the ownership of the tuned model.
+public struct TransferOwnershipRequest: Codable {
+  /// Required. The email address of the user to whom the tuned model is being transferred to.
+  public var emailAddress: String?
 
-  public init(nextPageToken: String? = nil, models: [Model]? = nil) {
-    self.nextPageToken = nextPageToken
-    self.models = models
+  public init(emailAddress: String? = nil) {
+    self.emailAddress = emailAddress
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.nextPageToken = try values.decodeIfPresent(String.self, forKey: "nextPageToken")
-    self.models = try values.decodeIfPresent([Model].self, forKey: "models")
+    self.emailAddress = try values.decodeIfPresent(String.self, forKey: "emailAddress")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(nextPageToken, forKey: "nextPageToken")
-    try values.encodeIfPresent(models, forKey: "models")
+    try values.encodeIfPresent(emailAddress, forKey: "emailAddress")
   }
 }

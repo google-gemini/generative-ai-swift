@@ -17,27 +17,27 @@
 
 import Foundation
 
-/// Response from `ListModel` containing a paginated list of Models.
-public struct ListModelsResponse: Codable {
+/// Response from `ListPermissions` containing a paginated list of permissions.
+public struct ListPermissionsResponse: Codable {
   /// A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no more pages.
   public var nextPageToken: String?
-  /// The returned Models.
-  public var models: [Model]?
+  /// Returned permissions.
+  public var permissions: [Permission]?
 
-  public init(nextPageToken: String? = nil, models: [Model]? = nil) {
+  public init(nextPageToken: String? = nil, permissions: [Permission]? = nil) {
     self.nextPageToken = nextPageToken
-    self.models = models
+    self.permissions = permissions
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
     self.nextPageToken = try values.decodeIfPresent(String.self, forKey: "nextPageToken")
-    self.models = try values.decodeIfPresent([Model].self, forKey: "models")
+    self.permissions = try values.decodeIfPresent([Permission].self, forKey: "permissions")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
     try values.encodeIfPresent(nextPageToken, forKey: "nextPageToken")
-    try values.encodeIfPresent(models, forKey: "models")
+    try values.encodeIfPresent(permissions, forKey: "permissions")
   }
 }

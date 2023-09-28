@@ -19,35 +19,35 @@ import Foundation
 
 /// A citation to a source for a portion of a specific response.
 public struct CitationSource: Codable {
-  /// Optional. Start of segment of the response that is attributed to this source. Index indicates the start of the segment, measured in bytes.
-  public var startIndex: Int32?
   /// Optional. URI that is attributed as a source for a portion of the text.
   public var uri: String?
   /// Optional. License for the GitHub project that is attributed as a source for segment. License info is required for code citations.
   public var license: String?
   /// Optional. End of the attributed segment, exclusive.
   public var endIndex: Int32?
+  /// Optional. Start of segment of the response that is attributed to this source. Index indicates the start of the segment, measured in bytes.
+  public var startIndex: Int32?
 
-  public init(startIndex: Int32? = nil, uri: String? = nil, license: String? = nil, endIndex: Int32? = nil) {
-    self.startIndex = startIndex
+  public init(uri: String? = nil, license: String? = nil, endIndex: Int32? = nil, startIndex: Int32? = nil) {
     self.uri = uri
     self.license = license
     self.endIndex = endIndex
+    self.startIndex = startIndex
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.startIndex = try values.decodeIfPresent(Int32.self, forKey: "startIndex")
     self.uri = try values.decodeIfPresent(String.self, forKey: "uri")
     self.license = try values.decodeIfPresent(String.self, forKey: "license")
     self.endIndex = try values.decodeIfPresent(Int32.self, forKey: "endIndex")
+    self.startIndex = try values.decodeIfPresent(Int32.self, forKey: "startIndex")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(startIndex, forKey: "startIndex")
     try values.encodeIfPresent(uri, forKey: "uri")
     try values.encodeIfPresent(license, forKey: "license")
     try values.encodeIfPresent(endIndex, forKey: "endIndex")
+    try values.encodeIfPresent(startIndex, forKey: "startIndex")
   }
 }

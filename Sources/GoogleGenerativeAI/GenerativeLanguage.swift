@@ -23,7 +23,7 @@ public class GenerativeLanguage {
   private lazy var apiClient: APIClient = {
     let baseURL = URL(string: "https://generativelanguage.googleapis.com")
     return APIClient(baseURL: baseURL) { configuration in
-      configuration.sessionConfiguration.httpAdditionalHeaders = ["x-goog-api-client": "genai-swift/0.1.0"]
+      configuration.sessionConfiguration.httpAdditionalHeaders = ["x-goog-api-client": "genai-swift/0.3.0"]
       configuration.sessionConfiguration.httpAdditionalHeaders = ["x-goog-api-key": apiKey]
     }
   }()
@@ -53,37 +53,37 @@ extension GenerativeLanguage: GenerativeLanguageProtocol {
     var messages = history
     messages.append(Message(content: message, author: "0"))
 
-    let messagePrompt = MessagePrompt(context: context, examples: examples, messages: messages)
-    let messageRequest = GenerateMessageRequest(candidateCount: Int32(candidateCount), prompt: messagePrompt, temperature: temperature)
+    let messagePrompt = MessagePrompt(examples: examples, messages: messages, context: context)
+    let messageRequest = GenerateMessageRequest(prompt: messagePrompt, candidateCount: Int32(candidateCount), temperature: temperature)
 
-    let request = API.v1beta2.generateMessage(model).post(messageRequest)
+    let request = API.v1beta3.generateMessage(model).post(messageRequest)
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func generateText(with prompt: String, model: String = "models/text-bison-001", temperature: Float = 1, candidateCount: Int = 1) async throws -> GenerateTextResponse {
     let textPrompt = TextPrompt(text: prompt)
-    let textRequest = GenerateTextRequest(temperature: temperature, candidateCount: Int32(candidateCount), prompt: textPrompt)
-    let request = API.v1beta2.generateText(model).post(textRequest)
+    let textRequest = GenerateTextRequest(candidateCount: Int32(candidateCount), prompt: textPrompt, temperature: temperature)
+    let request = API.v1beta3.generateText(model).post(textRequest)
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func generateEmbeddings(from text: String, model: String = "models/embedding-gecko-001") async throws -> EmbedTextResponse {
     let embedTextRequest = EmbedTextRequest(text: text)
-    let request = API.v1beta2.embedText(model).post(embedTextRequest)
+    let request = API.v1beta3.embedText(model).post(embedTextRequest)
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func listModels() async throws -> ListModelsResponse {
-    let request = API.v1beta2.models.get()
+    let request = API.v1beta3.models.get()
     let response = try await apiClient.send(request)
     return response.value
   }
 
   public func getModel(name: String) async throws -> Model {
-    let request = API.v1beta2.models.get(name: name)
+    let request = API.v1beta3.models.get(name: name)
     let response = try await apiClient.send(request)
     return response.value
   }

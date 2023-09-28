@@ -19,20 +19,30 @@ import Foundation
 
 /// Output text returned from a model.
 public struct TextCompletion: Codable {
+  /// A collection of source attributions for a piece of content.
+  public var citationMetadata: CitationMetadata?
   /// Output only. The generated text returned from the model.
   public var output: String?
+  /// Ratings for the safety of a response. There is at most one rating per category.
+  public var safetyRatings: [SafetyRating]?
 
-  public init(output: String? = nil) {
+  public init(citationMetadata: CitationMetadata? = nil, output: String? = nil, safetyRatings: [SafetyRating]? = nil) {
+    self.citationMetadata = citationMetadata
     self.output = output
+    self.safetyRatings = safetyRatings
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
+    self.citationMetadata = try values.decodeIfPresent(CitationMetadata.self, forKey: "citationMetadata")
     self.output = try values.decodeIfPresent(String.self, forKey: "output")
+    self.safetyRatings = try values.decodeIfPresent([SafetyRating].self, forKey: "safetyRatings")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
+    try values.encodeIfPresent(citationMetadata, forKey: "citationMetadata")
     try values.encodeIfPresent(output, forKey: "output")
+    try values.encodeIfPresent(safetyRatings, forKey: "safetyRatings")
   }
 }

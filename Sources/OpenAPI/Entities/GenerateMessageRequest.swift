@@ -19,40 +19,40 @@ import Foundation
 
 /// Request to generate a message response from the model.
 public struct GenerateMessageRequest: Codable {
-  /// Optional. The maximum number of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Top-k sampling considers the set of `top_k` most probable tokens.
-  public var topK: Int32?
+  /// All of the structured input text passed to the model as a prompt. A `MessagePrompt` contains a structured set of fields that provide context for the conversation, examples of user input/model output message pairs that prime the model to respond in different ways, and the conversation history or list of messages representing the alternating turns of the conversation between the user and the model.
+  public var prompt: MessagePrompt?
   /// Optional. The maximum cumulative probability of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Nucleus sampling considers the smallest set of tokens whose probability sum is at least `top_p`.
   public var topP: Float?
   /// Optional. The number of generated response messages to return. This value must be between `[1, 8]`, inclusive. If unset, this will default to `1`.
   public var candidateCount: Int32?
-  /// All of the structured input text passed to the model as a prompt. A `MessagePrompt` contains a structured set of fields that provide context for the conversation, examples of user input/model output message pairs that prime the model to respond in different ways, and the conversation history or list of messages representing the alternating turns of the conversation between the user and the model.
-  public var prompt: MessagePrompt?
   /// Optional. Controls the randomness of the output. Values can range over `[0.0,1.0]`, inclusive. A value closer to `1.0` will produce responses that are more varied, while a value closer to `0.0` will typically result in less surprising responses from the model.
   public var temperature: Float?
+  /// Optional. The maximum number of tokens to consider when sampling. The model uses combined Top-k and nucleus sampling. Top-k sampling considers the set of `top_k` most probable tokens.
+  public var topK: Int32?
 
-  public init(topK: Int32? = nil, topP: Float? = nil, candidateCount: Int32? = nil, prompt: MessagePrompt? = nil, temperature: Float? = nil) {
-    self.topK = topK
+  public init(prompt: MessagePrompt? = nil, topP: Float? = nil, candidateCount: Int32? = nil, temperature: Float? = nil, topK: Int32? = nil) {
+    self.prompt = prompt
     self.topP = topP
     self.candidateCount = candidateCount
-    self.prompt = prompt
     self.temperature = temperature
+    self.topK = topK
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.topK = try values.decodeIfPresent(Int32.self, forKey: "topK")
+    self.prompt = try values.decodeIfPresent(MessagePrompt.self, forKey: "prompt")
     self.topP = try values.decodeIfPresent(Float.self, forKey: "topP")
     self.candidateCount = try values.decodeIfPresent(Int32.self, forKey: "candidateCount")
-    self.prompt = try values.decodeIfPresent(MessagePrompt.self, forKey: "prompt")
     self.temperature = try values.decodeIfPresent(Float.self, forKey: "temperature")
+    self.topK = try values.decodeIfPresent(Int32.self, forKey: "topK")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(topK, forKey: "topK")
+    try values.encodeIfPresent(prompt, forKey: "prompt")
     try values.encodeIfPresent(topP, forKey: "topP")
     try values.encodeIfPresent(candidateCount, forKey: "candidateCount")
-    try values.encodeIfPresent(prompt, forKey: "prompt")
     try values.encodeIfPresent(temperature, forKey: "temperature")
+    try values.encodeIfPresent(topK, forKey: "topK")
   }
 }

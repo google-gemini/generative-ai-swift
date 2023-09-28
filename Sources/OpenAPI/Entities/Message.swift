@@ -19,30 +19,30 @@ import Foundation
 
 /// The base unit of structured text. A `Message` includes an `author` and the `content` of the `Message`. The `author` is used to tag messages when they are fed to the model as text.
 public struct Message: Codable {
-  /// Required. The text content of the structured `Message`.
-  public var content: String?
   /// A collection of source attributions for a piece of content.
   public var citationMetadata: CitationMetadata?
+  /// Required. The text content of the structured `Message`.
+  public var content: String?
   /// Optional. The author of this Message. This serves as a key for tagging the content of this Message when it is fed to the model as text. The author can be any alphanumeric string.
   public var author: String?
 
-  public init(content: String? = nil, citationMetadata: CitationMetadata? = nil, author: String? = nil) {
-    self.content = content
+  public init(citationMetadata: CitationMetadata? = nil, content: String? = nil, author: String? = nil) {
     self.citationMetadata = citationMetadata
+    self.content = content
     self.author = author
   }
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.content = try values.decodeIfPresent(String.self, forKey: "content")
     self.citationMetadata = try values.decodeIfPresent(CitationMetadata.self, forKey: "citationMetadata")
+    self.content = try values.decodeIfPresent(String.self, forKey: "content")
     self.author = try values.decodeIfPresent(String.self, forKey: "author")
   }
 
   public func encode(to encoder: Encoder) throws {
     var values = encoder.container(keyedBy: StringCodingKey.self)
-    try values.encodeIfPresent(content, forKey: "content")
     try values.encodeIfPresent(citationMetadata, forKey: "citationMetadata")
+    try values.encodeIfPresent(content, forKey: "content")
     try values.encodeIfPresent(author, forKey: "author")
   }
 }
