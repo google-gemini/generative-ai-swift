@@ -15,6 +15,10 @@
 import Foundation
 import Get
 
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
+
 /// The API client for the PaLM API.
 public class GenerativeLanguage {
 
