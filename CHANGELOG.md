@@ -1,6 +1,27 @@
 # Changelog
 
-## [0.2.0](https://github.com/google/generative-ai-swift/releases/tag/0.2.0) (2023-05-17)
+## [Unreleased](https://github.com/google/generative-ai-swift/tree/HEAD)
+
+[Full Changelog](https://github.com/google/generative-ai-swift/compare/0.2.0...0.3.0)
+
+**Closed issues:**
+
+- Add sample project for embeddings [\#15](https://github.com/google/generative-ai-swift/issues/15)
+- Swift `generateEmbeddings` returns 404 [\#13](https://github.com/google/generative-ai-swift/issues/13)
+
+**Merged pull requests:**
+
+- Clean up labels + automation [\#30](https://github.com/google/generative-ai-swift/pull/30) ([keertk](https://github.com/keertk))
+- Update stale.yml [\#24](https://github.com/google/generative-ai-swift/pull/24) ([ymodak](https://github.com/ymodak))
+- Create a PR template [\#22](https://github.com/google/generative-ai-swift/pull/22) ([keertk](https://github.com/keertk))
+- Adding github action workflow to mark stale issues and prs. [\#21](https://github.com/google/generative-ai-swift/pull/21) ([ymodak](https://github.com/ymodak))
+- Automatically add and remove specific labels [\#20](https://github.com/google/generative-ai-swift/pull/20) ([keertk](https://github.com/keertk))
+- Create issue templates [\#19](https://github.com/google/generative-ai-swift/pull/19) ([keertk](https://github.com/keertk))
+- Fix model name for Unit test and add  chat unit test [\#17](https://github.com/google/generative-ai-swift/pull/17) ([jsharp83](https://github.com/jsharp83))
+- Add sample for embeddings [\#16](https://github.com/google/generative-ai-swift/pull/16) ([peterfriese](https://github.com/peterfriese))
+- 🐛 Use correct model name for embeddings [\#14](https://github.com/google/generative-ai-swift/pull/14) ([peterfriese](https://github.com/peterfriese))
+
+## [0.2.0](https://github.com/google/generative-ai-swift/tree/0.2.0) (2023-05-17)
 
 [Full Changelog](https://github.com/google/generative-ai-swift/compare/0.1.0...0.2.0)
 
@@ -10,9 +31,9 @@
 
 **Merged pull requests:**
 
-- 🩹 Remove force unwrapping that is not required [\#12](https://github.com/google/generative-ai-swift/pull/12) ([jaesung-0o0](https://github.com/jaesung-0o0))
+- 🩹 Remove force unwrapping that is not required [\#12](https://github.com/google/generative-ai-swift/pull/12) ([x-0o0](https://github.com/x-0o0))
 - ✏️ Delete unnecessary line and multiple module import [\#10](https://github.com/google/generative-ai-swift/pull/10) ([commitcomplete](https://github.com/commitcomplete))
-- \[FIX\] Modify swift version to 5.7.1 and fix test build error [\#9](https://github.com/google/generative-ai-swift/pull/9) ([jaesung-0o0](https://github.com/jaesung-0o0))
+- \[FIX\] Modify swift version to 5.7.1 and fix test build error [\#9](https://github.com/google/generative-ai-swift/pull/9) ([x-0o0](https://github.com/x-0o0))
 - ✏️ Remove unnecessary whitespace [\#8](https://github.com/google/generative-ai-swift/pull/8) ([Juhwa-Lee1023](https://github.com/Juhwa-Lee1023))
 
 ## [0.1.0](https://github.com/google/generative-ai-swift/tree/0.1.0) (2023-05-08)
