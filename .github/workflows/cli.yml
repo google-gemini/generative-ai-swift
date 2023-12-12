@@ -1,0 +1,30 @@
+name: cli
+
+on:
+  pull_request:
+  schedule:
+    # Run every day at 11pm (PST) - cron uses UTC times
+    - cron:  '0 7 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift-build-run:
+    strategy:
+      matrix:
+        target: [macOS]
+        os: [macos-13]
+        include:
+          - os: macos-13
+            xcode: Xcode_15.0.1
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Xcode
+      run: sudo xcode-select -s /Applications/${{ matrix.xcode }}.app/Contents/Developer
+    - name: Initialize xcodebuild
+      run: xcodebuild -list
+    - name: Build CLI
+      run: scripts/third_party/travis/retry.sh scripts/build.sh GenerativeAICLI macOS build Examples/GenerativeAICLI

@@ -1,90 +1,17 @@
-# Google Generative AI SDK for Swift
+# Google AI Swift SDK
 
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/google/generative-ai-swift)
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/google/generative-ai-swift)
+> [!IMPORTANT]
+> Thanks for your interest in the Google AI SDKs! **You can start using this SDK and its samples on December 13, 2023.** Until then, check out our [blog post](https://blog.google/technology/ai/google-gemini-ai/) to learn more about Google's Gemini multimodal model.
 
+> [!IMPORTANT]
+> If you are using the PaLM SDK for Swift, please see [Developers who use the PaLM SDK for Swift](#developers-who-use-the-palm-sdk-for-swift) for instructions.
 
-The Google Generative AI SDK for Swift allows developers to use state-of-the-art Large Language Models (LLMs) to build language applications.
+## Developers who use the PaLM SDK for Swift
 
-Once you've added the Swift package to your Swift application, you can call the API as follows:
+​​If you're using the PaLM SDK for Swift, review the information below to continue using the PaLM SDK until you've migrated to the new version that allows you to use Gemini.
 
-```swift
-import GoogleGenerativeAI
+- To continue using PaLM models, make sure your app depends on version [`0.3.0`](https://github.com/google/generative-ai-swift/releases/tag/0.3.0) _up to_ the next minor version ([`0.4.0`](https://github.com/google/generative-ai-swift/releases/tag/0.4.0)) of `generative-ai-swift`.
 
-let palmClient = GenerativeLanguage(apiKey: "YOUR API KEY")
-response = try await palmClient.chat(message: "Hello")
-```
+- When you're ready to use Gemini models, migrate your code to the Gemini API and update your app's `generative-ai-swift` dependency to version `0.4.0` or higher.
 
-
-## Getting Started
-
-This repository contains a few sample apps. To try them out, follow these steps:
-
-1. Check out this repository.
-    ```swift
-    git clone https://github.com/google/generative-ai-swift
-    ```
-1. Follow the instructions on the [setup page](https://developers.generativeai.google/tutorials/setup) to obtain an API key.
-1. Open and build one of the examples in the `Examples` folder.
-1. Paste the API key into the `API_KEY` property in the `PaLM-Info.plist` file.
-1. Run the app.
-
-
-## Using the PaLM SDK in your own app
-
-To use the Swift SDK for the PaLM API in your own apps, follow these steps:
-
-1. Create a new Swift app (or use your existing app).
-1. Right-click on your project in the project navigator.
-1. Select _Add Packages_ from the context menu.
-1. In the _Add Packages_ dialog, paste the package URL into the search bar: https://github.com/google/generative-ai-swift
-1. Click on _Add Package_. Xcode will now add the _GoogleGenerativeAI_ to your project.
-
-### Initializing the API client
-
-Before you can make any API calls, you need to import and initialize the API
-client.
-
-1.  Import the `GoogleGenerativeAI` module:
-    ```swift
-    import GoogleGenerativeAI
-    ```
-1.  Initialize the API client:
-    ```swift
-    let palmClient = GenerativeLanguage(apiKey: "YOUR API KEY")
-    ```
-
-### Calling the API
-
-Now you're ready to call the PaLM API's methods. 
-
-> **Note**: All API methods are asynchronous, so you need to call them using Swift's
-async/await.
-
-For example, here is how you can call the `generateText` method to summarize a Wikipedia article:
-
-```swift
-let prompt = "Summarise the following text: https://wikipedia.org/..."
-
-let response = try await palmClient.generateText(with: prompt)
-
-if let candidate = response?.candidates?.first, let text = candidate.output {
-  print(text)
-}
-```
-
-
-## Documentation
-
-You can find the documentation for the PaLM API at https://developers.generativeai.google.com/guide
-
-
-## Contributing
-
-See [Contributing](docs/CONTRIBUTING.md) for more information on contributing to the Generative AI SDK for Swift.
-
-
-## License
-
-The contents of this repository are licensed under the
-[Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+To see the PaLM documentation and code, go to the [`palm` branch](https://github.com/google/generative-ai-swift/tree/palm).

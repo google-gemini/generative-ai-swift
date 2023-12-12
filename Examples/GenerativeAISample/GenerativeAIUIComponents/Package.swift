@@ -14,38 +14,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 import PackageDescription
 
 let package = Package(
-  name: "generative-ai-swift",
+  name: "GenerativeAIUIComponents",
   platforms: [
-    .iOS(.v15),
-    .macOS(.v12),
+    .iOS(.v16),
   ],
   products: [
-    // Products define the executables and libraries a package produces, making them visible to
-    // other packages.
     .library(
-      name: "GoogleGenerativeAI",
-      targets: ["GoogleGenerativeAI"]
+      name: "GenerativeAIUIComponents",
+      targets: ["GenerativeAIUIComponents"]
     ),
   ],
   targets: [
-    // Targets are the basic building blocks of a package, defining a module or a test suite.
-    // Targets can depend on other targets in this package and products from dependencies.
     .target(
-      name: "GoogleGenerativeAI",
-      path: "Sources"
-    ),
-    .testTarget(
-      name: "GoogleGenerativeAITests",
-      dependencies: ["GoogleGenerativeAI"],
-      path: "Tests",
-      resources: [
-        .process("GoogleAITests/GenerateContentResponses"),
-        .process("GoogleAITests/SampleResponses"),
-      ]
+      name: "GenerativeAIUIComponents"
     ),
   ]
 )
