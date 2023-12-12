@@ -16,13 +16,6 @@ import GoogleGenerativeAI
 import MarkdownUI
 import SwiftUI
 
-extension SafetyRating: Hashable {
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(category)
-    hasher.combine(probability)
-  }
-}
-
 extension SafetySetting.HarmCategory: CustomStringConvertible {
   public var description: String {
     switch self {
