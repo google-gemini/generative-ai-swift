@@ -19,7 +19,7 @@ import Foundation
 /// responses that exceed a certain threshold.
 public struct SafetyRating: Decodable, Equatable {
   /// The category describing the potential harm a piece of content may pose. See
-  /// ``SafetySetting.HarmCategory`` for a list of possible values.
+  /// ``SafetySetting/HarmCategory`` for a list of possible values.
   public let category: SafetySetting.HarmCategory
 
   /// The model-generated probability that a given piece of content falls under the harm category
