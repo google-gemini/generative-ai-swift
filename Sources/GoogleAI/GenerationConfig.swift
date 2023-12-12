@@ -46,7 +46,7 @@ public struct GenerationConfig: Encodable {
   /// must be between [1, 8], inclusive. If unset, this will default to 1.
   ///
   /// - Note: Only unique candidates are returned. Higher temperatures are more
-  ///     likely to produce unique candidates. Setting temperature to 0 will
+  ///     likely to produce unique candidates. Setting `temperature` to 0 will
   ///     always produce exactly one candidate regardless of the
   ///     `candidateCount`.
   public let candidateCount: Int?
