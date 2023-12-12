@@ -16,7 +16,6 @@ import Foundation
 
 /// The model's response to a generate content request.
 public struct GenerateContentResponse {
-
   /// A list of candidate response content, ordered from best to worst.
   public let candidates: [CandidateResponse]
 
@@ -78,7 +77,6 @@ extension GenerateContentResponse: Decodable {
 /// A struct representing a possible reply to a content generation prompt. Each content generation
 /// prompt may produce multiple candidate responses.
 public struct CandidateResponse {
-
   /// The response's content.
   public let content: ModelContent
 
@@ -152,18 +150,16 @@ extension CandidateResponse: Decodable {
 
 /// A collection of source attributions for a piece of content.
 public struct CitationMetadata: Decodable {
-
   /// A list of individual cited sources and the parts of the content to which they apply.
   public let citationSources: [Citation]
 }
 
 /// A struct describing a source attribution.
 public struct Citation: Decodable {
-
-  /// The beginning of a sequence in a model response, inclusive, that derives from a cited source.
+  /// The inclusive beginning of a sequence in a model response that derives from a cited source.
   public let startIndex: Int
 
-  /// The end of a sequence in a model response, exclusive, that derives from a cited source.
+  /// The exclusive end of a sequence in a model response that derives from a cited source.
   public let endIndex: Int
 
   /// A link to the cited source.
@@ -185,12 +181,12 @@ public enum FinishReason: String {
   /// The maximum number of tokens as specified in the request was reached.
   case maxTokens = "MAX_TOKENS"
 
-  /// The token generation was stopped as the response was flagged for safety reasons.
+  /// The token generation was stopped because the response was flagged for safety reasons.
   /// NOTE: When streaming, the Candidate.content will be empty if content filters blocked the
   /// output.
   case safety = "SAFETY"
 
-  /// The token generation was stopped as the response was flagged for unauthorized citations.
+  /// The token generation was stopped because the response was flagged for unauthorized citations.
   case recitation = "RECITATION"
 
   /// All other reasons that stopped token generation.
@@ -214,10 +210,8 @@ extension FinishReason: Decodable {
 
 /// A metadata struct containing any feedback the model had on the prompt it was provided.
 public struct PromptFeedback {
-
   /// A type describing possible reasons to block a prompt.
   public enum BlockReason: String, Decodable {
-
     /// The block reason is unknown.
     case unknown = "UNKNOWN"
 
