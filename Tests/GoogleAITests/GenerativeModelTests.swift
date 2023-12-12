@@ -160,30 +160,20 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "json"
       )
 
-    var responseError: Error?
-    var content: GenerateContentResponse?
     do {
-      content = try await model.generateContent(testPrompt)
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
+    } catch let GenerateContentError.internalError(underlying: underlyingError) {
+      guard case let .emptyContent(decodingError) =
+        try XCTUnwrap(underlyingError as? InvalidCandidateError) else {
+        XCTFail("Not an InvalidCandidateError.emptyContent error: \(underlyingError)")
+        return
+      }
+      _ = try XCTUnwrap(decodingError as? DecodingError,
+                        "Not a DecodingError: \(decodingError)")
     } catch {
-      responseError = error
+      XCTFail("Should throw GenerateContentError.internalError; error thrown: \(error)")
     }
-
-    XCTAssertNil(content)
-    XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
-    guard case let .internalError(underlyingError) = generateContentError else {
-      XCTFail("Not an internal error: \(generateContentError)")
-      return
-    }
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? InvalidCandidateError)
-    guard case let .emptyContent(emptyContentUnderlyingError) = invalidCandidateError else {
-      XCTFail("Not an empty content error: \(invalidCandidateError)")
-      return
-    }
-    _ = try XCTUnwrap(
-      emptyContentUnderlyingError as? DecodingError,
-      "Not a decoding error: \(emptyContentUnderlyingError)"
-    )
   }
 
   func testGenerateContent_failure_finishReasonSafety() async throws {
