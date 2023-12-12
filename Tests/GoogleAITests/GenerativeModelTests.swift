@@ -95,10 +95,19 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "json"
       )
 
-    let content = try await model.generateContent(testPrompt)
+    let response = try await model.generateContent(testPrompt)
 
-    XCTAssertNotNil(content.text)
-    // TODO: Add assertions
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    XCTAssertEqual(response.text, "Some information cited from an external source")
+    let citationMetadata = try XCTUnwrap(candidate.citationMetadata)
+    XCTAssertEqual(citationMetadata.citationSources.count, 1)
+    let citationSource = try XCTUnwrap(citationMetadata.citationSources.first)
+    XCTAssertEqual(citationSource.uri, "https://www.example.com/some-citation")
+    XCTAssertEqual(citationSource.startIndex, 574)
+    XCTAssertEqual(citationSource.endIndex, 705)
+    XCTAssertEqual(citationSource.license, "")
   }
 
   func testGenerateContent_success_quoteReply() async throws {
