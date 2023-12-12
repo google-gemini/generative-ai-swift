@@ -29,12 +29,16 @@ public class Chat {
   /// model. This will be provided to the model for each message sent as context for the discussion.
   public var history: [ModelContent]
 
+  /// See ``sendMessage(_:)-3ify5``.
   public func sendMessage(_ parts: PartsRepresentable...) async throws -> GenerateContentResponse {
     return try await sendMessage([ModelContent(parts: parts)])
   }
 
-  /// Send a message, using the existing history of this chat as context. If successful, the message
+  /// Sends a message using the existing history of this chat as context. If successful, the message
   /// and response will be added to the history. If unsuccessful, history will remain unchanged.
+  /// - Parameter content: The new content to send as a single chat message.
+  /// - Returns: The model's response if no error occurred.
+  /// - Throws: A ``GenerateContentError`` if an error occurred.
   public func sendMessage(_ content: [ModelContent]) async throws
     -> GenerateContentResponse {
     // Ensure that the new content has the role set.
@@ -61,11 +65,16 @@ public class Chat {
     return result
   }
 
+  /// See ``sendMessageStream(_:)-4abs3``.
   public func sendMessageStream(_ parts: PartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     return sendMessageStream([ModelContent(parts: parts)])
   }
 
+  /// Sends a message using the existing history of this chat as context. If successful, the message
+  /// and response will be added to the history. If unsuccessful, history will remain unchanged.
+  /// - Parameter content: The new content to send as a single chat message.
+  /// - Returns: A stream containing the model's response or an error if an error occurred.
   public func sendMessageStream(_ content: [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     return AsyncThrowingStream { continuation in
