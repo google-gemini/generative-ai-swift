@@ -46,7 +46,7 @@ struct MessageContentView: View {
         .markdownTextStyle {
           FontFamilyVariant(.normal)
           FontSize(.em(0.85))
-          ForegroundColor(.white)
+          ForegroundColor(message.participant == .system ? .black : .white)
         }
         .markdownBlockStyle(\.codeBlock) { configuration in
           configuration.label
@@ -75,8 +75,8 @@ struct MessageView: View {
       }
       MessageContentView(message: message)
         .padding(10)
-        .background(.blue)
-        .foregroundColor(.white)
+        .background(message.participant == .system  ? .gray.opacity(0.25) : .blue)
+        .foregroundColor(message.participant == .system ? .black : .white)
         .roundedCorner(10,
                        corners: [
                          .topLeft,
