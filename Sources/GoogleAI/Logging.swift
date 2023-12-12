@@ -29,7 +29,6 @@ struct Logging {
   @available(*, unavailable)
   private init() {}
 
-  // TODO: Evaluate if the category being empty is okay.
   /// The default logger that is visible for all users. Note: we shouldn't be using anything lower
   /// than `.notice`.
   static var `default` = Logger(subsystem: subsystem, category: defaultCategory)

@@ -14,16 +14,11 @@
 
 import Foundation
 
-/*
- Other TODOs:
- - Use OSLog to have nice logging for debug purposes throughout.
- */
-
 /// A type that represents a remote multimodal model (like Gemini), with the ability to generate
 /// content based on various input types.
 public final class GenerativeModel {
   /// Name of the model in the backend.
-  private let modelName: String // TODO: Can we use a macro to validate the format (no spaces, etc)?
+  private let modelName: String
 
   /// The backing service responsible for sending and receiving model requests to the backend.
   let generativeAIService: GenerativeAIService

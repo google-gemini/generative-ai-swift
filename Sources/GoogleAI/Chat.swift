@@ -44,8 +44,11 @@ public class Chat {
     let request = history + newContent
     let result = try await model.generateContent(request)
     guard let reply = result.candidates.first?.content else {
-      // TODO: Throw a proper error here.
-      let error = NSError(domain: "com.google.generative-ai", code: -1)
+      let error = NSError(domain: "com.google.generative-ai",
+                          code: -1,
+                          userInfo: [
+                            NSLocalizedDescriptionKey: "No candidates with content available.",
+                          ])
       throw GenerateContentError.internalError(underlying: error)
     }
 

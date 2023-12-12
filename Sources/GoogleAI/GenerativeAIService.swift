@@ -16,7 +16,7 @@ import Foundation
 
 struct GenerativeAIService {
   /// Gives permission to talk to the backend.
-  private let apiKey: String // TODO: Can we use a macro to validate the format (no spaces, etc)?
+  private let apiKey: String
 
   private let urlSession: URLSession
 
