@@ -1,0 +1,47 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    env:
+      MINT_PATH: ${{ github.workspace }}/mint
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.6
+
+    - name: Cache Mint packages
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.MINT_PATH }}
+        key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+
+    - name: Setup check
+      run: |
+        brew update
+        brew install mint
+        mint bootstrap
+
+    - name: Style
+      run: scripts/style.sh test-only
+
+    - name: Whitespace
+      run: scripts/check_whitespace.sh
+
+    - name: Filename spaces
+      run: scripts/check_filename_spaces.sh
+
+    - name: Copyrights
+      run: scripts/check_copyright.sh

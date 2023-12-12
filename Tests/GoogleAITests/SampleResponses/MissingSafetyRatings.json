@@ -1,0 +1,16 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "The sky is blue because of a phenomenon called Rayleigh scattering. This refers to the scattering of light by particles that are smaller than the wavelength of light. In the case of the sky, the particles that are doing the scattering are molecules of nitrogen and oxygen.\n\nWhen sunlight hits these molecules, the shorter wavelengths of light (blue and violet) are scattered more than the longer wavelengths (red and orange). This is because the shorter wavelengths have a higher energy and are therefore more likely to interact with the molecules.\n\nThe scattered blue light is then redirected in all directions, which is why we see the sky as being blue. The amount of scattering depends on the wavelength of light and the size of the particles, which is why the sky appears to be a darker shade of blue when the sun is low in the sky (when the sunlight has to travel through more of the atmosphere to reach our eyes) and a lighter shade of blue when the sun is high in the sky (when the sunlight has to travel through less of the atmosphere to reach our eyes).\n\nIt is important to note that the sky is not actually blue. It only appears to be blue because of the way that light is scattered by the molecules in the atmosphere. If you were to travel to space, you would see that the sky is actually black."
+          }
+        ]
+      },
+      "index": 0
+    }
+  ],
+  "promptFeedback": {
+  }
+}

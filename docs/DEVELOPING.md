@@ -1,13 +1,21 @@
 # Developing
 
-## Re-generating the API
-All code in the [OpenAPI](../Sources/OpenAPI) is generated based on the API specification in [generativelanguage-v1beta3.json](../Sources/generativelanguage-v1beta3.json).
+## Prerequisites
 
-To re-generate the API based on any changes to the API, follow these steps:
+* Xcode 15 or newer
 
-* Obtain the API discovery document from https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta3&key=$YOUR_API_KEY
-* Convert the discovery document to OpenAPI 3.0 (Swagger) format
-    * https://github.com/APIs-guru/google-discovery-to-swagger
-    * https://github.com/LucyBot-Inc/api-spec-converter
-* Use [CreateAPI](https://github.com/CreateAPI/CreateAPI) to generate helper classes for accessing the API
-* Manually write the API surface ([protocol](../Sources/GoogleGenerativeAI/GenerativeLanguageProtocol.swift) / [implementation)](../Sources/GoogleGenerativeAI/GenerativeLanguage.swift) and [REST routes for the API client](../Sources/GoogleGenerativeAI/Endpoints.swift) to access the API using the generated helper classes
+## Setting up your development environment
+
+* `git clone git@github.com:google/generative-ai-swift.git`
+* `open Package.swift`
+* Command-u to build and run the library and unit tests
+* `open Examples/GenerativeAISample/GenerativeAISample.xcodeproj` to build and run the Examples
+
+## Checking in code
+
+Before submitting a pull request, make sure to check your code against the
+style guide by running the following command:
+
+```bash
+$ ./scripts/style.sh
+```
