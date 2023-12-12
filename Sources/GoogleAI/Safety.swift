@@ -17,7 +17,7 @@ import Foundation
 /// A type defining potentially harmful media categories and their model-assigned ratings. A value
 /// of this type may be assigned to a category for every model-generated response, not just
 /// responses that exceed a certain threshold.
-public struct SafetyRating: Decodable, Equatable {
+public struct SafetyRating: Decodable, Equatable, Hashable {
   /// The category describing the potential harm a piece of content may pose. See
   /// ``SafetySetting/HarmCategory`` for a list of possible values.
   public let category: SafetySetting.HarmCategory
