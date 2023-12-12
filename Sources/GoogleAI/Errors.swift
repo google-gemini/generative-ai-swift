@@ -14,19 +14,21 @@
 
 import Foundation
 
-struct RPCError: Error, Decodable {
+struct RPCError: Error {
   let httpResponseCode: Int32
   let message: String
   let status: RPCStatus
-
-  enum CodingKeys: CodingKey {
-    case error
-  }
 
   init(httpResponseCode: Int32, message: String, status: RPCStatus) {
     self.httpResponseCode = httpResponseCode
     self.message = message
     self.status = status
+  }
+}
+
+extension RPCError: Decodable {
+  enum CodingKeys: CodingKey {
+    case error
   }
 
   init(from decoder: Decoder) throws {
@@ -53,10 +55,18 @@ struct RPCError: Error, Decodable {
   }
 }
 
-struct ErrorStatus: Codable {
+struct ErrorStatus {
   let code: Int32?
   let message: String?
   let status: RPCStatus?
+}
+
+extension ErrorStatus: Decodable {
+  enum CodingKeys: CodingKey {
+    case code
+    case message
+    case status
+  }
 
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -70,7 +80,7 @@ struct ErrorStatus: Codable {
   }
 }
 
-enum RPCStatus: String, Codable {
+enum RPCStatus: String, Decodable {
   // Not an error; returned on success.
   case ok = "OK"
 
