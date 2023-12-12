@@ -75,7 +75,7 @@ struct MessageView: View {
       }
       MessageContentView(message: message)
         .padding(10)
-        .background(message.participant == .system  ? .gray.opacity(0.25) : .blue)
+        .background(message.participant == .system ? .gray.opacity(0.25) : .blue)
         .foregroundColor(message.participant == .system ? .black : .white)
         .roundedCorner(10,
                        corners: [
