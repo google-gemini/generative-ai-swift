@@ -1,4 +1,6 @@
 version: 1
+metadata:
+  authors: "Google"
 builder:
   configs:
     - platform: ios
