@@ -57,7 +57,7 @@ public struct GenerationConfig: Encodable {
   /// (unbounded).
   public let maxOutputTokens: Int?
 
-  /// A set of up to 5 ``String``s that will stop output generation. If
+  /// A set of up to 5 `String`s that will stop output generation. If
   /// specified, the API will stop at the first appearance of a stop sequence.
   /// The stop sequence will not be included as part of the response.
   public let stopSequences: [String]?
