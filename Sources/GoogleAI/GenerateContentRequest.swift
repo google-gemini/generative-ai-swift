@@ -24,7 +24,7 @@ struct GenerateContentRequest {
 }
 
 extension GenerateContentRequest: Encodable {
-  private enum CodingKeys: String, CodingKey {
+  enum CodingKeys: String, CodingKey {
     case contents
     case generationConfig
     case safetySettings

@@ -14,7 +14,7 @@
 
 import Foundation
 
-public struct GenerateContentResponse: Codable {
+public struct GenerateContentResponse {
   public let candidates: [CandidateResponse]
 
   public let promptFeedback: PromptFeedback?
@@ -35,6 +35,13 @@ public struct GenerateContentResponse: Codable {
   public init(candidates: [CandidateResponse], promptFeedback: PromptFeedback?) {
     self.candidates = candidates
     self.promptFeedback = promptFeedback
+  }
+}
+
+extension GenerateContentResponse: Decodable {
+  enum CodingKeys: CodingKey {
+    case candidates
+    case promptFeedback
   }
 
   public init(from decoder: Decoder) throws {
@@ -62,7 +69,7 @@ public struct GenerateContentResponse: Codable {
   }
 }
 
-public struct CandidateResponse: Codable {
+public struct CandidateResponse {
   public let content: ModelContent
   public let safetyRatings: [SafetyRating]
 
@@ -77,6 +84,16 @@ public struct CandidateResponse: Codable {
     self.safetyRatings = safetyRatings
     self.finishReason = finishReason
     self.citationMetadata = citationMetadata
+  }
+}
+
+extension CandidateResponse: Decodable {
+  enum CodingKeys: CodingKey {
+    case content
+    case safetyRatings
+    case finishReason
+    case finishMessage
+    case citationMetadata
   }
 
   public init(from decoder: Decoder) throws {
@@ -117,18 +134,18 @@ public struct CandidateResponse: Codable {
 }
 
 /// A collection of source attributions for a piece of content.
-public struct CitationMetadata: Codable {
+public struct CitationMetadata: Decodable {
   public let citationSources: [Citation]
 }
 
-public struct Citation: Codable {
+public struct Citation: Decodable {
   public let startIndex: Int
   public let endIndex: Int
   public let uri: String
   public let license: String
 }
 
-public enum FinishReason: String, Codable {
+public enum FinishReason: String {
   case unknown = "FINISH_REASON_UNKNOWN"
 
   case unspecified = "FINISH_REASON_UNSPECIFIED"
@@ -145,7 +162,9 @@ public enum FinishReason: String, Codable {
   case safety = "SAFETY"
   case recitation = "RECITATION"
   case other = "OTHER"
+}
 
+extension FinishReason: Decodable {
   /// Do not explicitly use. Initializer required for Decodable conformance.
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -160,8 +179,8 @@ public enum FinishReason: String, Codable {
   }
 }
 
-public struct PromptFeedback: Codable {
-  public enum BlockReason: String, Codable {
+public struct PromptFeedback {
+  public enum BlockReason: String, Decodable {
     case unknown = "UNKNOWN"
     case unspecified = "BLOCK_REASON_UNSPECIFIED"
     case safety = "SAFETY"
@@ -189,7 +208,15 @@ public struct PromptFeedback: Codable {
     self.blockReason = blockReason
     self.safetyRatings = safetyRatings
   }
+}
 
+extension PromptFeedback: Decodable {
+  enum CodingKeys: CodingKey {
+    case blockReason
+    case safetyRatings
+  }
+
+  /// Do not explicitly use. Initializer required for Decodable conformance.
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     blockReason = try container.decodeIfPresent(

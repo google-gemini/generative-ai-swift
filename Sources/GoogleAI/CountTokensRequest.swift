@@ -33,6 +33,6 @@ extension CountTokensRequest: GenerativeAIRequest {
   }
 }
 
-public struct CountTokensResponse: Codable {
+public struct CountTokensResponse: Decodable {
   public let totalTokens: Int
 }
