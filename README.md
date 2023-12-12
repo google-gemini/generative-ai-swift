@@ -3,6 +3,8 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/google/generative-ai-swift)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/google/generative-ai-swift)
 
+> [!IMPORTANT]
+> This version (`0.3.0`) of the SDK is intended for being used with the PaLM LLM. If you would like to use the Gemini multimodal model, please migrate to the `main` branch to use the new version of the SDK.
 
 The Google Generative AI SDK for Swift allows developers to use state-of-the-art Large Language Models (LLMs) to build language applications.
 
