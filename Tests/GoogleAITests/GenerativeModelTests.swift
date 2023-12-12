@@ -48,10 +48,21 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "json"
       )
 
-    let content = try await model.generateContent(testPrompt)
+    let response = try await model.generateContent(testPrompt)
 
-    XCTAssertNotNil(content.text)
-    // TODO: Add assertions
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    let finishReason = try XCTUnwrap(candidate.finishReason)
+    XCTAssertEqual(finishReason, .stop)
+    XCTAssertEqual(candidate.safetyRatings, safetyRatingsNegligible)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    let part = try XCTUnwrap(candidate.content.parts.first)
+    let partText = try XCTUnwrap(part.text)
+    XCTAssertTrue(partText.hasPrefix("You can ask me a wide range of questions"))
+    XCTAssertEqual(response.text, partText)
+    let promptFeedback = try XCTUnwrap(response.promptFeedback)
+    XCTAssertNil(promptFeedback.blockReason)
+    XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
   }
 
   func testGenerateContent_success_basicReplyShort() async throws {
@@ -61,19 +72,18 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "json"
       )
 
-    let content = try await model
-      .generateContent("Where is the Google headquarters located?")
+    let response = try await model.generateContent(testPrompt)
 
-    XCTAssertEqual(content.candidates.count, 1)
-    let candidate = try XCTUnwrap(content.candidates.first)
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
     let finishReason = try XCTUnwrap(candidate.finishReason)
     XCTAssertEqual(finishReason, .stop)
     XCTAssertEqual(candidate.safetyRatings, safetyRatingsNegligible)
     XCTAssertEqual(candidate.content.parts.count, 1)
     let part = try XCTUnwrap(candidate.content.parts.first)
     XCTAssertEqual(part.text, "Mountain View, California, United States")
-    XCTAssertEqual(content.text, part.text)
-    let promptFeedback = try XCTUnwrap(content.promptFeedback)
+    XCTAssertEqual(response.text, part.text)
+    let promptFeedback = try XCTUnwrap(response.promptFeedback)
     XCTAssertNil(promptFeedback.blockReason)
     XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
   }
@@ -98,10 +108,21 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "json"
       )
 
-    let content = try await model.generateContent(testPrompt)
+    let response = try await model.generateContent(testPrompt)
 
-    XCTAssertNotNil(content.text)
-    // TODO: Add assertions
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    let finishReason = try XCTUnwrap(candidate.finishReason)
+    XCTAssertEqual(finishReason, .stop)
+    XCTAssertEqual(candidate.safetyRatings, safetyRatingsNegligible)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    let part = try XCTUnwrap(candidate.content.parts.first)
+    let partText = try XCTUnwrap(part.text)
+    XCTAssertTrue(partText.hasPrefix("Google"))
+    XCTAssertEqual(response.text, part.text)
+    let promptFeedback = try XCTUnwrap(response.promptFeedback)
+    XCTAssertNil(promptFeedback.blockReason)
+    XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
   }
 
   func testGenerateContent_success_unknownEnum() async throws {
