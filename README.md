@@ -1,9 +1,6 @@
 # Google AI Swift SDK
 
 > [!IMPORTANT]
-> Thanks for your interest in the Google AI SDKs! **You can start using this SDK and its samples on December 13, 2023.** Until then, check out our [blog post](https://blog.google/technology/ai/google-gemini-ai/) to learn more about Google's Gemini multimodal model.
-
-> [!IMPORTANT]
 > If you are using the PaLM SDK for Swift, please see [Developers who use the PaLM SDK for Swift](#developers-who-use-the-palm-sdk-for-swift) for instructions.
 
 The Google AI Swift SDK enables developers to use Google's state-of-the-art generative AI models
@@ -43,6 +40,19 @@ To try out the sample app, follow these steps:
 
 1.  Run the app.
 
+## Use the SDK in your app
+
+Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to your Xcode project
+using Swift Package Manager.
+
+For detailed instructions, you can find a
+[quickstart](https://ai.google.dev/tutorials/swift_quickstart) for the Google AI Swift SDK in the
+Google documentation.
+
+This quickstart describes how to add your API key and the Swift package to your app, initialize the
+model, and then call the API to access the model. It also describes some additional use cases and
+features, like streaming, counting tokens, and controlling responses.
+
 ## Logging
 
 To enable additional logging in the Xcode console, including a cURL command and raw stream
@@ -57,6 +67,11 @@ line:
 1. `open Examples/GenerativeAICLI/Package.swift`
 1. Run in Xcode and examine the console to see the options.
 1. Edit the scheme's `Arguments Passed On Launch` with the desired options.
+
+## Documentation
+
+Find complete documentation for the Google AI SDKs and the Gemini model in the Google
+documentation: https://ai.google.dev/docs
 
 ## Contributing
 
