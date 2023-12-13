@@ -17,7 +17,10 @@ import XCTest
 
 @available(iOS 15.0, tvOS 15.0, *)
 class MockURLProtocol: URLProtocol {
-  static var requestHandler: ((URLRequest) -> (URLResponse, AsyncLineSequence<URL.AsyncBytes>?))?
+  static var requestHandler: ((URLRequest) throws -> (
+    URLResponse,
+    AsyncLineSequence<URL.AsyncBytes>?
+  ))?
 
   override class func canInit(with request: URLRequest) -> Bool { return true }
 
@@ -32,7 +35,7 @@ class MockURLProtocol: URLProtocol {
     }
 
     Task {
-      let (response, stream) = requestHandler(self.request)
+      let (response, stream) = try requestHandler(self.request)
       client.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
       if let stream = stream {
         do {

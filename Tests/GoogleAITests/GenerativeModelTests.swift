@@ -698,18 +698,18 @@ final class GenerativeModelTests: XCTestCase {
 
   private func httpRequestHandler(forResource name: String,
                                   withExtension ext: String,
-                                  statusCode: Int = 200) throws -> ((URLRequest) -> (
+                                  statusCode: Int = 200) throws -> ((URLRequest) throws -> (
     URLResponse,
     AsyncLineSequence<URL.AsyncBytes>?
   )) {
     let fileURL = try XCTUnwrap(Bundle.module.url(forResource: name, withExtension: ext))
     return { request in
-      let response = HTTPURLResponse(
+      let response = try XCTUnwrap(HTTPURLResponse(
         url: request.url!,
         statusCode: statusCode,
         httpVersion: nil,
         headerFields: nil
-      )!
+      ))
       return (response, fileURL.lines)
     }
   }
