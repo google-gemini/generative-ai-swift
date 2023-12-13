@@ -31,7 +31,6 @@ public class Chat {
 
   /// See ``sendMessage(_:)-3ify5``.
   public func sendMessage(_ parts: PartsRepresentable...) async throws -> GenerateContentResponse {
-    let x = 7
     return try await sendMessage([ModelContent(parts: parts)])
   }
 
