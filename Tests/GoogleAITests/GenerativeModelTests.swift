@@ -393,7 +393,7 @@ final class GenerativeModelTests: XCTestCase {
     let content = try await model.generateContent(testPrompt)
     let promptFeedback = try XCTUnwrap(content.promptFeedback)
     XCTAssertEqual(promptFeedback.safetyRatings.count, 0)
-    XCTAssertNotNil(content.text)
+    XCTAssertEqual(content.text, "This is the generated content.")
   }
 
   // MARK: - Generate Content (Streaming)
