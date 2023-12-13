@@ -70,7 +70,7 @@ struct ConversationScreen: View {
           .font(.title)
       }
       .focused($focusedField, equals: .message)
-      .onSubmit { sendMessage() }
+      .onSubmit { sendOrStop() }
     }
     .toolbar {
       ToolbarItem(placement: .primaryAction) {

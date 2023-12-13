@@ -58,10 +58,8 @@ public struct InputField<Label>: View where Label: View {
           .stroke(Color(UIColor.systemFill), lineWidth: 1)
         }
 
-        Button(action: submit) {
-          self.label()
-        }
-        .padding(.top, 4)
+        Button(action: submit, label: label)
+          .padding(.top, 4)
       }
     }
     .padding(.horizontal)
