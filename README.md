@@ -1,9 +1,9 @@
-# Google AI Swift SDK
+# Google AI SDK for Swift
 
 > [!IMPORTANT]
 > If you are using the PaLM SDK for Swift, please see [Developers who use the PaLM SDK for Swift](#developers-who-use-the-palm-sdk-for-swift) for instructions.
 
-The Google AI Swift SDK enables developers to use Google's state-of-the-art generative AI models
+The Google AI SDK for Swift enables developers to use Google's state-of-the-art generative AI models
 (like Gemini) to build AI-powered features and applications. This SDK supports use cases like:
 - Generate text from text-only input
 - Generate text from text-and-images input (multimodal)
@@ -46,7 +46,7 @@ Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to yo
 using Swift Package Manager.
 
 For detailed instructions, you can find a
-[quickstart](https://ai.google.dev/tutorials/swift_quickstart) for the Google AI Swift SDK in the
+[quickstart](https://ai.google.dev/tutorials/swift_quickstart) for the Google AI SDK for Swift in the
 Google documentation.
 
 This quickstart describes how to add your API key and the Swift package to your app, initialize the
@@ -77,7 +77,7 @@ documentation: https://ai.google.dev/docs
 
 See [Contributing](https://github.com/google/generative-ai-swift/blob/main/docs/CONTRIBUTING.md)
 for more information on
-contributing to the Google AI Swift SDK.
+contributing to the Google AI SDK for Swift.
 
 
 ## Developers who use the PaLM SDK for Swift
