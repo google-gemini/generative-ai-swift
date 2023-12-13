@@ -417,8 +417,8 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("No content is there, this shouldn't happen.")
       }
-    } catch {
-      // TODO: Catch specific error.
+    } catch GenerateContentError.internalError(_ as InvalidCandidateError) {
+      // Underlying error is as expected, nothing else to check.
       return
     }
 
@@ -440,8 +440,6 @@ final class GenerativeModelTests: XCTestCase {
     } catch let GenerateContentError.responseStoppedEarly(reason, _) {
       XCTAssertEqual(reason, .safety)
       return
-    } catch {
-      XCTFail("Wrong error generated: \(error)")
     }
 
     XCTFail("Should have caught an error.")
@@ -548,7 +546,7 @@ final class GenerativeModelTests: XCTestCase {
         withExtension: "txt"
       )
 
-    let stream = model.generateContentStream("Can you explain quantum physics?")
+    let stream = model.generateContentStream("Hi")
     var citations: [Citation] = []
     for try await content in stream {
       XCTAssertNotNil(content.text)
@@ -568,114 +566,67 @@ final class GenerativeModelTests: XCTestCase {
 
   func testGenerateContentStream_errorMidStream() async throws {
     MockURLProtocol.requestHandler = try httpRequestHandler(
-      forResource: "ExampleErrorMidStream",
-      withExtension: "json"
+      forResource: "streaming-failure-error-mid-stream",
+      withExtension: "txt"
     )
 
-    let stream = model.generateContentStream("What sorts of questions can I ask you?")
-
-    var textResponses = [String]()
-    var errorResponse: Error?
+    var responseCount = 0
     do {
+      let stream = model.generateContentStream("Hi")
       for try await content in stream {
         XCTAssertNotNil(content.text)
-        let text = try XCTUnwrap(content.text)
-        textResponses.append(text)
+        responseCount += 1
       }
-    } catch {
-      errorResponse = error
+    } catch let GenerateContentError.internalError(rpcError as RPCError) {
+      XCTAssertEqual(rpcError.httpResponseCode, 499)
+      XCTAssertEqual(rpcError.status, .cancelled)
+
+      // Check the content count is correct.
+      XCTAssertEqual(responseCount, 2)
+      return
     }
 
-    // TODO: Add assertions for response content
-    XCTAssertEqual(textResponses.count, 2)
-    XCTAssertNotNil(errorResponse)
+    XCTFail("Expected an internalError with an RPCError.")
   }
 
   func testGenerateContentStream_nonHTTPResponse() async throws {
     MockURLProtocol.requestHandler = try nonHTTPRequestHandler()
 
-    let stream = model.generateContentStream("What sorts of questions can I ask you?")
-    var responseError: Error?
+    let stream = model.generateContentStream("Hi")
     do {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch {
-      responseError = error
-    }
-
-    XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
-    guard case let .internalError(underlyingError) = generateContentError else {
-      XCTFail("Not an internal error: \(generateContentError)")
+    } catch let GenerateContentError.internalError(underlying) {
+      XCTAssertEqual(underlying.localizedDescription, "Response was not an HTTP response.")
       return
     }
-    XCTAssertEqual(underlyingError.localizedDescription, "Response was not an HTTP response.")
+
+    XCTFail("Expected an internal error.")
   }
 
   func testGenerateContentStream_invalidResponse() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
-        forResource: "InvalidStreamingResponse",
-        withExtension: "json"
+        forResource: "streaming-failure-invalid-json",
+        withExtension: "txt"
       )
 
     let stream = model.generateContentStream(testPrompt)
-    var responseError: Error?
     do {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch {
-      responseError = error
-    }
-
-    XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
-    guard case let .internalError(underlyingError) = generateContentError else {
-      XCTFail("Not an internal error: \(generateContentError)")
-      return
-    }
-    let decodingError = try XCTUnwrap(underlyingError as? DecodingError)
-    guard case let .dataCorrupted(context) = decodingError else {
-      XCTFail("Not a data corrupted error: \(decodingError)")
-      return
-    }
-    XCTAssert(context.debugDescription.hasPrefix("Failed to decode GenerateContentResponse"))
-  }
-
-  func testGenerateContentStream_emptyContent() async throws {
-    MockURLProtocol
-      .requestHandler = try httpRequestHandler(
-        forResource: "EmptyContentStreamingResponse",
-        withExtension: "json"
-      )
-
-    let stream = model.generateContentStream(testPrompt)
-    var responseError: Error?
-    do {
-      for try await content in stream {
-        XCTFail("Unexpected content in stream: \(content)")
+    } catch let GenerateContentError.internalError(underlying as DecodingError) {
+      guard case let .dataCorrupted(context) = underlying else {
+        XCTFail("Not a data corrupted error: \(underlying)")
+        return
       }
-    } catch {
-      responseError = error
+      XCTAssert(context.debugDescription.hasPrefix("Failed to decode GenerateContentResponse"))
+      return
     }
 
-    XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
-    guard case let .internalError(underlyingError) = generateContentError else {
-      XCTFail("Not an internal error: \(generateContentError)")
-      return
-    }
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? InvalidCandidateError)
-    guard case let .emptyContent(emptyContentUnderlyingError) = invalidCandidateError else {
-      XCTFail("Not an empty content error: \(invalidCandidateError)")
-      return
-    }
-    _ = try XCTUnwrap(
-      emptyContentUnderlyingError as? DecodingError,
-      "Not a decoding error: \(emptyContentUnderlyingError)"
-    )
+    XCTFail("Expected an internal error.")
   }
 
   func testGenerateContentStream_malformedContent() async throws {
