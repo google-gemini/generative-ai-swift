@@ -163,24 +163,29 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContent_failure_invalidAPIKey() async throws {
+    let expectedStatusCode = 400
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "unary-failure-api-key",
         withExtension: "json",
-        statusCode: 400
+        statusCode: expectedStatusCode
       )
 
-    var responseError: Error?
-    var content: GenerateContentResponse?
     do {
-      content = try await model.generateContent(testPrompt)
-    } catch {
-      responseError = error
-    }
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
+    } catch let GenerateContentError.internalError(underlying: underlyingError) {
+      guard let rpcError = underlyingError as? RPCError else {
+        XCTFail("Not an RPCError: \(underlyingError)")
+        return
+      }
 
-    XCTAssertNotNil(responseError)
-    XCTAssertNil(content)
-    // TODO: Add assertions about `responseError`.
+      XCTAssertEqual(rpcError.status, .invalidArgument)
+      XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
+      XCTAssertTrue(rpcError.message.hasPrefix("API key not valid"))
+    } catch {
+      XCTFail("Should throw GenerateContentError.internalError; error thrown: \(error)")
+    }
   }
 
   func testGenerateContent_failure_emptyContent() async throws {
@@ -243,6 +248,7 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContent_failure_imageRejected() async throws {
+    let expectedStatusCode = 400
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "unary-failure-image-rejected",
@@ -250,17 +256,21 @@ final class GenerativeModelTests: XCTestCase {
         statusCode: 400
       )
 
-    var responseError: Error?
-    var content: GenerateContentResponse?
     do {
-      content = try await model.generateContent(testPrompt)
-    } catch {
-      responseError = error
-    }
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
+    } catch let GenerateContentError.internalError(underlying: underlyingError) {
+      guard let rpcError = underlyingError as? RPCError else {
+        XCTFail("Not an RPCError: \(underlyingError)")
+        return
+      }
 
-    XCTAssertNotNil(responseError)
-    XCTAssertNil(content)
-    // TODO: Add assertions about `responseError`.
+      XCTAssertEqual(rpcError.status, .invalidArgument)
+      XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
+      XCTAssertEqual(rpcError.message, "Request contains an invalid argument.")
+    } catch {
+      XCTFail("Should throw GenerateContentError.internalError; error thrown: \(error)")
+    }
   }
 
   func testGenerateContent_failure_promptBlockedSafety() async throws {
@@ -281,6 +291,7 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContent_failure_unknownModel() async throws {
+    let expectedStatusCode = 404
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "unary-failure-unknown-model",
@@ -288,17 +299,21 @@ final class GenerativeModelTests: XCTestCase {
         statusCode: 404
       )
 
-    var responseError: Error?
-    var content: GenerateContentResponse?
     do {
-      content = try await model.generateContent(testPrompt)
-    } catch {
-      responseError = error
-    }
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
+    } catch let GenerateContentError.internalError(underlying: underlyingError) {
+      guard let rpcError = underlyingError as? RPCError else {
+        XCTFail("Not an RPCError: \(underlyingError)")
+        return
+      }
 
-    XCTAssertNotNil(responseError)
-    XCTAssertNil(content)
-    // TODO: Add assertions about `responseError`.
+      XCTAssertEqual(rpcError.status, .notFound)
+      XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
+      XCTAssertTrue(rpcError.message.hasPrefix("models/unknown is not found"))
+    } catch {
+      XCTFail("Should throw GenerateContentError.internalError; error thrown: \(error)")
+    }
   }
 
   func testGenerateContent_failure_nonHTTPResponse() async throws {

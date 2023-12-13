@@ -15,11 +15,11 @@
 import Foundation
 
 struct RPCError: Error {
-  let httpResponseCode: Int32
+  let httpResponseCode: Int
   let message: String
   let status: RPCStatus
 
-  init(httpResponseCode: Int32, message: String, status: RPCStatus) {
+  init(httpResponseCode: Int, message: String, status: RPCStatus) {
     self.httpResponseCode = httpResponseCode
     self.message = message
     self.status = status
@@ -56,7 +56,7 @@ extension RPCError: Decodable {
 }
 
 struct ErrorStatus {
-  let code: Int32?
+  let code: Int?
   let message: String?
   let status: RPCStatus?
 }
@@ -70,7 +70,7 @@ extension ErrorStatus: Decodable {
 
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    code = try container.decodeIfPresent(Int32.self, forKey: .code)
+    code = try container.decodeIfPresent(Int.self, forKey: .code)
     message = try container.decodeIfPresent(String.self, forKey: .message)
     do {
       status = try container.decodeIfPresent(RPCStatus.self, forKey: .status)
