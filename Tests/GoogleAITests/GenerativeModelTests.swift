@@ -159,12 +159,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: underlyingError) {
-      guard let rpcError = underlyingError as? RPCError else {
-        XCTFail("Not an RPCError: \(underlyingError)")
-        return
-      }
-
+    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.status, .invalidArgument)
       XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
       XCTAssertTrue(rpcError.message.hasPrefix("API key not valid"))
@@ -183,10 +178,10 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: underlyingError) {
-      guard case let .emptyContent(decodingError) =
-        try XCTUnwrap(underlyingError as? InvalidCandidateError) else {
-        XCTFail("Not an InvalidCandidateError.emptyContent error: \(underlyingError)")
+    } catch let GenerateContentError
+      .internalError(underlying: invalidCandidateError as InvalidCandidateError) {
+      guard case let .emptyContent(decodingError) = invalidCandidateError else {
+        XCTFail("Not an InvalidCandidateError.emptyContent error: \(invalidCandidateError)")
         return
       }
       _ = try XCTUnwrap(decodingError as? DecodingError,
@@ -244,12 +239,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: underlyingError) {
-      guard let rpcError = underlyingError as? RPCError else {
-        XCTFail("Not an RPCError: \(underlyingError)")
-        return
-      }
-
+    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.status, .invalidArgument)
       XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
       XCTAssertEqual(rpcError.message, "Request contains an invalid argument.")
@@ -287,12 +277,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: underlyingError) {
-      guard let rpcError = underlyingError as? RPCError else {
-        XCTFail("Not an RPCError: \(underlyingError)")
-        return
-      }
-
+    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
       XCTAssertTrue(rpcError.message.hasPrefix("models/unknown is not found"))
