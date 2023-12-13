@@ -672,7 +672,10 @@ final class GenerativeModelTests: XCTestCase {
       XCTAssertEqual(rpcError.httpResponseCode, 404)
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))
+      return
     }
+
+    XCTFail("Expected internal RPCError.")
   }
 
   // MARK: - Helpers
