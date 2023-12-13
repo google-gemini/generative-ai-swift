@@ -46,7 +46,7 @@ public struct ModelContent: Codable, Equatable {
 
     /// Convenience function for populating a Part with PNG data.
     public static func png(_ data: Data) -> Self {
-      return .data(mimetype: "image/jpeg", data)
+      return .data(mimetype: "image/png", data)
     }
 
     // MARK: Codable Conformance
