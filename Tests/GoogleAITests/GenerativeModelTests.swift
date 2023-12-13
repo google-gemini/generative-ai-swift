@@ -154,14 +154,14 @@ final class GenerativeModelTests: XCTestCase {
     let promptSafetyRatings = try XCTUnwrap(response.promptFeedback?.safetyRatings)
     XCTAssertEqual(promptSafetyRatings, expectedSafetyRatings)
   }
-  
+
   func testGenerateContent_success_unknownEnum_finishReason() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "unary-success-unknown-enum-finish-reason",
         withExtension: "json"
       )
-        
+
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
@@ -172,14 +172,14 @@ final class GenerativeModelTests: XCTestCase {
       XCTFail("Should throw a responseStoppedEarly")
     }
   }
-  
+
   func testGenerateContent_success_unknownEnum_promptBlocked() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "unary-success-unknown-enum-prompt-blocked",
         withExtension: "json"
       )
-    
+
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
