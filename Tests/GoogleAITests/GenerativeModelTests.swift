@@ -149,46 +149,8 @@ final class GenerativeModelTests: XCTestCase {
     let response = try await model.generateContent(testPrompt)
 
     XCTAssertEqual(response.text, "Some text")
-    let candidateSafetyRatings = try XCTUnwrap(response.candidates.first?.safetyRatings)
-    XCTAssertEqual(candidateSafetyRatings, expectedSafetyRatings)
-    let promptSafetyRatings = try XCTUnwrap(response.promptFeedback?.safetyRatings)
-    XCTAssertEqual(promptSafetyRatings, expectedSafetyRatings)
-  }
-
-  func testGenerateContent_success_unknownEnum_finishReason() async throws {
-    MockURLProtocol
-      .requestHandler = try httpRequestHandler(
-        forResource: "unary-success-unknown-enum-finish-reason",
-        withExtension: "json"
-      )
-
-    do {
-      _ = try await model.generateContent(testPrompt)
-      XCTFail("Should throw")
-    } catch let GenerateContentError.responseStoppedEarly(reason, response) {
-      XCTAssertEqual(reason, .unknown)
-      XCTAssertEqual(response.text, "Some text")
-    } catch {
-      XCTFail("Should throw a responseStoppedEarly")
-    }
-  }
-
-  func testGenerateContent_success_unknownEnum_promptBlocked() async throws {
-    MockURLProtocol
-      .requestHandler = try httpRequestHandler(
-        forResource: "unary-success-unknown-enum-prompt-blocked",
-        withExtension: "json"
-      )
-
-    do {
-      _ = try await model.generateContent(testPrompt)
-      XCTFail("Should throw")
-    } catch let GenerateContentError.promptBlocked(response) {
-      let promptFeedback = try XCTUnwrap(response.promptFeedback)
-      XCTAssertEqual(promptFeedback.blockReason, .unknown)
-    } catch {
-      XCTFail("Should throw a promptBlocked")
-    }
+    XCTAssertEqual(response.candidates.first?.safetyRatings, expectedSafetyRatings)
+    XCTAssertEqual(response.promptFeedback?.safetyRatings, expectedSafetyRatings)
   }
 
   func testGenerateContent_failure_invalidAPIKey() async throws {
@@ -304,6 +266,42 @@ final class GenerativeModelTests: XCTestCase {
       XCTFail("Should throw")
     } catch let GenerateContentError.promptBlocked(response) {
       XCTAssertNil(response.text)
+    } catch {
+      XCTFail("Should throw a promptBlocked")
+    }
+  }
+
+  func testGenerateContent_failure_unknownEnum_finishReason() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-failure-unknown-enum-finish-reason",
+        withExtension: "json"
+      )
+
+    do {
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw")
+    } catch let GenerateContentError.responseStoppedEarly(reason, response) {
+      XCTAssertEqual(reason, .unknown)
+      XCTAssertEqual(response.text, "Some text")
+    } catch {
+      XCTFail("Should throw a responseStoppedEarly")
+    }
+  }
+
+  func testGenerateContent_failure_unknownEnum_promptBlocked() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-failure-unknown-enum-prompt-blocked",
+        withExtension: "json"
+      )
+
+    do {
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw")
+    } catch let GenerateContentError.promptBlocked(response) {
+      let promptFeedback = try XCTUnwrap(response.promptFeedback)
+      XCTAssertEqual(promptFeedback.blockReason, .unknown)
     } catch {
       XCTFail("Should throw a promptBlocked")
     }
