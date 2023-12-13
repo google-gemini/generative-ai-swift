@@ -199,8 +199,10 @@ xcb_flags+=(
   COMPILER_INDEX_STORE_ENABLE=NO
 )
 
+fail_on_warnings=SWIFT_TREAT_WARNINGS_AS_ERRORS=YES
+
 if [[ $workspace = *.xcodeproj ]] ; then
-  RunXcodebuild -project $workspace -scheme $product "${xcb_flags[@]}" $method
+  RunXcodebuild -project $workspace -scheme $product "${xcb_flags[@]}" $fail_on_warnings $method
 else
-  RunXcodebuild -workspace $workspace -scheme $product -destination "$destination" "${xcb_flags[@]}" $method
+  RunXcodebuild -workspace $workspace -scheme $product -destination "$destination" "${xcb_flags[@]}" $fail_on_warnings $method
 fi
