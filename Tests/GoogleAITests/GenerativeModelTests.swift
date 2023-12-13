@@ -147,21 +147,6 @@ final class GenerativeModelTests: XCTestCase {
     // TODO: Add assertions
   }
 
-  private func internalTestGenerateContent(resource: String,
-                                           safetyRatingsCount: Int = 6) async throws {
-    MockURLProtocol.requestHandler = try httpRequestHandler(
-      forResource: resource,
-      withExtension: "json"
-    )
-
-    let content = try await model.generateContent("What sorts of questions can I ask you?")
-
-    // TODO: Add assertions for response content
-    let promptFeedback = try XCTUnwrap(content.promptFeedback)
-    XCTAssertEqual(promptFeedback.safetyRatings.count, safetyRatingsCount)
-    XCTAssertNotNil(content.text)
-  }
-
   func testGenerateContent_failure_invalidAPIKey() async throws {
     let expectedStatusCode = 400
     MockURLProtocol
@@ -400,7 +385,15 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContentMissingSafetyRatings() async throws {
-    try await internalTestGenerateContent(resource: "MissingSafetyRatings", safetyRatingsCount: 0)
+    MockURLProtocol.requestHandler = try httpRequestHandler(
+      forResource: "unary-success-missing-safety-ratings",
+      withExtension: "json"
+    )
+
+    let content = try await model.generateContent(testPrompt)
+    let promptFeedback = try XCTUnwrap(content.promptFeedback)
+    XCTAssertEqual(promptFeedback.safetyRatings.count, 0)
+    XCTAssertEqual(content.text, "This is the generated content.")
   }
 
   // MARK: - Generate Content (Streaming)
@@ -499,7 +492,7 @@ final class GenerativeModelTests: XCTestCase {
       responses += 1
     }
 
-    XCTAssertEqual(responses, 6)
+    XCTAssertEqual(responses, 10)
   }
 
   func testGenerateContentStream_successBasicReplyShort() async throws {
@@ -632,75 +625,57 @@ final class GenerativeModelTests: XCTestCase {
   func testGenerateContentStream_malformedContent() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
-        forResource: "MalformedContentStreamingResponse",
-        withExtension: "json"
+        forResource: "streaming-failure-malformed-content",
+        withExtension: "txt"
       )
 
     let stream = model.generateContentStream(testPrompt)
-    var responseError: Error?
     do {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch {
-      responseError = error
+    } catch let GenerateContentError.internalError(underlyingError as InvalidCandidateError) {
+      guard case let .malformedContent(contentError) = underlyingError else {
+        XCTFail("Not a malformed content error: \(underlyingError)")
+        return
+      }
+
+      XCTAssert(contentError is DecodingError)
+      return
     }
 
-    XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
-    guard case let .internalError(underlyingError) = generateContentError else {
-      XCTFail("Not an internal error: \(generateContentError)")
-      return
-    }
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? InvalidCandidateError)
-    guard case let .malformedContent(malformedContentUnderlyingError) = invalidCandidateError else {
-      XCTFail("Not a malformed content error: \(invalidCandidateError)")
-      return
-    }
-    _ = try XCTUnwrap(
-      malformedContentUnderlyingError as? DecodingError,
-      "Not a decoding error: \(malformedContentUnderlyingError)"
-    )
+    XCTFail("Expected an internal decoding error.")
   }
 
   // MARK: - Count Tokens
 
   func testCountTokens_succeeds() async throws {
     MockURLProtocol.requestHandler = try httpRequestHandler(
-      forResource: "CountTokensResponse",
+      forResource: "success-total-tokens",
       withExtension: "json"
     )
 
     let response = try await model.countTokens("Why is the sky blue?")
-
     XCTAssertEqual(response.totalTokens, 6)
   }
 
   func testCountTokens_modelNotFound() async throws {
     MockURLProtocol.requestHandler = try httpRequestHandler(
-      forResource: "CountTokensModelNotFound", withExtension: "json",
+      forResource: "failure-model-not-found", withExtension: "json",
       statusCode: 404
     )
 
-    var response: CountTokensResponse?
-    var responseError: Error?
     do {
-      response = try await model.countTokens("Why is the sky blue?")
-    } catch {
-      responseError = error
-    }
-
-    XCTAssertNil(response)
-    XCTAssertNotNil(responseError)
-    let countTokensError = try XCTUnwrap(responseError as? CountTokensError)
-    guard case let .internalError(underlyingError) = countTokensError else {
-      XCTFail("Not an internal error: \(countTokensError)")
+      _ = try await model.countTokens("Why is the sky blue?")
+      XCTFail("Request should not have succeeded.")
+    } catch let CountTokensError.internalError(rpcError as RPCError) {
+      XCTAssertEqual(rpcError.httpResponseCode, 404)
+      XCTAssertEqual(rpcError.status, .notFound)
+      XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))
       return
     }
-    let rpcError = try XCTUnwrap(underlyingError as? RPCError)
-    XCTAssertEqual(rpcError.httpResponseCode, 404)
-    XCTAssertEqual(rpcError.status, .notFound)
-    XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))
+
+    XCTFail("Expected internal RPCError.")
   }
 
   // MARK: - Helpers

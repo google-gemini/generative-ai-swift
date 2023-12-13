@@ -32,8 +32,8 @@ final class ChatTests: XCTestCase {
 
   func testMergingText() async throws {
     let fileURL = try XCTUnwrap(Bundle.module.url(
-      forResource: "ExampleStreamingResponse",
-      withExtension: "json"
+      forResource: "streaming-success-basic-reply-long",
+      withExtension: "txt"
     ))
 
     MockURLProtocol.requestHandler = { request in
@@ -59,32 +59,7 @@ final class ChatTests: XCTestCase {
     XCTAssertEqual(chat.history.count, 2)
     XCTAssertEqual(chat.history[0].parts[0].text, input)
 
-    let finalText = """
-     As an AI language model, I am designed to help you with a wide range of topics and \
-    questions. Here are some examples of the types of questions you can ask me:
-    - **General knowledge:** Ask me about a variety of topics, including history, science, \
-    technology, art, culture, and more.
-    - **Creative writing:** Request me to write a story, poem, or any other creative piece \
-    based on your specifications.
-    - **Language translation:** I can translate text from one language to another.
-    - **Math problems:** I can solve math equations and provide step-by-step solutions.
-    - **Trivia and quizzes:** Test your knowledge by asking me trivia questions or creating \
-    quizzes on various subjects.
-    - **Conversation:** Engage in casual conversation on any topic of your interest.
-    - **Advice and suggestions:** Seek advice on various matters, such as relationships, \
-    career choices, or personal growth.
-    - **Entertainment:** Request jokes, riddles, or fun facts to lighten up your day.
-    - **Code generation:** Ask me to write code snippets in different programming languages.
-    - **Real-time information:** Inquire about current events, weather conditions, or other \
-    up-to-date information.
-    - **Creative ideas:** Generate creative ideas for projects, hobbies, or any other endeavor.
-    - **Health and wellness:** Get information about health, fitness, and nutrition.
-    - **Travel and geography:** Ask about places, landmarks, cultures, and travel tips.
-
-    Remember that my responses are based on the information available to me up until my \
-    training cutoff date in September 2021. For the most up-to-date information, especially \
-    on rapidly changing topics, it's always a good idea to consult reliable and recent sources.
-    """
+    let finalText = "1 2 3 4 5 6 7 8 9 10"
     let assembledExpectation = ModelContent(role: "model", parts: finalText)
     XCTAssertEqual(chat.history[0].parts[0].text, input)
     XCTAssertEqual(chat.history[1], assembledExpectation)

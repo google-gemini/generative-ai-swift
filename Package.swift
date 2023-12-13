@@ -43,8 +43,8 @@ let package = Package(
       dependencies: ["GoogleGenerativeAI"],
       path: "Tests",
       resources: [
+        .process("GoogleAITests/CountTokenResponses"),
         .process("GoogleAITests/GenerateContentResponses"),
-        .process("GoogleAITests/SampleResponses"),
       ]
     ),
   ]
