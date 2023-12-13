@@ -75,7 +75,9 @@ struct MessageView: View {
       }
       MessageContentView(message: message)
         .padding(10)
-        .background(message.participant == .system ? Color(UIColor.systemFill) : Color(UIColor.systemBlue))
+        .background(message.participant == .system
+          ? Color(UIColor.systemFill)
+          : Color(UIColor.systemBlue))
         .roundedCorner(10,
                        corners: [
                          .topLeft,
