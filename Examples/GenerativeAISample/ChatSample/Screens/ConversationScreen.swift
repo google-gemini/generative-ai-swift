@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import GenerativeAIUIComponents
 import GoogleGenerativeAI
 import SwiftUI
 
@@ -64,18 +65,12 @@ struct ConversationScreen: View {
           }
         })
       }
-      HStack(alignment: .bottom) {
-        TextField("Message...", text: $userPrompt, axis: .vertical)
-          .focused($focusedField, equals: .message)
-          .textFieldStyle(.roundedBorder)
-          .frame(minHeight: CGFloat(30))
-          .onSubmit { sendMessage() }
-        Button(action: sendOrStop) {
-          Image(systemName: viewModel.busy ? "stop.circle.fill" : "arrow.up.circle.fill")
-            .font(.title)
-        }
+      InputField("Message...", text: $userPrompt) {
+        Image(systemName: viewModel.busy ? "stop.circle.fill" : "arrow.up.circle.fill")
+          .font(.title)
       }
-      .padding(.horizontal)
+      .focused($focusedField, equals: .message)
+      .onSubmit { sendOrStop() }
     }
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
