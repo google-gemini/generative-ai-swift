@@ -1,8 +1,5 @@
 # Google AI Swift SDK
 
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/google/generative-ai-swift)
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/google/generative-ai-swift)
-
 > [!IMPORTANT]
 > Thanks for your interest in the Google AI SDKs! **You can start using this SDK and its samples on December 13, 2023.** Until then, check out our [blog post](https://blog.google/technology/ai/google-gemini-ai/) to learn more about Google's Gemini multimodal model.
 
@@ -21,7 +18,7 @@ generate text from text-and-image input:
 ```swift
 let model = GenerativeModel(name: "gemini-pro-vision", apiKey: "YOUR_API_KEY")
 let cookieImage = UIImage(...)
-let prompt = "Give me a recipe for this:"
+let prompt = "Do these look store-bought or homemade?"
 
 let response = try await model.generateContent(prompt, cookieImage)
 ```
