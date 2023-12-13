@@ -33,6 +33,8 @@ extension CountTokensRequest: GenerativeAIRequest {
   }
 }
 
+/// The model's response to a count tokens request.
 public struct CountTokensResponse: Decodable {
+  /// The total number of tokens in the input given to the model as a prompt.
   public let totalTokens: Int
 }
