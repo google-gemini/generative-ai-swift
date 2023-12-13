@@ -39,8 +39,7 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: The model's response if no error occurred.
   /// - Throws: A ``GenerateContentError`` if an error occurred.
-  public func sendMessage(_ content: [ModelContent]) async throws
-    -> GenerateContentResponse {
+  public func sendMessage(_ content: [ModelContent]) async throws -> GenerateContentResponse {
     // Ensure that the new content has the role set.
     let newContent: [ModelContent] = content.map(populateContentRole(_:))
 
