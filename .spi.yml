@@ -4,5 +4,5 @@ metadata:
 builder:
   configs:
     - platform: ios
-      documentation_targets: [GoogleGenerativeAI]
+      documentation_targets: [generative-ai-swift]
       scheme: generative-ai-swift
