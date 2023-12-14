@@ -13,6 +13,10 @@
 // limitations under the License.
 import Foundation
 
+#if !os(macOS) && !os(iOS)
+  #error("Only iOS and macOS targets are currently supported.")
+#endif
+
 /// Constants associated with the GenerativeAISwift SDK
 public enum GenerativeAISwift {
   /// String value of the SDK version
