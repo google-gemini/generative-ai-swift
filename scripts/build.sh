@@ -175,7 +175,7 @@ case "$platform" in
 
   catalyst)
     xcb_flags=("${catalyst_flags[@]}")
-    destination='platform="macOS,variant=Mac Catalyst,arch=x86_64" TARGETED_DEVICE_FAMILY=2'
+    destination='platform="macOS,variant=Mac Catalyst,name=Any Mac'
     ;;
 
   all)
