@@ -60,6 +60,7 @@
 		88E10F5E2B11140200C08E95 /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 88209C142B0F928F00F64795 /* GenerativeAI-Info.plist */; };
 		88E10F5F2B11140500C08E95 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88209C192B0FBDC300F64795 /* APIKey.swift */; };
 		88E10F612B11162B00C08E95 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 88E10F602B11162B00C08E95 /* GoogleGenerativeAI */; };
+		CB0DFFD52B2B4F08006E109D /* GenerativeAIUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = CB0DFFD42B2B4F08006E109D /* GenerativeAIUIComponents */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +133,7 @@
 			files = (
 				88E10F612B11162B00C08E95 /* GoogleGenerativeAI in Frameworks */,
 				88D9474D2B14F27E008B5580 /* MarkdownUI in Frameworks */,
+				CB0DFFD52B2B4F08006E109D /* GenerativeAIUIComponents in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +417,7 @@
 			packageProductDependencies = (
 				88E10F602B11162B00C08E95 /* GoogleGenerativeAI */,
 				88D9474C2B14F27E008B5580 /* MarkdownUI */,
+				CB0DFFD42B2B4F08006E109D /* GenerativeAIUIComponents */,
 			);
 			productName = ChatSample;
 			productReference = 88E10F422B110D5300C08E95 /* ChatSample.app */;
@@ -1138,6 +1141,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 88209C212B0FBDF700F64795 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = GoogleGenerativeAI;
+		};
+		CB0DFFD42B2B4F08006E109D /* GenerativeAIUIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GenerativeAIUIComponents;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
