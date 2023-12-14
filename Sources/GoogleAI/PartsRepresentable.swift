@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import Foundation
-#if canImport(AppKit)
-  import AppKit // For NSImage extensions.
-#elseif canImport(UIKit)
+#if canImport(UIKit)
   import UIKit // For UIImage extensions.
+#elseif canImport(AppKit)
+  import AppKit // For NSImage extensions.
 #endif
 
 /// A protocol describing any data that could be interpreted as model input data.
@@ -46,7 +46,20 @@ extension [any PartsRepresentable]: PartsRepresentable {
   }
 }
 
-#if canImport(AppKit)
+#if canImport(UIKit)
+  /// Enables images to be representable as ``PartsRepresentable``.
+  extension UIImage: PartsRepresentable {
+    public var partsValue: [ModelContent.Part] {
+      guard let data = jpegData(compressionQuality: 0.8) else {
+        Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from UIImage.")
+        return []
+      }
+
+      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
+    }
+  }
+
+#elseif canImport(AppKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension NSImage: PartsRepresentable {
     public var partsValue: [ModelContent.Part] {
@@ -63,18 +76,4 @@ extension [any PartsRepresentable]: PartsRepresentable {
       return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
     }
   }
-
-#elseif canImport(UIKit)
-  /// Enables images to be representable as ``PartsRepresentable``.
-  extension UIImage: PartsRepresentable {
-    public var partsValue: [ModelContent.Part] {
-      guard let data = jpegData(compressionQuality: 0.8) else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from UIImage.")
-        return []
-      }
-
-      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
-    }
-  }
-
 #endif
