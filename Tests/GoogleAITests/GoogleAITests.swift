@@ -62,12 +62,7 @@ final class GoogleGenerativeAITests: XCTestCase {
     let _ = try await genAI.generateContent(str)
     let _ = try await genAI.generateContent([str])
     let _ = try await genAI.generateContent(str, "abc", "def")
-    #if canImport(AppKit)
-      _ = try await genAI.generateContent(NSImage())
-      _ = try await genAI.generateContent([NSImage()])
-      _ = try await genAI.generateContent(str, NSImage(), "def", NSImage())
-      _ = try await genAI.generateContent([str, NSImage(), "def", NSImage()])
-    #elseif canImport(UIKit)
+    #if canImport(UIKit)
       _ = try await genAI.generateContent(UIImage())
       _ = try await genAI.generateContent([UIImage()])
       _ = try await genAI
@@ -76,6 +71,11 @@ final class GoogleGenerativeAITests: XCTestCase {
       _ = try await genAI.generateContent([str, UIImage(), "def", UIImage()])
       _ = try await genAI.generateContent([ModelContent("def", UIImage()),
                                            ModelContent("def", UIImage())])
+    #elseif canImport(AppKit)
+      _ = try await genAI.generateContent(NSImage())
+      _ = try await genAI.generateContent([NSImage()])
+      _ = try await genAI.generateContent(str, NSImage(), "def", NSImage())
+      _ = try await genAI.generateContent([str, NSImage(), "def", NSImage()])
     #endif
 
     // PartsRepresentable combinations.
@@ -91,7 +91,19 @@ final class GoogleGenerativeAITests: XCTestCase {
       mimetype: "foo",
       Data()
     )] as [any PartsRepresentable])
-    #if canImport(AppKit)
+    #if canImport(UIKit)
+      _ = ModelContent(role: "user", parts: UIImage())
+      _ = ModelContent(role: "user", parts: [UIImage()])
+      // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
+      // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
+      // way we can get it to work.
+      _ = ModelContent(parts: [str, UIImage()] as [any PartsRepresentable])
+      // Alternatively, you can explicitly declare the type in a variable and pass it in.
+      let representable2: [any PartsRepresentable] = [str, UIImage()]
+      _ = ModelContent(parts: representable2)
+      _ = ModelContent(parts: [str, UIImage(),
+                               ModelContent.Part.text(str)] as [any PartsRepresentable])
+    #elseif canImport(AppKit)
       _ = ModelContent(role: "user", parts: NSImage())
       _ = ModelContent(role: "user", parts: [NSImage()])
       // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
@@ -104,18 +116,6 @@ final class GoogleGenerativeAITests: XCTestCase {
       _ =
         ModelContent(parts: [str, NSImage(),
                              ModelContent.Part.text(str)] as [any PartsRepresentable])
-    #elseif canImport(UIKit)
-      _ = ModelContent(role: "user", parts: UIImage())
-      _ = ModelContent(role: "user", parts: [UIImage()])
-      // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
-      // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
-      // way we can get it to work.
-      _ = ModelContent(parts: [str, UIImage()] as [any PartsRepresentable])
-      // Alternatively, you can explicitly declare the type in a variable and pass it in.
-      let representable2: [any PartsRepresentable] = [str, UIImage()]
-      _ = ModelContent(parts: representable2)
-      _ = ModelContent(parts: [str, UIImage(),
-                               ModelContent.Part.text(str)] as [any PartsRepresentable])
     #endif
 
     // countTokens API
