@@ -748,7 +748,7 @@ final class GenerativeModelTests: XCTestCase {
     let fileURL = try XCTUnwrap(Bundle.module.url(forResource: name, withExtension: ext))
     return { request in
       let requestURL = try XCTUnwrap(request.url)
-      XCTAssertEqual(requestURL.path().occurrenceCount(of: "models/"), 1)
+      XCTAssertEqual(requestURL.path.occurrenceCount(of: "models/"), 1)
       let response = try XCTUnwrap(HTTPURLResponse(
         url: requestURL,
         statusCode: statusCode,
