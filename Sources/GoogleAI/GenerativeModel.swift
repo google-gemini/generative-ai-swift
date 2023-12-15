@@ -17,8 +17,11 @@ import Foundation
 /// A type that represents a remote multimodal model (like Gemini), with the ability to generate
 /// content based on various input types.
 public final class GenerativeModel {
-  /// Name of the model in the backend.
-  private let modelName: String
+  // The prefix for a model resource in the Gemini API.
+  private static let modelResourcePrefix = "models/"
+
+  /// The resource name of the model in the backend; has the format "models/model-name".
+  private let modelResourceName: String
 
   /// The backing service responsible for sending and receiving model requests to the backend.
   let generativeAIService: GenerativeAIService
@@ -31,7 +34,7 @@ public final class GenerativeModel {
 
   /// Initializes a new remote model with the given parameters.
   ///
-  /// - Parameter name: The name of the model to be used.
+  /// - Parameter name: The name of the model to be used, e.g., "gemini-pro" or "models/gemini-pro".
   /// - Parameter apiKey: The API key for your project.
   /// - Parameter generationConfig: A value containing the content generation parameters your model
   ///     should use.
@@ -56,7 +59,7 @@ public final class GenerativeModel {
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
        urlSession: URLSession) {
-    modelName = name
+    modelResourceName = GenerativeModel.modelResourceName(name: name)
     generativeAIService = GenerativeAIService(apiKey: apiKey, urlSession: urlSession)
     self.generationConfig = generationConfig
     self.safetySettings = safetySettings
@@ -96,7 +99,7 @@ public final class GenerativeModel {
   /// - Returns: The generated content response from the model.
   /// - Throws: A ``GenerateContentError`` if the request failed.
   public func generateContent(_ content: [ModelContent]) async throws -> GenerateContentResponse {
-    let generateContentRequest = GenerateContentRequest(model: "models/\(modelName)",
+    let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
@@ -147,7 +150,7 @@ public final class GenerativeModel {
   ///     error if an error occurred.
   public func generateContentStream(_ content: [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    let generateContentRequest = GenerateContentRequest(model: "models/\(modelName)",
+    let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
@@ -215,12 +218,21 @@ public final class GenerativeModel {
   /// - Throws: A ``CountTokensError`` if the tokenization request failed.
   public func countTokens(_ content: [ModelContent]) async throws
     -> CountTokensResponse {
-    let countTokensRequest = CountTokensRequest(model: "models/\(modelName)", contents: content)
+    let countTokensRequest = CountTokensRequest(model: modelResourceName, contents: content)
 
     do {
       return try await generativeAIService.loadRequest(request: countTokensRequest)
     } catch {
       throw CountTokensError.internalError(underlying: error)
+    }
+  }
+
+  /// Returns a model resource name of the form "models/model-name" based on `name`.
+  private static func modelResourceName(name: String) -> String {
+    if name.hasPrefix(modelResourcePrefix) {
+      return name
+    } else {
+      return modelResourcePrefix + name
     }
   }
 }

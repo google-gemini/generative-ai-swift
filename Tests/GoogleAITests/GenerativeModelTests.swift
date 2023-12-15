@@ -153,6 +153,22 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(response.promptFeedback?.safetyRatings, expectedSafetyRatings)
   }
 
+  func testGenerateContent_success_prefixedModelName() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-basic-reply-short",
+        withExtension: "json"
+      )
+    let model = GenerativeModel(
+      // Model name is prefixed with "models/".
+      name: "models/test-model",
+      apiKey: "API_KEY",
+      urlSession: urlSession
+    )
+
+    _ = try await model.generateContent(testPrompt)
+  }
+
   func testGenerateContent_failure_invalidAPIKey() async throws {
     let expectedStatusCode = 400
     MockURLProtocol
@@ -731,13 +747,22 @@ final class GenerativeModelTests: XCTestCase {
   )) {
     let fileURL = try XCTUnwrap(Bundle.module.url(forResource: name, withExtension: ext))
     return { request in
+      let requestURL = try XCTUnwrap(request.url)
+      XCTAssertEqual(requestURL.path.occurrenceCount(of: "models/"), 1)
       let response = try XCTUnwrap(HTTPURLResponse(
-        url: request.url!,
+        url: requestURL,
         statusCode: statusCode,
         httpVersion: nil,
         headerFields: nil
       ))
       return (response, fileURL.lines)
     }
+  }
+}
+
+private extension String {
+  /// Returns the number of occurrences of `substring` in the `String`.
+  func occurrenceCount(of substring: String) -> Int {
+    return components(separatedBy: substring).count - 1
   }
 }
