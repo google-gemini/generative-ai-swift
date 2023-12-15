@@ -17,7 +17,7 @@ import Foundation
 /// A type that represents a remote multimodal model (like Gemini), with the ability to generate
 /// content based on various input types.
 public final class GenerativeModel {
-  // The prefix for a model resource in the Generative Language API.
+  // The prefix for a model resource in the Gemini API.
   private static let modelResourcePrefix = "models/"
 
   /// The resource name of the model in the backend; has the format "models/model-name".
