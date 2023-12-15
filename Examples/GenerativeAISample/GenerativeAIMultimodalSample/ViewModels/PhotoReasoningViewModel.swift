@@ -20,6 +20,9 @@ import SwiftUI
 
 @MainActor
 class PhotoReasoningViewModel: ObservableObject {
+  // Maximum image dimensions in pixels; reduces image size in bytes.
+  private static let maxImageSize = CGSize(width: 768.0, height: 768.0)
+
   private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "generative-ai")
 
   @Published
@@ -61,7 +64,17 @@ class PhotoReasoningViewModel: ObservableObject {
       var images = [PartsRepresentable]()
       for item in selectedItems {
         if let data = try? await item.loadTransferable(type: Data.self) {
-          images.append(ModelContent.Part.png(data))
+          guard let image = UIImage(data: data) else {
+            logger.error("Failed to parse data as an image, skipping.")
+            continue
+          }
+          guard let resizedImage = image
+            .preparingThumbnail(of: PhotoReasoningViewModel.maxImageSize) else {
+            logger.error("Failed to resize image: \(image)")
+            continue
+          }
+
+          images.append(resizedImage)
         }
       }
 
@@ -78,6 +91,17 @@ class PhotoReasoningViewModel: ObservableObject {
     } catch {
       logger.error("\(error.localizedDescription)")
       errorMessage = error.localizedDescription
+    }
+  }
+}
+
+private extension CGSize {
+  func fitting(maxSize: CGSize) -> CGSize {
+    if width <= maxSize.width && height <= maxSize.height {
+      return self
+    } else {
+      let width = min(self.width * maxSize.height / height, maxSize.width)
+      return CGSize(width: width, height: height * width / self.width)
     }
   }
 }
