@@ -26,7 +26,7 @@ enum APIKey {
     guard let value = plist?.object(forKey: "API_KEY") as? String else {
       fatalError("Couldn't find key 'API_KEY' in 'GenerativeAI-Info.plist'.")
     }
-    if value.starts(with: "_") {
+    if value.starts(with: "_") || value.isEmpty {
       fatalError(
         "Follow the instructions at https://ai.google.dev/tutorials/setup to get an API key."
       )
