@@ -748,7 +748,7 @@ final class GenerativeModelTests: XCTestCase {
     let fileURL = try XCTUnwrap(Bundle.module.url(forResource: name, withExtension: ext))
     return { request in
       let requestURL = try XCTUnwrap(request.url)
-      XCTAssertEqual(requestURL.path().ranges(of: "models/").count, 1)
+      XCTAssertEqual(requestURL.path().occurrenceCount(of: "models/"), 1)
       let response = try XCTUnwrap(HTTPURLResponse(
         url: requestURL,
         statusCode: statusCode,
@@ -757,5 +757,12 @@ final class GenerativeModelTests: XCTestCase {
       ))
       return (response, fileURL.lines)
     }
+  }
+}
+
+private extension String {
+  /// Returns the number of occurrences of `substring` in the `String`.
+  func occurrenceCount(of substring: String) -> Int {
+    return components(separatedBy: substring).count - 1
   }
 }
