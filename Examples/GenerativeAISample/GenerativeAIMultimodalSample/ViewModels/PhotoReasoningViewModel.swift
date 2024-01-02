@@ -20,8 +20,8 @@ import SwiftUI
 
 @MainActor
 class PhotoReasoningViewModel: ObservableObject {
-  // Maximum image dimensions in pixels; reduces image size in bytes.
-  private static let maxImageSize = CGSize(width: 768.0, height: 768.0)
+  // Maximum image dimensions (width and height) in pixels; reduces image size in bytes.
+  private static let largestImageDimension = 768.0
 
   private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "generative-ai")
 
@@ -68,12 +68,12 @@ class PhotoReasoningViewModel: ObservableObject {
             logger.error("Failed to parse data as an image, skipping.")
             continue
           }
-          if image.size.fits(inside: PhotoReasoningViewModel.maxImageSize) {
+          if image.size.fits(largestDimension: PhotoReasoningViewModel.largestImageDimension) {
             images.append(image)
           } else {
             guard let resizedImage = image
               .preparingThumbnail(of: image.size
-                .aspectFit(inside: PhotoReasoningViewModel.maxImageSize)) else {
+                .aspectFit(largestDimension: PhotoReasoningViewModel.largestImageDimension)) else {
               logger.error("Failed to resize image: \(image)")
               continue
             }
@@ -101,17 +101,17 @@ class PhotoReasoningViewModel: ObservableObject {
 }
 
 private extension CGSize {
-  func fits(inside maxSize: CGSize) -> Bool {
-    return width <= maxSize.width && height <= maxSize.height
+  func fits(largestDimension length: CGFloat) -> Bool {
+    return width <= length && height <= length
   }
 
-  func aspectFit(inside maxSize: CGSize) -> CGSize {
+  func aspectFit(largestDimension length: CGFloat) -> CGSize {
     let aspectRatio = width / height
     if width > height {
-      let width = min(self.width, maxSize.width)
+      let width = min(self.width, length)
       return CGSize(width: width, height: round(width / aspectRatio))
     } else {
-      let height = min(self.height, maxSize.height)
+      let height = min(self.height, length)
       return CGSize(width: round(height * aspectRatio), height: height)
     }
   }
