@@ -68,13 +68,18 @@ class PhotoReasoningViewModel: ObservableObject {
             logger.error("Failed to parse data as an image, skipping.")
             continue
           }
-          guard let resizedImage = image
-            .preparingThumbnail(of: PhotoReasoningViewModel.maxImageSize) else {
-            logger.error("Failed to resize image: \(image)")
-            continue
-          }
+          if image.size.fits(inside: PhotoReasoningViewModel.maxImageSize) {
+            images.append(image)
+          } else {
+            guard let resizedImage = image
+              .preparingThumbnail(of: image.size
+                .aspectFit(inside: PhotoReasoningViewModel.maxImageSize)) else {
+              logger.error("Failed to resize image: \(image)")
+              continue
+            }
 
-          images.append(resizedImage)
+            images.append(resizedImage)
+          }
         }
       }
 
@@ -96,12 +101,18 @@ class PhotoReasoningViewModel: ObservableObject {
 }
 
 private extension CGSize {
-  func fitting(maxSize: CGSize) -> CGSize {
-    if width <= maxSize.width && height <= maxSize.height {
-      return self
+  func fits(inside maxSize: CGSize) -> Bool {
+    return width <= maxSize.width && height <= maxSize.height
+  }
+
+  func aspectFit(inside maxSize: CGSize) -> CGSize {
+    let aspectRatio = width / height
+    if width > height {
+      let width = min(self.width, maxSize.width)
+      return CGSize(width: width, height: round(width / aspectRatio))
     } else {
-      let width = min(self.width * maxSize.height / height, maxSize.width)
-      return CGSize(width: width, height: height * width / self.width)
+      let height = min(self.height, maxSize.height)
+      return CGSize(width: round(height * aspectRatio), height: height)
     }
   }
 }
