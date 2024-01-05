@@ -100,7 +100,7 @@ function RunXcodebuild() {
 
 # Exports any logs output captured in the xcresult
 function ExportLogs() {
-  python "${scripts_dir}/xcresult_logs.py" "$@"
+  python3 "${scripts_dir}/xcresult_logs.py" "$@"
 }
 
 ios_flags=(
