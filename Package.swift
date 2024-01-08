@@ -21,7 +21,7 @@ let package = Package(
   name: "generative-ai-swift",
   platforms: [
     .iOS(.v15),
-    .macOS(.v12),
+    .macOS(.v11),
     .macCatalyst(.v15),
   ],
   products: [
