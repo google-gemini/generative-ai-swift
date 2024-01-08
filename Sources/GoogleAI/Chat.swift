@@ -65,6 +65,7 @@ public class Chat {
   }
 
   /// See ``sendMessageStream(_:)-4abs3``.
+  @available(macOS 12.0, *)
   public func sendMessageStream(_ parts: PartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     return sendMessageStream([ModelContent(parts: parts)])
@@ -74,6 +75,7 @@ public class Chat {
   /// and response will be added to the history. If unsuccessful, history will remain unchanged.
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: A stream containing the model's response or an error if an error occurred.
+  @available(macOS 12.0, *)
   public func sendMessageStream(_ content: [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     return AsyncThrowingStream { continuation in
