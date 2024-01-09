@@ -36,3 +36,5 @@ Mint
 # CLI Tool
 Apps/GoogleAICLI/GoogleAICLI.xcodeproj/xcshareddata/xcschemes/*
 GenerativeAI-Info.plist
+
+xcodebuild.log
