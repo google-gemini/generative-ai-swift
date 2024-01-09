@@ -23,7 +23,7 @@ import XCTest
 
 final class PartsRepresentableTests: XCTestCase {
   func testModelContentFromCGImageIsNotEmpty() throws {
-    // stolen from https://forums.swift.org/t/creating-a-cgimage-from-color-array/18634/2
+    // adapted from https://forums.swift.org/t/creating-a-cgimage-from-color-array/18634/2
     var srgbArray = [UInt32](repeating: 0xFFFF_FFFF, count: 8 * 8)
     let image = srgbArray.withUnsafeMutableBytes { ptr -> CGImage in
       let ctx = CGContext(

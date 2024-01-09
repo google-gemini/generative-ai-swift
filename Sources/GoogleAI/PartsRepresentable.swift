@@ -20,6 +20,8 @@ import UniformTypeIdentifiers
   import AppKit // For NSImage extensions.
 #endif
 
+private let imageCompressionQuality: CGFloat = 0.8
+
 /// A protocol describing any data that could be interpreted as model input data.
 public protocol PartsRepresentable {
   var partsValue: [ModelContent.Part] { get }
@@ -51,7 +53,7 @@ extension [any PartsRepresentable]: PartsRepresentable {
   /// Enables images to be representable as ``PartsRepresentable``.
   extension UIImage: PartsRepresentable {
     public var partsValue: [ModelContent.Part] {
-      guard let data = jpegData(compressionQuality: 0.8) else {
+      guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
         Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from UIImage.")
         return []
       }
@@ -90,7 +92,7 @@ extension CGImage: PartsRepresentable {
     }
     CGImageDestinationAddImage(imageDestination, self, nil)
     CGImageDestinationSetProperties(imageDestination, [
-      kCGImageDestinationLossyCompressionQuality: 0.8,
+      kCGImageDestinationLossyCompressionQuality: imageCompressionQuality,
     ] as CFDictionary)
     if CGImageDestinationFinalize(imageDestination) {
       return [.data(mimetype: "image/jpeg", output as Data)]
@@ -107,7 +109,7 @@ extension CIImage: PartsRepresentable {
       .flatMap {
         // The docs specify kCGImageDestinationLossyCompressionQuality as a supported option, but
         // Swift's type system does not allow this.
-        // [kCGImageDestinationLossyCompressionQuality: 0.8]
+        // [kCGImageDestinationLossyCompressionQuality: imageCompressionQuality]
         context.jpegRepresentation(of: self, colorSpace: $0, options: [:])
       }
     if let jpegData = jpegData {
