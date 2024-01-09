@@ -51,6 +51,7 @@ struct GenerativeAIService {
     return try parseResponse(T.Response.self, from: data)
   }
 
+  @available(macOS 12.0, *)
   func loadRequestStream<T: GenerativeAIRequest>(request: T)
     -> AsyncThrowingStream<T.Response, Error> {
     return AsyncThrowingStream { continuation in
