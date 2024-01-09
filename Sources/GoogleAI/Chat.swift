@@ -30,7 +30,7 @@ public class Chat {
   public var history: [ModelContent]
 
   /// See ``sendMessage(_:)-3ify5``.
-  public func sendMessage(_ parts: PartsRepresentable...) async throws -> GenerateContentResponse {
+  public func sendMessage(_ parts: any PartsRepresentable...) async throws -> GenerateContentResponse {
     return try await sendMessage([ModelContent(parts: parts)])
   }
 
@@ -66,7 +66,7 @@ public class Chat {
 
   /// See ``sendMessageStream(_:)-4abs3``.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ parts: PartsRepresentable...)
+  public func sendMessageStream(_ parts: any PartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     return sendMessageStream([ModelContent(parts: parts)])
   }

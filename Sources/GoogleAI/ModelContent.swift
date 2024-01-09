@@ -117,7 +117,7 @@ public struct ModelContent: Codable, Equatable {
 
   /// Creates a new value from any data interpretable as a ``Part``. See ``PartsRepresentable``
   /// for types that can be interpreted as `Part`s.
-  public init(role: String? = "user", _ parts: PartsRepresentable...) {
+  public init(role: String? = "user", _ parts: any PartsRepresentable...) {
     self.init(role: role, parts: parts)
   }
 }

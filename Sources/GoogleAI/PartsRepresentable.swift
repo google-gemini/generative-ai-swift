@@ -22,88 +22,118 @@ import UniformTypeIdentifiers
 
 private let imageCompressionQuality: CGFloat = 0.8
 
-/// A protocol describing any data that could be interpreted as model input data.
+/// A protocol describing any data that could be serialized to model-interpretable input data,
+/// where the serialization process might fail with an error.
 public protocol PartsRepresentable {
-  var partsValue: [ModelContent.Part] { get }
+  associatedtype ErrorType where ErrorType: Error
+  func toModelContentParts() -> Result<[ModelContent.Part], ErrorType>
+}
+
+public extension PartsRepresentable {
+  var partsValue: [ModelContent.Part] {
+    let content = toModelContentParts()
+    switch content {
+    case .success(let success):
+      return success
+    case .failure(let failure):
+      Logging.default
+          .error("Error converting \(type(of: self)) value to model content parts: \(failure)")
+      return []
+    }
+  }
 }
 
 /// Enables a `String` to be passed in as ``PartsRepresentable``.
 extension String: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    return [.text(self)]
+  public typealias ErrorType = Never
+
+  public func toModelContentParts() -> Result<[ModelContent.Part], Never> {
+    return .success([.text(self)])
   }
 }
 
 /// Enables a ``ModelContent.Part`` to be passed in as ``PartsRepresentable``.
 extension ModelContent.Part: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    return [self]
+  public typealias ErrorType = Never
+  public func toModelContentParts() -> Result<[ModelContent.Part], Never> {
+    return .success([self])
   }
 }
 
 /// Enable an `Array` of ``PartsRepresentable`` values to be passed in as a single
 /// ``PartsRepresentable``.
 extension [any PartsRepresentable]: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    return flatMap { $0.partsValue }
+  public typealias ErrorType = Never
+  public func toModelContentParts() -> Result<[ModelContent.Part], Never> {
+    return .success(flatMap { $0.partsValue })
   }
+}
+
+/// An enum describing failures that can occur when converting image types to model content data.
+/// For some image types like `CIImage`, creating valid model content requires creating a JPEG
+/// representation of the image that may not yet exist, which may be computationally expensive.
+public enum ImageConversionError: Error {
+
+  /// The underlying image was invalid. The error will be accompanied by the actual image object.
+  case invalidUnderlyingImage(Any)
+
+  /// A valid image destination could not be constructed.
+  case couldNotAllocateDestination
+
+  /// JPEG image data conversion failed, accompanied by the original image.
+  case couldNotConvertToJPEG(Any)
 }
 
 #if canImport(UIKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension UIImage: PartsRepresentable {
-    public var partsValue: [ModelContent.Part] {
-      guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from UIImage.")
-        return []
-      }
 
-      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
+    public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
+      guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
+        return .failure(.couldNotConvertToJPEG(self))
+      }
+      return .success([ModelContent.Part.data(mimetype: "image/jpeg", data)])
     }
   }
 
 #elseif canImport(AppKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension NSImage: PartsRepresentable {
-    public var partsValue: [ModelContent.Part] {
+    public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create CGImage from NSImage.")
-        return []
+        return .failure(.invalidUnderlyingImage(self))
       }
       let bmp = NSBitmapImageRep(cgImage: cgImage)
       guard let data = bmp.representation(using: .jpeg, properties: [.compressionFactor: 0.8])
       else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create BMP from CGImage.")
-        return []
+        return .failure(.couldNotConvertToJPEG(bmp))
       }
-      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
+      return .success([ModelContent.Part.data(mimetype: "image/jpeg", data)])
     }
   }
 #endif
 
 extension CGImage: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
+  public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
     let output = NSMutableData()
     guard let imageDestination = CGImageDestinationCreateWithData(
       output, UTType.jpeg.identifier as CFString, 1, nil
     ) else {
-      Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CGImage.")
-      return []
+      return .failure(.couldNotAllocateDestination)
     }
     CGImageDestinationAddImage(imageDestination, self, nil)
     CGImageDestinationSetProperties(imageDestination, [
       kCGImageDestinationLossyCompressionQuality: imageCompressionQuality,
     ] as CFDictionary)
     if CGImageDestinationFinalize(imageDestination) {
-      return [.data(mimetype: "image/jpeg", output as Data)]
+      return .success([.data(mimetype: "image/jpeg", output as Data)])
     }
-    Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CGImage.")
-    return []
+    return .failure(.couldNotConvertToJPEG(self))
   }
 }
 
 extension CIImage: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
+  public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
     let context = CIContext()
     let jpegData = (colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB))
       .flatMap {
@@ -113,9 +143,8 @@ extension CIImage: PartsRepresentable {
         context.jpegRepresentation(of: self, colorSpace: $0, options: [:])
       }
     if let jpegData = jpegData {
-      return [.data(mimetype: "image/jpeg", jpegData)]
+      return .success([.data(mimetype: "image/jpeg", jpegData)])
     }
-    Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CIImage.")
-    return []
+    return .failure(.couldNotConvertToJPEG(self))
   }
 }
