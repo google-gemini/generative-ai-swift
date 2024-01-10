@@ -33,11 +33,11 @@ public extension PartsRepresentable {
   var partsValue: [ModelContent.Part] {
     let content = toModelContentParts()
     switch content {
-    case .success(let success):
+    case let .success(success):
       return success
-    case .failure(let failure):
+    case let .failure(failure):
       Logging.default
-          .error("Error converting \(type(of: self)) value to model content parts: \(failure)")
+        .error("Error converting \(type(of: self)) value to model content parts: \(failure)")
       return []
     }
   }
@@ -73,7 +73,6 @@ extension [any PartsRepresentable]: PartsRepresentable {
 /// For some image types like `CIImage`, creating valid model content requires creating a JPEG
 /// representation of the image that may not yet exist, which may be computationally expensive.
 public enum ImageConversionError: Error {
-
   /// The underlying image was invalid. The error will be accompanied by the actual image object.
   case invalidUnderlyingImage(Any)
 
@@ -87,7 +86,6 @@ public enum ImageConversionError: Error {
 #if canImport(UIKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension UIImage: PartsRepresentable {
-
     public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
         return .failure(.couldNotConvertToJPEG(self))

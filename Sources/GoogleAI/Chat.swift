@@ -30,7 +30,8 @@ public class Chat {
   public var history: [ModelContent]
 
   /// See ``sendMessage(_:)-3ify5``.
-  public func sendMessage(_ parts: any PartsRepresentable...) async throws -> GenerateContentResponse {
+  public func sendMessage(_ parts: any PartsRepresentable...) async throws
+    -> GenerateContentResponse {
     return try await sendMessage([ModelContent(parts: parts)])
   }
 
