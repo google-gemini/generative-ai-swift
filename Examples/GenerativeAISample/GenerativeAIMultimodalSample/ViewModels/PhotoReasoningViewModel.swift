@@ -20,7 +20,8 @@ import SwiftUI
 
 @MainActor
 class PhotoReasoningViewModel: ObservableObject {
-  // Maximum image dimensions (width and height) in pixels; reduces image size in bytes.
+  // Maximum value for the larger of the two image dimensions (height and width) in pixels. This is
+  // being used to reduce the image size in bytes.
   private static let largestImageDimension = 768.0
 
   private var logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "generative-ai")
