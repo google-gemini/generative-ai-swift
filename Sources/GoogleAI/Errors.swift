@@ -18,11 +18,21 @@ struct RPCError: Error {
   let httpResponseCode: Int
   let message: String
   let status: RPCStatus
+  let details: [ErrorDetails]
 
-  init(httpResponseCode: Int, message: String, status: RPCStatus) {
+  private var errorInfo: ErrorDetails? {
+    return details.first { $0.isErrorInfo() }
+  }
+
+  init(httpResponseCode: Int, message: String, status: RPCStatus, details: [ErrorDetails]) {
     self.httpResponseCode = httpResponseCode
     self.message = message
     self.status = status
+    self.details = details
+  }
+
+  func isInvalidAPIKeyError() -> Bool {
+    return errorInfo?.reason == "API_KEY_INVALID"
   }
 }
 
@@ -52,6 +62,8 @@ extension RPCError: Decodable {
     } else {
       self.status = .unknown
     }
+
+    details = status.details
   }
 }
 
@@ -59,6 +71,27 @@ struct ErrorStatus {
   let code: Int?
   let message: String?
   let status: RPCStatus?
+  let details: [ErrorDetails]
+}
+
+struct ErrorDetails {
+  static let errorInfoType = "type.googleapis.com/google.rpc.ErrorInfo"
+
+  let type: String
+  let reason: String?
+  let domain: String?
+
+  func isErrorInfo() -> Bool {
+    return type == ErrorDetails.errorInfoType
+  }
+}
+
+extension ErrorDetails: Decodable, Equatable {
+  enum CodingKeys: String, CodingKey {
+    case type = "@type"
+    case reason
+    case domain
+  }
 }
 
 extension ErrorStatus: Decodable {
@@ -66,6 +99,7 @@ extension ErrorStatus: Decodable {
     case code
     case message
     case status
+    case details
   }
 
   init(from decoder: Decoder) throws {
@@ -76,6 +110,11 @@ extension ErrorStatus: Decodable {
       status = try container.decodeIfPresent(RPCStatus.self, forKey: .status)
     } catch {
       status = .unknown
+    }
+    if container.contains(.details) {
+      details = try container.decode([ErrorDetails].self, forKey: .details)
+    } else {
+      details = []
     }
   }
 }

@@ -24,4 +24,7 @@ public enum GenerateContentError: Error {
 
   /// A response didn't fully complete. See the `FinishReason` for more information.
   case responseStoppedEarly(reason: FinishReason, response: GenerateContentResponse)
+
+  /// The provided API key is invalid.
+  case invalidAPIKey(underlying: Error)
 }

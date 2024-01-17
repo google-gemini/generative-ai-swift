@@ -108,6 +108,9 @@ public final class GenerativeModel {
     do {
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
     } catch {
+      if let error = error as? RPCError, error.isInvalidAPIKeyError() {
+        throw GenerateContentError.invalidAPIKey(underlying: error)
+      }
       throw GenerateContentError.internalError(underlying: error)
     }
 
