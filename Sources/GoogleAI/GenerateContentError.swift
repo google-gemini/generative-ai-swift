@@ -26,5 +26,5 @@ public enum GenerateContentError: Error {
   case responseStoppedEarly(reason: FinishReason, response: GenerateContentResponse)
 
   /// The provided API key is invalid.
-  case invalidAPIKey(underlying: Error)
+  case invalidAPIKey
 }
