@@ -181,12 +181,12 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
-      XCTAssertEqual(rpcError.status, .invalidArgument)
-      XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
-      XCTAssertTrue(rpcError.message.hasPrefix("API key not valid"))
+    } catch let GenerateContentError.invalidAPIKey(underlying: error as RPCError) {
+      XCTAssertEqual(error.status, .invalidArgument)
+      XCTAssertEqual(error.httpResponseCode, expectedStatusCode)
+      XCTAssertTrue(error.message.hasPrefix("API key not valid"))
     } catch {
-      XCTFail("Should throw GenerateContentError.internalError; error thrown: \(error)")
+      XCTFail("Should throw GenerateContentError.invalidAPIKey; error thrown: \(error)")
     }
   }
 

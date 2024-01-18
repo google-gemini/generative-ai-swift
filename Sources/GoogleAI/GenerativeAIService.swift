@@ -45,7 +45,7 @@ struct GenerativeAIService {
         Logging.network.error("[GoogleGenerativeAI] Response payload: \(responseString)")
       }
 
-      throw try JSONDecoder().decode(RPCError.self, from: data)
+      throw parseError(responseData: data)
     }
 
     return try parseResponse(T.Response.self, from: data)
@@ -96,11 +96,7 @@ struct GenerativeAIService {
           }
 
           Logging.network.error("[GoogleGenerativeAI] Response payload: \(responseBody)")
-          do {
-            try parseError(responseBody: responseBody)
-          } catch {
-            continuation.finish(throwing: error)
-          }
+          continuation.finish(throwing: parseError(responseBody: responseBody))
 
           return
         }
@@ -138,12 +134,7 @@ struct GenerativeAIService {
         }
 
         if extraLines.count > 0 {
-          do {
-            try parseError(responseBody: extraLines)
-          } catch {
-            continuation.finish(throwing: error)
-          }
-
+          continuation.finish(throwing: parseError(responseBody: extraLines))
           return
         }
 
@@ -198,15 +189,21 @@ struct GenerativeAIService {
     return data
   }
 
-  private func parseError(responseBody: String) throws {
-    let data = try jsonData(jsonText: responseBody)
-
+  private func parseError(responseBody: String) -> Error {
     do {
-      let rpcError = try JSONDecoder().decode(RPCError.self, from: data)
-      throw rpcError
+      let data = try jsonData(jsonText: responseBody)
+      return parseError(responseData: data)
     } catch {
-      // TODO: Throw an error about an unrecognized error payload with the response body
-      throw error
+      return error
+    }
+  }
+
+  private func parseError(responseData: Data) -> Error {
+    do {
+      return try JSONDecoder().decode(RPCError.self, from: responseData)
+    } catch {
+      // TODO: Return an error about an unrecognized error payload with the response body
+      return error
     }
   }
 
