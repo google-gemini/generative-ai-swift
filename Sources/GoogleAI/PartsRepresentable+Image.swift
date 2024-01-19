@@ -25,8 +25,10 @@ private let imageCompressionQuality: CGFloat = 0.8
 /// For some image types like `CIImage`, creating valid model content requires creating a JPEG
 /// representation of the image that may not yet exist, which may be computationally expensive.
 public enum ImageConversionError: Error {
-  /// The underlying image was invalid. The error will be accompanied by the actual image object.
-  case invalidUnderlyingImage(CGImage)
+  #if canImport(AppKit)
+    /// The image (the receiver of the call `toModelContentParts()`) was invalid.
+    case invalidUnderlyingImage
+  #endif
 
   /// A valid image destination could not be allocated.
   case couldNotAllocateDestination
@@ -52,7 +54,7 @@ public enum ImageConversionError: Error {
   extension NSImage: PartsRepresentable {
     public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-        return .failure(.invalidUnderlyingImage(self))
+        return .failure(.invalidUnderlyingImage)
       }
       let bmp = NSBitmapImageRep(cgImage: cgImage)
       guard let data = bmp.representation(using: .jpeg, properties: [.compressionFactor: 0.8])
