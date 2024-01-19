@@ -22,15 +22,12 @@ public protocol PartsRepresentable {
 }
 
 public extension PartsRepresentable {
-
   func tryPartsValue() throws -> [ModelContent.Part] {
     return try toModelContentParts().get()
   }
-
 }
 
 public extension PartsRepresentable where ErrorType == Never {
-
   var partsValue: [ModelContent.Part] {
     let content = toModelContentParts()
     switch content {
@@ -56,9 +53,9 @@ extension [any PartsRepresentable]: PartsRepresentable {
   public func toModelContentParts() -> Result<[ModelContent.Part], Error> {
     let result = { () throws -> [ModelContent.Part] in
       try compactMap { element in
-        return try element.tryPartsValue()
+        try element.tryPartsValue()
       }
-      .flatMap({ $0 })
+      .flatMap { $0 }
     }
     return Result(catching: result)
   }

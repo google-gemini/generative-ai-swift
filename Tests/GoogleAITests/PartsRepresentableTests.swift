@@ -38,14 +38,14 @@ final class PartsRepresentableTests: XCTestCase {
       )!
       return ctx.makeImage()!
     }
-    let modelContent = image.partsValue
+    let modelContent = try image.tryPartsValue()
     XCTAssert(modelContent.count > 0, "Expected non-empty model content for CGImage: \(image)")
   }
 
   func testModelContentFromCIImageIsNotEmpty() throws {
     let image = CIImage(color: CIColor.red)
       .cropped(to: CGRect(origin: CGPointZero, size: CGSize(width: 16, height: 16)))
-    let modelContent = image.partsValue
+    let modelContent = try image.tryPartsValue()
     XCTAssert(modelContent.count > 0, "Expected non-empty model content for CGImage: \(image)")
   }
 
@@ -54,7 +54,7 @@ final class PartsRepresentableTests: XCTestCase {
       let coreImage = CIImage(color: CIColor.red)
         .cropped(to: CGRect(origin: CGPointZero, size: CGSize(width: 16, height: 16)))
       let image = UIImage(ciImage: coreImage)
-      let modelContent = image.partsValue
+      let modelContent = try image.tryPartsValue()
       XCTAssert(modelContent.count > 0, "Expected non-empty model content for UIImage: \(image)")
     }
   #else
@@ -64,7 +64,7 @@ final class PartsRepresentableTests: XCTestCase {
       let rep = NSCIImageRep(ciImage: coreImage)
       let image = NSImage(size: rep.size)
       image.addRepresentation(rep)
-      let modelContent = image.partsValue
+      let modelContent = try image.tryPartsValue()
       XCTAssert(modelContent.count > 0, "Expected non-empty model content for NSImage: \(image)")
     }
   #endif
