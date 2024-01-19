@@ -106,7 +106,12 @@ public struct ModelContent: Codable, Equatable {
   /// ``Part``. See ``PartsRepresentable`` for types that can be interpreted as `Part`s.
   public init(role: String? = "user", parts: some PartsRepresentable) {
     self.role = role
-    self.parts = parts.partsValue
+    do {
+      try self.parts = parts.tryPartsValue()
+    } catch {
+      Logging.default.error("Error creating parts: \(error)")
+      self.parts = []
+    }
   }
 
   /// Creates a new value from a list of ``Part``s.
