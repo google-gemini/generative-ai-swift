@@ -17,6 +17,7 @@ import Foundation
 struct CountTokensRequest {
   let model: String
   let contents: [ModelContent]
+  let options: RequestOptions?
 }
 
 extension CountTokensRequest: Encodable {
