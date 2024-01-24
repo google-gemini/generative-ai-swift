@@ -69,8 +69,8 @@ final class GoogleGenerativeAITests: XCTestCase {
         .generateContent([str, UIImage(), ModelContent.Part.text(str)])
       _ = try await genAI.generateContent(str, UIImage(), "def", UIImage())
       _ = try await genAI.generateContent([str, UIImage(), "def", UIImage()])
-      _ = try await genAI.generateContent([try ModelContent("def", UIImage()),
-                                           try ModelContent("def", UIImage())])
+      _ = try await genAI.generateContent([ModelContent("def", UIImage()),
+                                           ModelContent("def", UIImage())])
     #elseif canImport(AppKit)
       _ = try await genAI.generateContent(NSImage())
       _ = try await genAI.generateContent([NSImage()])
@@ -102,7 +102,7 @@ final class GoogleGenerativeAITests: XCTestCase {
       let representable2: [any PartsRepresentable] = [str, UIImage()]
       _ = try ModelContent(parts: representable2)
       _ = try ModelContent(parts: [str, UIImage(),
-                               ModelContent.Part.text(str)] as [any PartsRepresentable])
+                                   ModelContent.Part.text(str)] as [any PartsRepresentable])
     #elseif canImport(AppKit)
       _ = try ModelContent(role: "user", parts: NSImage())
       _ = try ModelContent(role: "user", parts: [NSImage()])
@@ -115,7 +115,7 @@ final class GoogleGenerativeAITests: XCTestCase {
       _ = try ModelContent(parts: representable2)
       _ =
         try ModelContent(parts: [str, NSImage(),
-                             ModelContent.Part.text(str)] as [any PartsRepresentable])
+                                 ModelContent.Part.text(str)] as [any PartsRepresentable])
     #endif
 
     // countTokens API
@@ -124,14 +124,14 @@ final class GoogleGenerativeAITests: XCTestCase {
       let _: CountTokensResponse = try await genAI.countTokens("What color is the Sky?",
                                                                UIImage())
       let _: CountTokensResponse = try await genAI.countTokens([
-        try ModelContent("What color is the Sky?", UIImage()),
-        try ModelContent(UIImage(), "What color is the Sky?", UIImage()),
+        ModelContent("What color is the Sky?", UIImage()),
+        ModelContent(UIImage(), "What color is the Sky?", UIImage()),
       ])
     #endif
 
     // Chat
     _ = genAI.startChat()
-    _ = genAI.startChat(history: [try ModelContent(parts: "abc")])
+    _ = try genAI.startChat(history: [ModelContent(parts: "abc")])
   }
 
   // Result builder alternative

@@ -141,7 +141,7 @@ public final class GenerativeModel {
   @available(macOS 12.0, *)
   public func generateContentStream(_ parts: any PartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    return generateContentStream(try [ModelContent(parts: parts)])
+    return try generateContentStream([ModelContent(parts: parts)])
   }
 
   /// Generates new content from input content given to the model as a prompt.
@@ -152,14 +152,14 @@ public final class GenerativeModel {
   @available(macOS 12.0, *)
   public func generateContentStream(_ contentClosure: @autoclosure () throws -> [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-      let content: [ModelContent]
-      do {
-        content = try contentClosure()
-      } catch(let underlying) {
-        return AsyncThrowingStream { continuation in
-          continuation.finish(throwing: GenerateContentError.internalError(underlying: underlying))
-        }
+    let content: [ModelContent]
+    do {
+      content = try contentClosure()
+    } catch let underlying {
+      return AsyncThrowingStream { continuation in
+        continuation.finish(throwing: GenerateContentError.internalError(underlying: underlying))
       }
+    }
 
     let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
