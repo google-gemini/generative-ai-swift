@@ -40,9 +40,14 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: The model's response if no error occurred.
   /// - Throws: A ``GenerateContentError`` if an error occurred.
-  public func sendMessage(_ content: [ModelContent]) async throws -> GenerateContentResponse {
+  public func sendMessage(_ content: @autoclosure () throws -> [ModelContent]) async throws -> GenerateContentResponse {
     // Ensure that the new content has the role set.
-    let newContent: [ModelContent] = content.map(populateContentRole(_:))
+    let newContent: [ModelContent]
+    do {
+      newContent = try content().map(populateContentRole(_:))
+    } catch(let underlying) {
+      throw GenerateContentError.internalError(underlying: underlying)
+    }
 
     // Send the history alongside the new message as context.
     let request = history + newContent
@@ -69,7 +74,7 @@ public class Chat {
   @available(macOS 12.0, *)
   public func sendMessageStream(_ parts: any PartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    return sendMessageStream([ModelContent(parts: parts)])
+    return sendMessageStream(try [ModelContent(parts: parts)])
   }
 
   /// Sends a message using the existing history of this chat as context. If successful, the message
@@ -77,8 +82,17 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: A stream containing the model's response or an error if an error occurred.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ content: [ModelContent])
+  public func sendMessageStream(_ contentClosure: @autoclosure () throws -> [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
+      let content: [ModelContent]
+      do {
+        content = try contentClosure()
+      } catch(let underlying) {
+        return AsyncThrowingStream { continuation in
+          continuation.finish(throwing: GenerateContentError.internalError(underlying: underlying))
+        }
+      }
+
     return AsyncThrowingStream { continuation in
       Task {
         var aggregatedContent: [ModelContent] = []

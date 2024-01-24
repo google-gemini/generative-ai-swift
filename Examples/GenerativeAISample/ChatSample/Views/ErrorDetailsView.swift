@@ -162,7 +162,7 @@ struct ErrorDetailsView: View {
   NavigationView {
     let _ = GenerateContentError.promptBlocked(
       response: GenerateContentResponse(candidates: [
-        CandidateResponse(content: ModelContent(role: "model", [
+        CandidateResponse(content: try! ModelContent(role: "model", [
           """
             A _hypothetical_ model response.
             Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
@@ -183,7 +183,7 @@ struct ErrorDetailsView: View {
     let errorFinishedEarly = GenerateContentError.responseStoppedEarly(
       reason: .maxTokens,
       response: GenerateContentResponse(candidates: [
-        CandidateResponse(content: ModelContent(role: "model", [
+        CandidateResponse(content: try! ModelContent(role: "model", [
           """
             A _hypothetical_ model response.
             Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.

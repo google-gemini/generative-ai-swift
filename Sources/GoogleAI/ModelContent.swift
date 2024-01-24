@@ -104,14 +104,9 @@ public struct ModelContent: Codable, Equatable {
 
   /// Creates a new value from any data or `Array` of data interpretable as a
   /// ``Part``. See ``PartsRepresentable`` for types that can be interpreted as `Part`s.
-  public init(role: String? = "user", parts: some PartsRepresentable) {
+  public init(role: String? = "user", parts: some PartsRepresentable) throws {
     self.role = role
-    do {
-      try self.parts = parts.tryPartsValue()
-    } catch {
-      Logging.default.error("Error creating parts: \(error)")
-      self.parts = []
-    }
+    try self.parts = parts.tryPartsValue()
   }
 
   /// Creates a new value from a list of ``Part``s.
@@ -122,7 +117,7 @@ public struct ModelContent: Codable, Equatable {
 
   /// Creates a new value from any data interpretable as a ``Part``. See ``PartsRepresentable``
   /// for types that can be interpreted as `Part`s.
-  public init(role: String? = "user", _ parts: any PartsRepresentable...) {
-    self.init(role: role, parts: parts)
+  public init(role: String? = "user", _ parts: any PartsRepresentable...) throws {
+    try self.init(role: role, parts: parts)
   }
 }

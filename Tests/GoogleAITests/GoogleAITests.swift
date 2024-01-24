@@ -69,8 +69,8 @@ final class GoogleGenerativeAITests: XCTestCase {
         .generateContent([str, UIImage(), ModelContent.Part.text(str)])
       _ = try await genAI.generateContent(str, UIImage(), "def", UIImage())
       _ = try await genAI.generateContent([str, UIImage(), "def", UIImage()])
-      _ = try await genAI.generateContent([ModelContent("def", UIImage()),
-                                           ModelContent("def", UIImage())])
+      _ = try await genAI.generateContent([try ModelContent("def", UIImage()),
+                                           try ModelContent("def", UIImage())])
     #elseif canImport(AppKit)
       _ = try await genAI.generateContent(NSImage())
       _ = try await genAI.generateContent([NSImage()])
@@ -81,40 +81,40 @@ final class GoogleGenerativeAITests: XCTestCase {
     // PartsRepresentable combinations.
     let _ = ModelContent(parts: [.text(str)])
     let _ = ModelContent(role: "model", parts: [.text(str)])
-    let _ = ModelContent(parts: "Constant String")
-    let _ = ModelContent(parts: str)
-    let _ = ModelContent(parts: [str])
+    let _ = try ModelContent(parts: "Constant String")
+    let _ = try ModelContent(parts: str)
+    let _ = try ModelContent(parts: [str])
     // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
     // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
     // way we can get it to work.
-    let _ = ModelContent(parts: [str, ModelContent.Part.data(
+    let _ = try ModelContent(parts: [str, ModelContent.Part.data(
       mimetype: "foo",
       Data()
     )] as [any PartsRepresentable])
     #if canImport(UIKit)
-      _ = ModelContent(role: "user", parts: UIImage())
-      _ = ModelContent(role: "user", parts: [UIImage()])
+      _ = try ModelContent(role: "user", parts: UIImage())
+      _ = try ModelContent(role: "user", parts: [UIImage()])
       // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
       // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
       // way we can get it to work.
-      _ = ModelContent(parts: [str, UIImage()] as [any PartsRepresentable])
+      _ = try ModelContent(parts: [str, UIImage()] as [any PartsRepresentable])
       // Alternatively, you can explicitly declare the type in a variable and pass it in.
       let representable2: [any PartsRepresentable] = [str, UIImage()]
-      _ = ModelContent(parts: representable2)
-      _ = ModelContent(parts: [str, UIImage(),
+      _ = try ModelContent(parts: representable2)
+      _ = try ModelContent(parts: [str, UIImage(),
                                ModelContent.Part.text(str)] as [any PartsRepresentable])
     #elseif canImport(AppKit)
-      _ = ModelContent(role: "user", parts: NSImage())
-      _ = ModelContent(role: "user", parts: [NSImage()])
+      _ = try ModelContent(role: "user", parts: NSImage())
+      _ = try ModelContent(role: "user", parts: [NSImage()])
       // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
       // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
       // way we can get it to work.
-      _ = ModelContent(parts: [str, NSImage()] as [any PartsRepresentable])
+      _ = try ModelContent(parts: [str, NSImage()] as [any PartsRepresentable])
       // Alternatively, you can explicitly declare the type in a variable and pass it in.
       let representable2: [any PartsRepresentable] = [str, NSImage()]
-      _ = ModelContent(parts: representable2)
+      _ = try ModelContent(parts: representable2)
       _ =
-        ModelContent(parts: [str, NSImage(),
+        try ModelContent(parts: [str, NSImage(),
                              ModelContent.Part.text(str)] as [any PartsRepresentable])
     #endif
 
@@ -124,14 +124,14 @@ final class GoogleGenerativeAITests: XCTestCase {
       let _: CountTokensResponse = try await genAI.countTokens("What color is the Sky?",
                                                                UIImage())
       let _: CountTokensResponse = try await genAI.countTokens([
-        ModelContent("What color is the Sky?", UIImage()),
-        ModelContent(UIImage(), "What color is the Sky?", UIImage()),
+        try ModelContent("What color is the Sky?", UIImage()),
+        try ModelContent(UIImage(), "What color is the Sky?", UIImage()),
       ])
     #endif
 
     // Chat
     _ = genAI.startChat()
-    _ = genAI.startChat(history: [ModelContent(parts: "abc")])
+    _ = genAI.startChat(history: [try ModelContent(parts: "abc")])
   }
 
   // Result builder alternative
