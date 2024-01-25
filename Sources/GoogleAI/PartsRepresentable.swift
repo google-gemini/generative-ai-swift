@@ -17,55 +17,31 @@ import Foundation
 /// A protocol describing any data that could be serialized to model-interpretable input data,
 /// where the serialization process might fail with an error.
 public protocol PartsRepresentable {
-  associatedtype ErrorType where ErrorType: Error
-  func toModelContentParts() -> Result<[ModelContent.Part], ErrorType>
-}
-
-public extension PartsRepresentable {
-  func tryPartsValue() throws -> [ModelContent.Part] {
-    return try toModelContentParts().get()
-  }
-}
-
-public extension PartsRepresentable where ErrorType == Never {
-  var partsValue: [ModelContent.Part] {
-    let content = toModelContentParts()
-    switch content {
-    case let .success(success):
-      return success
-    }
-  }
+  func tryPartsValue() throws -> [ModelContent.Part]
 }
 
 /// Enables a ``ModelContent.Part`` to be passed in as ``PartsRepresentable``.
 extension ModelContent.Part: PartsRepresentable {
   public typealias ErrorType = Never
-  public func toModelContentParts() -> Result<[ModelContent.Part], Never> {
-    return .success([self])
+  public func tryPartsValue() throws -> [ModelContent.Part] {
+    return [self]
   }
 }
 
 /// Enable an `Array` of ``PartsRepresentable`` values to be passed in as a single
 /// ``PartsRepresentable``.
-extension [any PartsRepresentable]: PartsRepresentable {
-  public typealias ErrorType = Error
-
-  public func toModelContentParts() -> Result<[ModelContent.Part], Error> {
-    let result = { () throws -> [ModelContent.Part] in
-      try compactMap { element in
-        try element.tryPartsValue()
-      }
-      .flatMap { $0 }
+extension [PartsRepresentable]: PartsRepresentable {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
+    return try compactMap { element in
+      try element.tryPartsValue()
     }
-    return Result(catching: result)
+    .flatMap { $0 }
   }
 }
 
 /// Enables a `String` to be passed in as ``PartsRepresentable``.
 extension String: PartsRepresentable {
-  public typealias ErrorType = Never
-
-  public func toModelContentParts() -> Result<[ModelContent.Part], Never> {
-    return .success([.text(self)])
+  public func tryPartsValue() throws -> [ModelContent.Part] {
+    return [.text(self)]
   }
 }

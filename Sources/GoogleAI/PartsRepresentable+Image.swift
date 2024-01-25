@@ -41,52 +41,52 @@ public enum ImageConversionError: Error {
 #if canImport(UIKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension UIImage: PartsRepresentable {
-    public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
+    public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
-        return .failure(.couldNotConvertToJPEG(self))
+        throw ImageConversionError.couldNotConvertToJPEG(self)
       }
-      return .success([ModelContent.Part.data(mimetype: "image/jpeg", data)])
+      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
     }
   }
 
 #elseif canImport(AppKit)
   /// Enables images to be representable as ``PartsRepresentable``.
   extension NSImage: PartsRepresentable {
-    public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
+    public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-        return .failure(.invalidUnderlyingImage)
+        throw ImageConversionError.invalidUnderlyingImage
       }
       let bmp = NSBitmapImageRep(cgImage: cgImage)
       guard let data = bmp.representation(using: .jpeg, properties: [.compressionFactor: 0.8])
       else {
-        return .failure(.couldNotConvertToJPEG(bmp))
+        throw ImageConversionError.couldNotConvertToJPEG(bmp)
       }
-      return .success([ModelContent.Part.data(mimetype: "image/jpeg", data)])
+      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
     }
   }
 #endif
 
 extension CGImage: PartsRepresentable {
-  public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
     let output = NSMutableData()
     guard let imageDestination = CGImageDestinationCreateWithData(
       output, UTType.jpeg.identifier as CFString, 1, nil
     ) else {
-      return .failure(.couldNotAllocateDestination)
+      throw ImageConversionError.couldNotAllocateDestination
     }
     CGImageDestinationAddImage(imageDestination, self, nil)
     CGImageDestinationSetProperties(imageDestination, [
       kCGImageDestinationLossyCompressionQuality: imageCompressionQuality,
     ] as CFDictionary)
     if CGImageDestinationFinalize(imageDestination) {
-      return .success([.data(mimetype: "image/jpeg", output as Data)])
+      return [.data(mimetype: "image/jpeg", output as Data)]
     }
-    return .failure(.couldNotConvertToJPEG(self))
+    throw ImageConversionError.couldNotConvertToJPEG(self)
   }
 }
 
 extension CIImage: PartsRepresentable {
-  public func toModelContentParts() -> Result<[ModelContent.Part], ImageConversionError> {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
     let context = CIContext()
     let jpegData = (colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB))
       .flatMap {
@@ -96,8 +96,8 @@ extension CIImage: PartsRepresentable {
         context.jpegRepresentation(of: self, colorSpace: $0, options: [:])
       }
     if let jpegData = jpegData {
-      return .success([.data(mimetype: "image/jpeg", jpegData)])
+      return [.data(mimetype: "image/jpeg", jpegData)]
     }
-    return .failure(.couldNotConvertToJPEG(self))
+    throw ImageConversionError.couldNotConvertToJPEG(self)
   }
 }
