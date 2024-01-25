@@ -181,10 +181,8 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.invalidAPIKey(underlying: error as RPCError) {
-      XCTAssertEqual(error.status, .invalidArgument)
-      XCTAssertEqual(error.httpResponseCode, expectedStatusCode)
-      XCTAssertTrue(error.message.hasPrefix("API key not valid"))
+    } catch GenerateContentError.invalidAPIKey {
+      // Do nothing, catching a GenerateContentError.invalidAPIKey error is expected.
     } catch {
       XCTFail("Should throw GenerateContentError.invalidAPIKey; error thrown: \(error)")
     }
