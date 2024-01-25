@@ -108,10 +108,7 @@ public final class GenerativeModel {
     do {
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
     } catch {
-      if let error = error as? RPCError, error.isInvalidAPIKeyError() {
-        throw GenerateContentError.invalidAPIKey
-      }
-      throw GenerateContentError.internalError(underlying: error)
+      throw GenerativeModel.generateContentError(from: error)
     }
 
     // Check the prompt feedback to see if the prompt was blocked.
@@ -168,7 +165,7 @@ public final class GenerativeModel {
       do {
         response = try await responseIterator.next()
       } catch {
-        throw GenerateContentError.internalError(underlying: error)
+        throw GenerativeModel.generateContentError(from: error)
       }
 
       // The responseIterator will return `nil` when it's done.
@@ -239,6 +236,18 @@ public final class GenerativeModel {
     } else {
       return modelResourcePrefix + name
     }
+  }
+
+  /// Returns a `GenerateContentError` (for public consumption) from an internal error.
+  ///
+  /// If `error` is already a `GenerateContentError` the error is returned unchanged.
+  private static func generateContentError(from error: Error) -> GenerateContentError {
+    if let error = error as? GenerateContentError {
+      return error
+    } else if let error = error as? RPCError, error.isInvalidAPIKeyError() {
+      return GenerateContentError.invalidAPIKey
+    }
+    return GenerateContentError.internalError(underlying: error)
   }
 }
 
