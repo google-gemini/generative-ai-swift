@@ -439,6 +439,26 @@ final class GenerativeModelTests: XCTestCase {
 
   // MARK: - Generate Content (Streaming)
 
+  func testGenerateContentStream_failureInvalidAPIKey() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-failure-api-key",
+        withExtension: "json"
+      )
+
+    do {
+      let stream = model.generateContentStream("Hi")
+      for try await _ in stream {
+        XCTFail("No content is there, this shouldn't happen.")
+      }
+    } catch GenerateContentError.invalidAPIKey {
+      // invalidAPIKey error is as expected, nothing else to check.
+      return
+    }
+
+    XCTFail("Should have caught an error.")
+  }
+
   func testGenerateContentStream_failureEmptyContent() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
