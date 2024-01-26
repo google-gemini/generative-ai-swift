@@ -16,21 +16,34 @@ import Foundation
 
 /// A protocol describing any data that could be serialized to model-interpretable input data,
 /// where the serialization process might fail with an error.
-public protocol PartsRepresentable {
+public protocol ThrowingPartsRepresentable {
   func tryPartsValue() throws -> [ModelContent.Part]
 }
 
-/// Enables a ``ModelContent.Part`` to be passed in as ``PartsRepresentable``.
-extension ModelContent.Part: PartsRepresentable {
+/// A protocol describing any data that could be serialized to model-interpretable input data,
+/// where the serialization process cannot fail with an error. For a failable conversion, see
+/// ``ThrowingPartsRepresentable``
+public protocol PartsRepresentable: ThrowingPartsRepresentable {
+  func toPartsValue() -> [ModelContent.Part]
+}
+
+public extension PartsRepresentable {
+  func tryPartsValue() throws -> [ModelContent.Part] {
+    return toPartsValue()
+  }
+}
+
+/// Enables a ``ModelContent.Part`` to be passed in as ``ThrowingPartsRepresentable``.
+extension ModelContent.Part: ThrowingPartsRepresentable {
   public typealias ErrorType = Never
   public func tryPartsValue() throws -> [ModelContent.Part] {
     return [self]
   }
 }
 
-/// Enable an `Array` of ``PartsRepresentable`` values to be passed in as a single
-/// ``PartsRepresentable``.
-extension [PartsRepresentable]: PartsRepresentable {
+/// Enable an `Array` of ``ThrowingPartsRepresentable`` values to be passed in as a single
+/// ``ThrowingPartsRepresentable``.
+extension [ThrowingPartsRepresentable]: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     return try compactMap { element in
       try element.tryPartsValue()
@@ -39,9 +52,9 @@ extension [PartsRepresentable]: PartsRepresentable {
   }
 }
 
-/// Enables a `String` to be passed in as ``PartsRepresentable``.
+/// Enables a `String` to be passed in as ``ThrowingPartsRepresentable``.
 extension String: PartsRepresentable {
-  public func tryPartsValue() throws -> [ModelContent.Part] {
+  public func toPartsValue() -> [ModelContent.Part] {
     return [.text(self)]
   }
 }

@@ -78,44 +78,51 @@ final class GoogleGenerativeAITests: XCTestCase {
       _ = try await genAI.generateContent([str, NSImage(), "def", NSImage()])
     #endif
 
-    // PartsRepresentable combinations.
+    // ThrowingPartsRepresentable combinations.
     let _ = ModelContent(parts: [.text(str)])
     let _ = ModelContent(role: "model", parts: [.text(str)])
-    let _ = try ModelContent(parts: "Constant String")
-    let _ = try ModelContent(parts: str)
+    let _ = ModelContent(parts: "Constant String")
+    let _ = ModelContent(parts: str)
+    // Note: This requires the `try` for some reason. Casting to explicit [PartsRepresentable] also
+    // doesn't work.
     let _ = try ModelContent(parts: [str])
-    // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
-    // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
-    // way we can get it to work.
+    // Note: without `as [any ThrowingPartsRepresentable]` this will fail to compile with "Cannot
+    // convert value of type 'String' to expected element type
+    // 'Array<ModelContent.Part>.ArrayLiteralElement'. Not sure if there's a way we can get it to
+    // work.
     let _ = try ModelContent(parts: [str, ModelContent.Part.data(
       mimetype: "foo",
       Data()
-    )] as [any PartsRepresentable])
+    )] as [any ThrowingPartsRepresentable])
     #if canImport(UIKit)
       _ = try ModelContent(role: "user", parts: UIImage())
       _ = try ModelContent(role: "user", parts: [UIImage()])
-      // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
-      // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
+      // Note: without `as [any ThrowingPartsRepresentable]` this will fail to compile with "Cannot
+      // convert
+      // value of type `[Any]` to expected type `[any ThrowingPartsRepresentable]`. Not sure if
+      // there's a
       // way we can get it to work.
-      _ = try ModelContent(parts: [str, UIImage()] as [any PartsRepresentable])
+      _ = try ModelContent(parts: [str, UIImage()] as [any ThrowingPartsRepresentable])
       // Alternatively, you can explicitly declare the type in a variable and pass it in.
-      let representable2: [any PartsRepresentable] = [str, UIImage()]
+      let representable2: [any ThrowingPartsRepresentable] = [str, UIImage()]
       _ = try ModelContent(parts: representable2)
       _ = try ModelContent(parts: [str, UIImage(),
-                                   ModelContent.Part.text(str)] as [any PartsRepresentable])
+                                   ModelContent.Part.text(str)] as [any ThrowingPartsRepresentable])
     #elseif canImport(AppKit)
       _ = try ModelContent(role: "user", parts: NSImage())
       _ = try ModelContent(role: "user", parts: [NSImage()])
-      // Note: without `as [any PartsRepresentable]` this will fail to compile with "Cannot convert
-      // value of type `[Any]` to expected type `[any PartsRepresentable]`. Not sure if there's a
+      // Note: without `as [any ThrowingPartsRepresentable]` this will fail to compile with "Cannot
+      // convert
+      // value of type `[Any]` to expected type `[any ThrowingPartsRepresentable]`. Not sure if
+      // there's a
       // way we can get it to work.
-      _ = try ModelContent(parts: [str, NSImage()] as [any PartsRepresentable])
+      _ = try ModelContent(parts: [str, NSImage()] as [any ThrowingPartsRepresentable])
       // Alternatively, you can explicitly declare the type in a variable and pass it in.
-      let representable2: [any PartsRepresentable] = [str, NSImage()]
+      let representable2: [any ThrowingPartsRepresentable] = [str, NSImage()]
       _ = try ModelContent(parts: representable2)
       _ =
         try ModelContent(parts: [str, NSImage(),
-                                 ModelContent.Part.text(str)] as [any PartsRepresentable])
+                                 ModelContent.Part.text(str)] as [any ThrowingPartsRepresentable])
     #endif
 
     // countTokens API
@@ -131,7 +138,7 @@ final class GoogleGenerativeAITests: XCTestCase {
 
     // Chat
     _ = genAI.startChat()
-    _ = try genAI.startChat(history: [ModelContent(parts: "abc")])
+    _ = genAI.startChat(history: [ModelContent(parts: "abc")])
   }
 
   // Result builder alternative

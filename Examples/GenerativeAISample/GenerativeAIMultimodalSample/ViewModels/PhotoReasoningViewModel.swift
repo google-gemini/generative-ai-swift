@@ -58,7 +58,7 @@ class PhotoReasoningViewModel: ObservableObject {
 
       let prompt = "Look at the image(s), and then answer the following question: \(userInput)"
 
-      var images = [any PartsRepresentable]()
+      var images = [any ThrowingPartsRepresentable]()
       for item in selectedItems {
         if let data = try? await item.loadTransferable(type: Data.self) {
           images.append(ModelContent.Part.png(data))

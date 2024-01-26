@@ -103,10 +103,17 @@ public struct ModelContent: Codable, Equatable {
   public let parts: [Part]
 
   /// Creates a new value from any data or `Array` of data interpretable as a
-  /// ``Part``. See ``PartsRepresentable`` for types that can be interpreted as `Part`s.
-  public init(role: String? = "user", parts: some PartsRepresentable) throws {
+  /// ``Part``. See ``ThrowingPartsRepresentable`` for types that can be interpreted as `Part`s.
+  public init(role: String? = "user", parts: some ThrowingPartsRepresentable) throws {
     self.role = role
     try self.parts = parts.tryPartsValue()
+  }
+
+  /// Creates a new value from any data or `Array` of data interpretable as a
+  /// ``Part``. See ``ThrowingPartsRepresentable`` for types that can be interpreted as `Part`s.
+  public init(role: String? = "user", parts: some PartsRepresentable) {
+    self.role = role
+    self.parts = parts.toPartsValue()
   }
 
   /// Creates a new value from a list of ``Part``s.
@@ -115,9 +122,19 @@ public struct ModelContent: Codable, Equatable {
     self.parts = parts
   }
 
-  /// Creates a new value from any data interpretable as a ``Part``. See ``PartsRepresentable``
+  /// Creates a new value from any data interpretable as a ``Part``. See
+  /// ``ThrowingPartsRepresentable``
   /// for types that can be interpreted as `Part`s.
-  public init(role: String? = "user", _ parts: any PartsRepresentable...) throws {
-    try self.init(role: role, parts: parts)
+  public init(role: String? = "user", _ parts: any ThrowingPartsRepresentable...) throws {
+    let content = try parts.flatMap { try $0.tryPartsValue() }
+    self.init(role: role, parts: content)
+  }
+
+  /// Creates a new value from any data interpretable as a ``Part``. See
+  /// ``ThrowingPartsRepresentable``
+  /// for types that can be interpreted as `Part`s.
+  public init(role: String? = "user", _ parts: [PartsRepresentable]) {
+    let content = parts.flatMap { $0.toPartsValue() }
+    self.init(role: role, parts: content)
   }
 }

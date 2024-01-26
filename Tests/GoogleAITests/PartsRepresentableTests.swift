@@ -21,7 +21,7 @@ import XCTest
   import AppKit
 #endif
 
-final class PartsRepresentableTests: XCTestCase {
+final class ThrowingPartsRepresentableTests: XCTestCase {
   func testModelContentFromCGImageIsNotEmpty() throws {
     // adapted from https://forums.swift.org/t/creating-a-cgimage-from-color-array/18634/2
     var srgbArray = [UInt32](repeating: 0xFFFF_FFFF, count: 8 * 8)

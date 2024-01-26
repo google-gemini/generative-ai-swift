@@ -39,8 +39,8 @@ public enum ImageConversionError: Error {
 }
 
 #if canImport(UIKit)
-  /// Enables images to be representable as ``PartsRepresentable``.
-  extension UIImage: PartsRepresentable {
+  /// Enables images to be representable as ``ThrowingPartsRepresentable``.
+  extension UIImage: ThrowingPartsRepresentable {
     public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
         throw ImageConversionError.couldNotConvertToJPEG(self)
@@ -50,8 +50,8 @@ public enum ImageConversionError: Error {
   }
 
 #elseif canImport(AppKit)
-  /// Enables images to be representable as ``PartsRepresentable``.
-  extension NSImage: PartsRepresentable {
+  /// Enables images to be representable as ``ThrowingPartsRepresentable``.
+  extension NSImage: ThrowingPartsRepresentable {
     public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
         throw ImageConversionError.invalidUnderlyingImage
@@ -66,7 +66,7 @@ public enum ImageConversionError: Error {
   }
 #endif
 
-extension CGImage: PartsRepresentable {
+extension CGImage: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     let output = NSMutableData()
     guard let imageDestination = CGImageDestinationCreateWithData(
@@ -85,7 +85,7 @@ extension CGImage: PartsRepresentable {
   }
 }
 
-extension CIImage: PartsRepresentable {
+extension CIImage: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     let context = CIContext()
     let jpegData = (colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB))
