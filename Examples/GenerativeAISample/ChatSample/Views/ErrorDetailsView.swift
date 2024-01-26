@@ -180,8 +180,8 @@ struct ErrorDetailsView: View {
     response: GenerateContentResponse(candidates: [
       CandidateResponse(content: ModelContent(role: "model", [
         """
-          A _hypothetical_ model response.
-          Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
+        A _hypothetical_ model response.
+        Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
         """,
       ]),
       safetyRatings: [
@@ -204,8 +204,8 @@ struct ErrorDetailsView: View {
     response: GenerateContentResponse(candidates: [
       CandidateResponse(content: ModelContent(role: "model", [
         """
-          A _hypothetical_ model response.
-          Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
+        A _hypothetical_ model response.
+        Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
         """,
       ]),
       safetyRatings: [
