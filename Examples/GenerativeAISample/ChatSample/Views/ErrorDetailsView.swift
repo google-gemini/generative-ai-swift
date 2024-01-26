@@ -167,7 +167,7 @@ struct ErrorDetailsView: View {
             SubtitleMarkdownFormRow(
               title: "Help",
               value: """
-              The API is unsupported in your location (country / territory); please see
+              The API is unsupported in your location (country / territory); please see the list of
               [available regions](https://ai.google.dev/available_regions#available_regions).
               """
             )
