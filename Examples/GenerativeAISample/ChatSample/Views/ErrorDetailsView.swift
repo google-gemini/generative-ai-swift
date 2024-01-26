@@ -157,6 +157,22 @@ struct ErrorDetailsView: View {
             )
           }
 
+        case GenerateContentError.unsupportedUserLocation:
+          Section("Error Type") {
+            Text("Unsupported User Location")
+          }
+
+          Section("Details") {
+            SubtitleFormRow(title: "Error description", value: error.localizedDescription)
+            SubtitleMarkdownFormRow(
+              title: "Help",
+              value: """
+              The API is unsupported in your location (country / territory); please see
+              [available regions](https://ai.google.dev/available_regions#available_regions).
+              """
+            )
+          }
+
         default:
           Section("Error Type") {
             Text("Some other error")
@@ -224,4 +240,8 @@ struct ErrorDetailsView: View {
 
 #Preview("Invalid API Key") {
   ErrorDetailsView(error: GenerateContentError.invalidAPIKey)
+}
+
+#Preview("Unsupported User Location") {
+  ErrorDetailsView(error: GenerateContentError.unsupportedUserLocation)
 }
