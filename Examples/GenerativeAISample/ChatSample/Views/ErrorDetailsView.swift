@@ -152,8 +152,7 @@ struct ErrorDetailsView: View {
             SubtitleMarkdownFormRow(
               title: "Help",
               value: """
-              The provided API key is invalid.
-              Please update `API_KEY` in the `GenerativeAI-Info.plist` file.
+              Please provide a valid value for `API_KEY` in the `GenerativeAI-Info.plist` file.
               """
             )
           }
