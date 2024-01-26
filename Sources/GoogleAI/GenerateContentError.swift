@@ -27,4 +27,14 @@ public enum GenerateContentError: Error {
 
   /// The provided API key is invalid.
   case invalidAPIKey
+
+  /// The user's location (region) is not supported by the API.
+  ///
+  /// See the Google documentation for a
+  /// [list of regions](https://ai.google.dev/available_regions#available_regions)
+  /// (countries and territories) where the API is available.
+  ///
+  /// - Important: The API is only available in
+  /// [specific regions](https://ai.google.dev/available_regions#available_regions).
+  case unsupportedUserLocation
 }

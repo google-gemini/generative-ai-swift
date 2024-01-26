@@ -342,6 +342,24 @@ final class GenerativeModelTests: XCTestCase {
     }
   }
 
+  func testGenerateContent_failure_unsupportedUserLocation() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-failure-unsupported-user-location",
+        withExtension: "json",
+        statusCode: 400
+      )
+
+    do {
+      _ = try await model.generateContent(testPrompt)
+      XCTFail("Should throw GenerateContentError.unsupportedUserLocation; no error thrown.")
+    } catch GenerateContentError.unsupportedUserLocation {
+      return
+    }
+
+    XCTFail("Expected an unsupported user location error.")
+  }
+
   func testGenerateContent_failure_nonHTTPResponse() async throws {
     MockURLProtocol.requestHandler = try nonHTTPRequestHandler()
 
@@ -706,6 +724,26 @@ final class GenerativeModelTests: XCTestCase {
     }
 
     XCTFail("Expected an internal decoding error.")
+  }
+
+  func testGenerateContentStream_failure_unsupportedUserLocation() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-failure-unsupported-user-location",
+        withExtension: "json",
+        statusCode: 400
+      )
+
+    let stream = model.generateContentStream(testPrompt)
+    do {
+      for try await content in stream {
+        XCTFail("Unexpected content in stream: \(content)")
+      }
+    } catch GenerateContentError.unsupportedUserLocation {
+      return
+    }
+
+    XCTFail("Expected an unsupported user location error.")
   }
 
   // MARK: - Count Tokens

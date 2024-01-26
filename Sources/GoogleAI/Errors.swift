@@ -34,6 +34,10 @@ struct RPCError: Error {
   func isInvalidAPIKeyError() -> Bool {
     return errorInfo?.reason == "API_KEY_INVALID"
   }
+
+  func isUnsupportedUserLocationError() -> Bool {
+    return message == RPCErrorMessage.unsupportedUserLocation.rawValue
+  }
 }
 
 extension RPCError: Decodable {
@@ -173,6 +177,10 @@ enum RPCStatus: String, Decodable {
 
   // Unrecoverable data loss or corruption.
   case dataLoss = "DATA_LOSS"
+}
+
+enum RPCErrorMessage: String {
+  case unsupportedUserLocation = "User location is not supported for the API use."
 }
 
 enum InvalidCandidateError: Error {

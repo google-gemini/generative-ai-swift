@@ -246,6 +246,8 @@ public final class GenerativeModel {
       return error
     } else if let error = error as? RPCError, error.isInvalidAPIKeyError() {
       return GenerateContentError.invalidAPIKey
+    } else if let error = error as? RPCError, error.isUnsupportedUserLocationError() {
+      return GenerateContentError.unsupportedUserLocation
     }
     return GenerateContentError.internalError(underlying: error)
   }
