@@ -24,6 +24,8 @@ public struct ModelContent: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
       case text
       case inlineData
+      case functionCall
+      case functionResponse
     }
 
     enum InlineDataKeys: String, CodingKey {
@@ -36,6 +38,10 @@ public struct ModelContent: Codable, Equatable {
 
     /// Data with a specified media type. Not all media types may be supported by the AI model.
     case data(mimetype: String, Data)
+
+    case functionCall(name: String, args: [String: Int])
+
+    case functionResponse(name: String, response: [String: Int])
 
     // MARK: Convenience Initializers
 
@@ -63,6 +69,20 @@ public struct ModelContent: Codable, Equatable {
         )
         try inlineDataContainer.encode(mimetype, forKey: .mimeType)
         try inlineDataContainer.encode(bytes, forKey: .bytes)
+      case let .functionCall(name, args):
+        var functionCallContainer = container.nestedContainer(
+          keyedBy: FunctionCall.CodingKeys.self,
+          forKey: .functionCall
+        )
+        try functionCallContainer.encode(name, forKey: .name)
+        try functionCallContainer.encode(args, forKey: .args)
+      case let .functionResponse(name, response):
+        var functionResponseContainer = container.nestedContainer(
+          keyedBy: FunctionResponse.CodingKeys.self,
+          forKey: .functionResponse
+        )
+        try functionResponseContainer.encode(name, forKey: .name)
+        try functionResponseContainer.encode(response, forKey: .response)
       }
     }
 
@@ -78,6 +98,8 @@ public struct ModelContent: Codable, Equatable {
         let mimetype = try dataContainer.decode(String.self, forKey: .mimeType)
         let bytes = try dataContainer.decode(Data.self, forKey: .bytes)
         self = .data(mimetype: mimetype, bytes)
+      } else if let functionCall = try? values.decode(FunctionCall.self, forKey: .functionCall) {
+        self = .functionCall(name: functionCall.name, args: functionCall.args)
       } else {
         throw DecodingError.dataCorrupted(.init(
           codingPath: [CodingKeys.text, CodingKeys.inlineData],

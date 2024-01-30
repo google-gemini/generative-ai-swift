@@ -98,9 +98,11 @@ public final class GenerativeModel {
   /// - Parameter content: The input(s) given to the model as a prompt.
   /// - Returns: The generated content response from the model.
   /// - Throws: A ``GenerateContentError`` if the request failed.
-  public func generateContent(_ content: [ModelContent]) async throws -> GenerateContentResponse {
+  public func generateContent(_ content: [ModelContent],
+                              tools: [Tool]? = nil) async throws -> GenerateContentResponse {
     let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
+                                                        tools: tools,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
                                                         isStreaming: false)
@@ -154,6 +156,7 @@ public final class GenerativeModel {
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
     let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
+                                                        tools: nil,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
                                                         isStreaming: true)

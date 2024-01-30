@@ -135,6 +135,12 @@ public class Chat {
           }
 
           parts.append(part)
+
+        case .functionCall:
+          print("\(#function): functionCall")
+
+        case .functionResponse:
+          print("\(#function): functionResponse")
         }
       }
     }

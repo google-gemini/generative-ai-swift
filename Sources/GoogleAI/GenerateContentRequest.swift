@@ -18,6 +18,7 @@ struct GenerateContentRequest {
   /// Model name.
   let model: String
   let contents: [ModelContent]
+  let tools: [Tool]?
   let generationConfig: GenerationConfig?
   let safetySettings: [SafetySetting]?
   let isStreaming: Bool
@@ -26,6 +27,7 @@ struct GenerateContentRequest {
 extension GenerateContentRequest: Encodable {
   enum CodingKeys: String, CodingKey {
     case contents
+    case tools
     case generationConfig
     case safetySettings
   }

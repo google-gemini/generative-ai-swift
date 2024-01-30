@@ -73,6 +73,7 @@ struct GenerateContent: AsyncParsableCommand {
         safetySettings: safetySettings
       )
 
+      var input = [ModelContent]()
       var parts = [ModelContent.Part]()
 
       if let textPrompt = textPrompt {
@@ -93,20 +94,95 @@ struct GenerateContent: AsyncParsableCommand {
         parts.append(.data(mimetype: mimeType, imageData))
       }
 
-      let input = [ModelContent(parts: parts)]
+      input.append(ModelContent(parts: parts))
+//      content.append(ModelContent(
+//        role: "model",
+//        parts: ModelContent.Part.functionCall(name: "sum", args: ["x": 3, "y": 5])
+//      ))
+//      content.append(ModelContent(
+//        role: "function",
+//        parts: ModelContent.Part.functionResponse(name: "sum", response: ["sum": 8])
+//      ))
+//      content.append(ModelContent(
+//        role: "model",
+//        parts: ModelContent.Part.functionCall(name: "sum", args: ["x": 8, "y": 7])
+//      ))
+//      content.append(ModelContent(
+//        role: "function",
+//        parts: ModelContent.Part.functionResponse(name: "sum", response: ["sum": 15])
+//      ))
 
-      if isStreaming {
-        let contentStream = model.generateContentStream(input)
-        print("Generated Content <streaming>:")
-        for try await content in contentStream {
-          if let text = content.text {
-            print(text)
-          }
+      let xParam = Schema(
+        type: .integer,
+        format: "int64",
+        description: "The first number.",
+        nullable: nil,
+        enumValues: nil,
+        properties: nil,
+        required: nil
+      )
+      let yParam = Schema(
+        type: .integer,
+        format: "int64",
+        description: "The second number.",
+        nullable: nil,
+        enumValues: nil,
+        properties: nil,
+        required: nil
+      )
+      let parameters = Schema(
+        type: .object,
+        format: nil,
+        description: "Returns the sum of `x` and `y`.",
+        nullable: nil,
+        enumValues: nil,
+        properties: ["x": xParam, "y": yParam],
+        required: nil
+      )
+      let functionDeclaration = FunctionDeclaration(
+        name: "sum",
+        description: "Returns the sum of `x` and `y`.",
+        parameters: parameters
+      )
+      let tool = Tool(functionDeclarations: [functionDeclaration])
+
+      while true {
+        let content = try await model.generateContent(input, tools: [tool])
+        guard let candidate = content.candidates.first else {
+          print("Response had no candidates.")
+          return
         }
-      } else {
-        let content = try await model.generateContent(input)
-        if let text = content.text {
-          print("Generated Content:\n\(text)")
+        guard let part = candidate.content.parts.first else {
+          print("Candidate had no parts.")
+          return
+        }
+        switch part {
+        case let .text(text):
+          print("Text: \(text)")
+          return
+        case let .data(mimetype: mimetype, _):
+          print("Data with mimetype: \(mimetype)")
+        case let .functionCall(name: name, args: args):
+          print("Function call \"\(name)\" with args: \(args)")
+          input.append(ModelContent(
+            role: "model",
+            parts: ModelContent.Part.functionCall(name: name, args: args)
+          ))
+          if name == "sum" {
+            guard let x = args["x"], let y = args["y"] else {
+              print("Expected x and y arguments in 'sum' function call, found \(args).")
+              return
+            }
+            input.append(ModelContent(
+              role: "function",
+              parts: ModelContent.Part.functionResponse(name: "sum", response: ["sum": x + y])
+            ))
+          } else {
+            print("Unknown function named \(name).")
+            return
+          }
+        case let .functionResponse(name: name, response: response):
+          print("Function response \"\(name)\" with value: \(response)")
         }
       }
     } catch {
