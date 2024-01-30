@@ -32,7 +32,11 @@ class SummarizeViewModel: ObservableObject {
   private var model: GenerativeModel?
 
   init() {
-    model = GenerativeModel(name: "gemini-pro", apiKey: APIKey.default)
+    model = GenerativeModel(
+      name: "gemini-pro",
+      apiKey: APIKey.default,
+      projectID: ProjectID.default
+    )
   }
 
   func summarize(inputText: String) async {

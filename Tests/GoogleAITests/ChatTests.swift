@@ -46,7 +46,12 @@ final class ChatTests: XCTestCase {
       return (response, fileURL.lines)
     }
 
-    let model = GenerativeModel(name: "my-model", apiKey: "API_KEY", urlSession: urlSession)
+    let model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      projectID: "test-project-id",
+      urlSession: urlSession
+    )
     let chat = Chat(model: model, history: [])
     let input = "Test input"
     let stream = chat.sendMessageStream(input)

@@ -18,6 +18,7 @@ struct CountTokensRequest {
   let model: String
   let contents: [ModelContent]
   let options: RequestOptions
+  let projectID: String
 }
 
 extension CountTokensRequest: Encodable {
@@ -30,7 +31,8 @@ extension CountTokensRequest: GenerativeAIRequest {
   typealias Response = CountTokensResponse
 
   var url: URL {
-    URL(string: "\(GenerativeAISwift.baseURL)/\(model):countTokens")!
+    let modelResource = "projects/\(projectID)/locations/us-central1/publishers/google/\(model)"
+    return URL(string: "\(GenerativeAISwift.baseURL)/\(modelResource):countTokens")!
   }
 }
 

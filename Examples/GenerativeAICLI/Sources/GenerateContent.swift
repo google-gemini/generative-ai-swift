@@ -18,8 +18,11 @@ import GoogleGenerativeAI
 
 @main
 struct GenerateContent: AsyncParsableCommand {
-  @Option(help: "The API key to use when calling the Generative Language API.")
+  @Option(help: "The access token to use when calling the Vertex AI API.")
   var apiKey: String
+
+  @Option()
+  var projectID: String
 
   @Option(name: .customLong("model"), help: "The name of the model to use (e.g., \"gemini-pro\").")
   var modelName: String?
@@ -33,11 +36,6 @@ struct GenerateContent: AsyncParsableCommand {
     transform: URL.filePath(_:)
   )
   var imageURL: URL?
-
-  @Flag(
-    name: .customLong("streaming"),
-    help: "Stream response data, printing it incrementally as it's received."
-  ) var isStreaming = false
 
   @Flag(
     name: .customLong("GoogleGenerativeAIDebugLogEnabled", withSingleDash: true),
@@ -55,22 +53,12 @@ struct GenerateContent: AsyncParsableCommand {
 
   mutating func run() async throws {
     do {
-      let safetySettings = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockNone)]
-      // Let the server pick the default config.
-      let config = GenerationConfig(
-        temperature: 0.2,
-        topP: 0.1,
-        topK: 16,
-        candidateCount: 1,
-        maxOutputTokens: isStreaming ? nil : 256,
-        stopSequences: nil
-      )
-
       let model = GenerativeModel(
         name: modelNameOrDefault(),
         apiKey: apiKey,
-        generationConfig: config,
-        safetySettings: safetySettings
+        projectID: projectID,
+        generationConfig: nil,
+        safetySettings: nil
       )
 
       var parts = [ModelContent.Part]()
@@ -95,18 +83,14 @@ struct GenerateContent: AsyncParsableCommand {
 
       let input = [ModelContent(parts: parts)]
 
-      if isStreaming {
-        let contentStream = model.generateContentStream(input)
-        print("Generated Content <streaming>:")
-        for try await content in contentStream {
-          if let text = content.text {
-            print(text)
-          }
-        }
-      } else {
-        let content = try await model.generateContent(input)
+      let countTokensResponse = try await model.countTokens(input)
+      print("Total Token Count: \(countTokensResponse.totalTokens)")
+
+      let contentStream = model.generateContentStream(input)
+      print("Generated Content <streaming>:")
+      for try await content in contentStream {
         if let text = content.text {
-          print("Generated Content:\n\(text)")
+          print(text)
         }
       }
     } catch {

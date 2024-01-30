@@ -148,7 +148,7 @@ struct GenerativeAIService {
   private func urlRequest<T: GenerativeAIRequest>(request: T) throws -> URLRequest {
     var urlRequest = URLRequest(url: request.url)
     urlRequest.httpMethod = "POST"
-    urlRequest.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
+    urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
     urlRequest.setValue("genai-swift/\(GenerativeAISwift.version)",
                         forHTTPHeaderField: "x-goog-api-client")
     urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")

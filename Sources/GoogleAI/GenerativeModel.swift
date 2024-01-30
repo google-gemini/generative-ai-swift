@@ -26,6 +26,8 @@ public final class GenerativeModel {
   /// The backing service responsible for sending and receiving model requests to the backend.
   let generativeAIService: GenerativeAIService
 
+  let projectID: String
+
   /// Configuration parameters used for the MultiModalModel.
   let generationConfig: GenerationConfig?
 
@@ -45,12 +47,14 @@ public final class GenerativeModel {
   ///   - requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
                           apiKey: String,
+                          projectID: String,
                           generationConfig: GenerationConfig? = nil,
                           safetySettings: [SafetySetting]? = nil,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
       apiKey: apiKey,
+      projectID: projectID,
       generationConfig: generationConfig,
       safetySettings: safetySettings,
       requestOptions: requestOptions,
@@ -61,12 +65,14 @@ public final class GenerativeModel {
   /// The designated initializer for this class.
   init(name: String,
        apiKey: String,
+       projectID: String,
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
        requestOptions: RequestOptions = RequestOptions(),
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
     generativeAIService = GenerativeAIService(apiKey: apiKey, urlSession: urlSession)
+    self.projectID = projectID
     self.generationConfig = generationConfig
     self.safetySettings = safetySettings
     self.requestOptions = requestOptions
@@ -112,7 +118,8 @@ public final class GenerativeModel {
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
                                                         isStreaming: false,
-                                                        options: requestOptions)
+                                                        options: requestOptions,
+                                                        projectID: projectID)
     let response: GenerateContentResponse
     do {
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
@@ -166,7 +173,8 @@ public final class GenerativeModel {
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
                                                         isStreaming: true,
-                                                        options: requestOptions)
+                                                        options: requestOptions,
+                                                        projectID: projectID)
 
     var responseIterator = generativeAIService.loadRequestStream(request: generateContentRequest)
       .makeAsyncIterator()
@@ -233,7 +241,8 @@ public final class GenerativeModel {
     let countTokensRequest = CountTokensRequest(
       model: modelResourceName,
       contents: content,
-      options: requestOptions
+      options: requestOptions,
+      projectID: projectID
     )
 
     do {

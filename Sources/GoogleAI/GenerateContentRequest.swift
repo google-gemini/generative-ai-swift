@@ -22,6 +22,7 @@ struct GenerateContentRequest {
   let safetySettings: [SafetySetting]?
   let isStreaming: Bool
   let options: RequestOptions
+  let projectID: String
 }
 
 extension GenerateContentRequest: Encodable {
@@ -36,10 +37,13 @@ extension GenerateContentRequest: GenerativeAIRequest {
   typealias Response = GenerateContentResponse
 
   var url: URL {
+    let modelResource = "projects/\(projectID)/locations/us-central1/publishers/google/\(model)"
     if isStreaming {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):streamGenerateContent?alt=sse")!
+      return URL(
+        string: "\(GenerativeAISwift.baseURL)/\(modelResource):streamGenerateContent?alt=sse"
+      )!
     } else {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):generateContent")!
+      return URL(string: "\(GenerativeAISwift.baseURL)/\(modelResource):generateContent")!
     }
   }
 }

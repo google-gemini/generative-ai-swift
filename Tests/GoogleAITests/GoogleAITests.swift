@@ -31,13 +31,23 @@ final class GoogleGenerativeAITests: XCTestCase {
     let filters = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockOnlyHigh)]
 
     // Permutations without optional arguments.
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY")
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY", safetySettings: filters)
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY", generationConfig: config)
+    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY", projectID: "test-project-id")
+    let _ = GenerativeModel(
+      name: "gemini-pro@001",
+      apiKey: "API_KEY",
+      projectID: "test-project-id",
+      safetySettings: filters
+    )
+    let _ = GenerativeModel(
+      name: "gemini-pro@001",
+      apiKey: "API_KEY",
+      projectID: "test-project-id",
+      generationConfig: config
+    )
 
     // All arguments passed.
     let genAI = GenerativeModel(name: "gemini-pro@001",
-                                apiKey: "API_KEY",
+                                apiKey: "API_KEY", projectID: "test-project-id",
                                 generationConfig: config, // Optional
                                 safetySettings: filters // Optional
     )

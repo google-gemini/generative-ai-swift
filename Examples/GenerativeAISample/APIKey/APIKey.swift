@@ -34,3 +34,22 @@ enum APIKey {
     return value
   }
 }
+
+enum ProjectID {
+  /// Fetch the Project ID from `GenerativeAI-Info.plist`
+  /// This is just *one* way how you can retrieve the API key for your app.
+  static var `default`: String {
+    guard let filePath = Bundle.main.path(forResource: "GenerativeAI-Info", ofType: "plist")
+    else {
+      fatalError("Couldn't find file 'GenerativeAI-Info.plist'.")
+    }
+    let plist = NSDictionary(contentsOfFile: filePath)
+    guard let value = plist?.object(forKey: "PROJECT_ID") as? String else {
+      fatalError("Couldn't find key 'PROJECT_ID' in 'GenerativeAI-Info.plist'.")
+    }
+    if value.starts(with: "_") || value.isEmpty {
+      fatalError("Invalid Project ID for Vertex AI.")
+    }
+    return value
+  }
+}

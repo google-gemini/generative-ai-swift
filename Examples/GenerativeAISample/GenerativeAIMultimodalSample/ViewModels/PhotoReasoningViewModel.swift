@@ -44,7 +44,11 @@ class PhotoReasoningViewModel: ObservableObject {
   private var model: GenerativeModel?
 
   init() {
-    model = GenerativeModel(name: "gemini-pro-vision", apiKey: APIKey.default)
+    model = GenerativeModel(
+      name: "gemini-pro-vision",
+      apiKey: APIKey.default,
+      projectID: ProjectID.default
+    )
   }
 
   func reason() async {

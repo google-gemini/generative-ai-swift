@@ -32,7 +32,12 @@ final class GenerativeModelTests: XCTestCase {
     let configuration = URLSessionConfiguration.default
     configuration.protocolClasses = [MockURLProtocol.self]
     urlSession = try XCTUnwrap(URLSession(configuration: configuration))
-    model = GenerativeModel(name: "my-model", apiKey: "API_KEY", urlSession: urlSession)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      projectID: "test-project-id",
+      urlSession: urlSession
+    )
   }
 
   override func tearDown() {
@@ -162,7 +167,7 @@ final class GenerativeModelTests: XCTestCase {
     let model = GenerativeModel(
       // Model name is prefixed with "models/".
       name: "models/test-model",
-      apiKey: "API_KEY",
+      apiKey: "API_KEY", projectID: "test-project-id",
       urlSession: urlSession
     )
 
