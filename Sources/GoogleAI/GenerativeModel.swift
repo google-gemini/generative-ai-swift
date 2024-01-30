@@ -20,8 +20,11 @@ public final class GenerativeModel {
   // The prefix for a model resource in the Gemini API.
   private static let modelResourcePrefix = "models/"
 
+  // The prefix for a tuned model resource in the Gemini API.
+  private static let tunedModelResourcePrefix = "tunedModels/"
+
   /// The resource name of the model in the backend; has the format "models/model-name".
-  private let modelResourceName: String
+  let modelResourceName: String
 
   /// The backing service responsible for sending and receiving model requests to the backend.
   let generativeAIService: GenerativeAIService
@@ -246,7 +249,7 @@ public final class GenerativeModel {
 
   /// Returns a model resource name of the form "models/model-name" based on `name`.
   private static func modelResourceName(name: String) -> String {
-    if name.hasPrefix(modelResourcePrefix) {
+    if name.hasPrefix(modelResourcePrefix) || name.hasPrefix(tunedModelResourcePrefix) {
       return name
     } else {
       return modelResourcePrefix + name

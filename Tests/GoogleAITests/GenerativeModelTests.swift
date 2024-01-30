@@ -845,6 +845,41 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(response.totalTokens, 6)
   }
 
+  // MARK: - Model Resource Name
+
+  func testModelResourceName_noPrefix() async throws {
+    let modelName = "my-model"
+    let modelResourceName = "models/\(modelName)"
+
+    model = GenerativeModel(name: modelName, apiKey: "API_KEY")
+
+    XCTAssertEqual(model.modelResourceName, modelResourceName)
+  }
+
+  func testModelResourceName_modelsPrefix() async throws {
+    let modelResourceName = "models/my-model"
+
+    model = GenerativeModel(name: modelResourceName, apiKey: "API_KEY")
+
+    XCTAssertEqual(model.modelResourceName, modelResourceName)
+  }
+
+  func testModelResourceName_tunedModelsPrefix() async throws {
+    let tunedModelResourceName = "tunedModels/my-model"
+
+    model = GenerativeModel(name: tunedModelResourceName, apiKey: "API_KEY")
+
+    XCTAssertEqual(model.modelResourceName, tunedModelResourceName)
+  }
+
+  func testModelResourceName_invalidPrefix() async throws {
+    let invalidModelName = "invalidPrefix/my-model"
+
+    model = GenerativeModel(name: invalidModelName, apiKey: "API_KEY")
+
+    XCTAssertEqual(model.modelResourceName, "models/\(invalidModelName)")
+  }
+
   // MARK: - Helpers
 
   private func nonHTTPRequestHandler() throws -> ((URLRequest) -> (
