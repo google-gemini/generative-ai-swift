@@ -25,10 +25,8 @@ private let imageCompressionQuality: CGFloat = 0.8
 /// For some image types like `CIImage`, creating valid model content requires creating a JPEG
 /// representation of the image that may not yet exist, which may be computationally expensive.
 public enum ImageConversionError: Error {
-  #if canImport(AppKit)
-    /// The image (the receiver of the call `toModelContentParts()`) was invalid.
-    case invalidUnderlyingImage
-  #endif
+  /// The image (the receiver of the call `toModelContentParts()`) was invalid.
+  case invalidUnderlyingImage
 
   /// A valid image destination could not be allocated.
   case couldNotAllocateDestination

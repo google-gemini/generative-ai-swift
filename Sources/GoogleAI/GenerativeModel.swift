@@ -159,7 +159,13 @@ public final class GenerativeModel {
       content = try contentClosure()
     } catch let underlying {
       return AsyncThrowingStream { continuation in
-        continuation.finish(throwing: GenerateContentError.internalError(underlying: underlying))
+        let error: Error
+        if let contentError = underlying as? ImageConversionError {
+          error = GenerateContentError.promptContentError(underlying: contentError)
+        } else {
+          error = GenerateContentError.internalError(underlying: underlying)
+        }
+        continuation.finish(throwing: error)
       }
     }
 

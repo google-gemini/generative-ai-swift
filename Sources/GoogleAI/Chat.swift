@@ -47,7 +47,11 @@ public class Chat {
     do {
       newContent = try content().map(populateContentRole(_:))
     } catch let underlying {
-      throw GenerateContentError.internalError(underlying: underlying)
+      if let contentError = underlying as? ImageConversionError {
+        throw GenerateContentError.promptContentError(underlying: contentError)
+      } else {
+        throw GenerateContentError.internalError(underlying: underlying)
+      }
     }
 
     // Send the history alongside the new message as context.
@@ -90,7 +94,13 @@ public class Chat {
       content = try contentClosure()
     } catch let underlying {
       return AsyncThrowingStream { continuation in
-        continuation.finish(throwing: GenerateContentError.internalError(underlying: underlying))
+        let error: Error
+        if let contentError = underlying as? ImageConversionError {
+          error = GenerateContentError.promptContentError(underlying: contentError)
+        } else {
+          error = GenerateContentError.internalError(underlying: underlying)
+        }
+        continuation.finish(throwing: error)
       }
     }
 
