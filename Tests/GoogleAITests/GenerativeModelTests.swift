@@ -476,6 +476,32 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(response.candidates.count, 1)
   }
 
+  private func addHeader(request: inout URLRequest) async throws {
+    print("Waiting for request hook.")
+    try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
+    request.addValue("hello-world", forHTTPHeaderField: "x-my-header")
+    print("Request hook finished.")
+  }
+
+  func testGenerateContent_requestOptions_hook() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-basic-reply-short",
+        withExtension: "json"
+      )
+    let requestOptions = RequestOptions(hooks: [addHeader])
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+  }
+
   // MARK: - Generate Content (Streaming)
 
   func testGenerateContentStream_failureInvalidAPIKey() async throws {

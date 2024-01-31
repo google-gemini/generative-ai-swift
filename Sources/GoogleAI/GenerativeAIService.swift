@@ -27,7 +27,7 @@ struct GenerativeAIService {
   }
 
   func loadRequest<T: GenerativeAIRequest>(request: T) async throws -> T.Response {
-    let urlRequest = try urlRequest(request: request)
+    let urlRequest = try await urlRequest(request: request)
 
     #if DEBUG
       printCURLCommand(from: urlRequest)
@@ -59,7 +59,7 @@ struct GenerativeAIService {
       Task {
         let urlRequest: URLRequest
         do {
-          urlRequest = try self.urlRequest(request: request)
+          urlRequest = try await self.urlRequest(request: request)
         } catch {
           continuation.finish(throwing: error)
           return
@@ -146,7 +146,7 @@ struct GenerativeAIService {
 
   // MARK: - Private Helpers
 
-  private func urlRequest<T: GenerativeAIRequest>(request: T) throws -> URLRequest {
+  private func urlRequest<T: GenerativeAIRequest>(request: T) async throws -> URLRequest {
     var urlRequest = URLRequest(url: request.url)
     urlRequest.httpMethod = "POST"
     urlRequest.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
@@ -159,6 +159,10 @@ struct GenerativeAIService {
 
     if let timeoutInterval = request.options.timeout {
       urlRequest.timeoutInterval = timeoutInterval
+    }
+
+    for requestHook in request.options.hooks {
+      try await requestHook(&urlRequest)
     }
 
     return urlRequest

@@ -29,9 +29,14 @@ public struct RequestOptions {
   /// The request’s timeout interval in seconds; if not specified uses the default value for a
   /// `URLRequest`.
   let timeout: TimeInterval?
-
   /// The API version to use in requests to the backend.
   let apiVersion: String
+
+  /// Asynchronous methods that manipulate the `URLRequest` before being sent.
+  /// Similar in concept to
+  /// [Event Hooks](https://docs.python-requests.org/en/latest/user/advanced/#event-hooks) in the
+  /// Python Requests library.
+  let hooks: [(_: inout URLRequest) async throws -> Void]
 
   /// Initializes a request options object.
   ///
@@ -39,8 +44,12 @@ public struct RequestOptions {
   ///   - timeout The request’s timeout interval in seconds; if not specified uses the default value
   ///   for a `URLRequest`.
   ///   - apiVersion The API version to use in requests to the backend; defaults to "v1".
-  public init(timeout: TimeInterval? = nil, apiVersion: String = "v1") {
+  /// - Parameter hooks An array of asynchronous methods that manipulate the `URLRequest` before
+  /// being sent (e.g., to add headers); if none specified, the `URLRequest` is unchanged.
+  public init(timeout: TimeInterval? = nil, apiVersion: String = "v1",
+              hooks: [(_: inout URLRequest) async throws -> Void] = []) {
     self.timeout = timeout
     self.apiVersion = apiVersion
+    self.hooks = hooks
   }
 }
