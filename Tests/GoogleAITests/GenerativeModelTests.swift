@@ -872,14 +872,6 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(model.modelResourceName, tunedModelResourceName)
   }
 
-  func testModelResourceName_invalidPrefix() async throws {
-    let invalidModelName = "invalidPrefix/my-model"
-
-    model = GenerativeModel(name: invalidModelName, apiKey: "API_KEY")
-
-    XCTAssertEqual(model.modelResourceName, "models/\(invalidModelName)")
-  }
-
   // MARK: - Helpers
 
   private func nonHTTPRequestHandler() throws -> ((URLRequest) -> (

@@ -249,7 +249,7 @@ public final class GenerativeModel {
 
   /// Returns a model resource name of the form "models/model-name" based on `name`.
   private static func modelResourceName(name: String) -> String {
-    if name.hasPrefix(modelResourcePrefix) || name.hasPrefix(tunedModelResourcePrefix) {
+    if name.contains("/") {
       return name
     } else {
       return modelResourcePrefix + name
