@@ -33,22 +33,21 @@ public final class GenerativeModel {
   let safetySettings: [SafetySetting]?
 
   /// Configuration parameters for sending requests to the backend.
-  let requestOptions: RequestOptions?
+  let requestOptions: RequestOptions
 
   /// Initializes a new remote model with the given parameters.
   ///
-  /// - Parameter name: The name of the model to be used, e.g., "gemini-pro" or "models/gemini-pro".
-  /// - Parameter apiKey: The API key for your project.
-  /// - Parameter generationConfig: A value containing the content generation parameters your model
-  ///     should use.
-  /// - Parameter safetySettings: A value describing what types of harmful content your model
-  ///     should allow.
-  /// - Parameter requestOptions Configuration parameters for sending requests to the backend.
+  /// - Parameters:
+  ///   - name: The name of the model to be used, e.g., "gemini-pro" or "models/gemini-pro".
+  ///   - apiKey: The API key for your project.
+  ///   - generationConfig: The content generation parameters your model should use.
+  ///   - safetySettings: A value describing what types of harmful content your model should allow.
+  ///   - requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
                           apiKey: String,
                           generationConfig: GenerationConfig? = nil,
                           safetySettings: [SafetySetting]? = nil,
-                          requestOptions: RequestOptions? = nil) {
+                          requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
       apiKey: apiKey,
@@ -64,7 +63,7 @@ public final class GenerativeModel {
        apiKey: String,
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
-       requestOptions: RequestOptions? = nil,
+       requestOptions: RequestOptions = RequestOptions(),
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
     generativeAIService = GenerativeAIService(apiKey: apiKey, urlSession: urlSession)

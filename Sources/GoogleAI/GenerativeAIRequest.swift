@@ -19,7 +19,7 @@ protocol GenerativeAIRequest: Encodable {
 
   var url: URL { get }
 
-  var options: RequestOptions? { get }
+  var options: RequestOptions { get }
 }
 
 /// Configuration parameters for sending requests to the backend.
