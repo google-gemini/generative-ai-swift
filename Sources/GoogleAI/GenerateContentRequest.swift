@@ -21,6 +21,7 @@ struct GenerateContentRequest {
   let generationConfig: GenerationConfig?
   let safetySettings: [SafetySetting]?
   let isStreaming: Bool
+  let options: RequestOptions?
 }
 
 extension GenerateContentRequest: Encodable {

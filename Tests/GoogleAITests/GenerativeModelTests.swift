@@ -455,6 +455,27 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(content.text, "This is the generated content.")
   }
 
+  func testGenerateContent_requestOptions_customTimeout() async throws {
+    let expectedTimeout = 150.0
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-basic-reply-short",
+        withExtension: "json",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+  }
+
   // MARK: - Generate Content (Streaming)
 
   func testGenerateContentStream_failureInvalidAPIKey() async throws {
@@ -746,6 +767,32 @@ final class GenerativeModelTests: XCTestCase {
     XCTFail("Expected an unsupported user location error.")
   }
 
+  func testGenerateContentStream_requestOptions_customTimeout() async throws {
+    let expectedTimeout = 150.0
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "streaming-success-basic-reply-short",
+        withExtension: "txt",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    var responses = 0
+    let stream = model.generateContentStream(testPrompt)
+    for try await content in stream {
+      XCTAssertNotNil(content.text)
+      responses += 1
+    }
+
+    XCTAssertEqual(responses, 1)
+  }
+
   // MARK: - Count Tokens
 
   func testCountTokens_succeeds() async throws {
@@ -777,6 +824,27 @@ final class GenerativeModelTests: XCTestCase {
     XCTFail("Expected internal RPCError.")
   }
 
+  func testCountTokens_requestOptions_customTimeout() async throws {
+    let expectedTimeout = 150.0
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "success-total-tokens",
+        withExtension: "json",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    let response = try await model.countTokens(testPrompt)
+
+    XCTAssertEqual(response.totalTokens, 6)
+  }
+
   // MARK: - Helpers
 
   private func nonHTTPRequestHandler() throws -> ((URLRequest) -> (
@@ -797,7 +865,9 @@ final class GenerativeModelTests: XCTestCase {
 
   private func httpRequestHandler(forResource name: String,
                                   withExtension ext: String,
-                                  statusCode: Int = 200) throws -> ((URLRequest) throws -> (
+                                  statusCode: Int = 200,
+                                  timeout: TimeInterval = URLRequest
+                                    .defaultTimeoutInterval()) throws -> ((URLRequest) throws -> (
     URLResponse,
     AsyncLineSequence<URL.AsyncBytes>?
   )) {
@@ -805,6 +875,7 @@ final class GenerativeModelTests: XCTestCase {
     return { request in
       let requestURL = try XCTUnwrap(request.url)
       XCTAssertEqual(requestURL.path.occurrenceCount(of: "models/"), 1)
+      XCTAssertEqual(request.timeoutInterval, timeout)
       let response = try XCTUnwrap(HTTPURLResponse(
         url: requestURL,
         statusCode: statusCode,
@@ -820,5 +891,13 @@ private extension String {
   /// Returns the number of occurrences of `substring` in the `String`.
   func occurrenceCount(of substring: String) -> Int {
     return components(separatedBy: substring).count - 1
+  }
+}
+
+private extension URLRequest {
+  /// Returns the default `timeoutInterval` for a `URLRequest`.
+  static func defaultTimeoutInterval() -> TimeInterval {
+    let placeholderURL = URL(string: "https://example.com")!
+    return URLRequest(url: placeholderURL).timeoutInterval
   }
 }

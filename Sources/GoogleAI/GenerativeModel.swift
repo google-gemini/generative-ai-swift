@@ -32,6 +32,9 @@ public final class GenerativeModel {
   /// The safety settings to be used for prompts.
   let safetySettings: [SafetySetting]?
 
+  /// Configuration parameters for sending requests to the backend.
+  let requestOptions: RequestOptions?
+
   /// Initializes a new remote model with the given parameters.
   ///
   /// - Parameter name: The name of the model to be used, e.g., "gemini-pro" or "models/gemini-pro".
@@ -40,15 +43,18 @@ public final class GenerativeModel {
   ///     should use.
   /// - Parameter safetySettings: A value describing what types of harmful content your model
   ///     should allow.
+  /// - Parameter requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
                           apiKey: String,
                           generationConfig: GenerationConfig? = nil,
-                          safetySettings: [SafetySetting]? = nil) {
+                          safetySettings: [SafetySetting]? = nil,
+                          requestOptions: RequestOptions? = nil) {
     self.init(
       name: name,
       apiKey: apiKey,
       generationConfig: generationConfig,
       safetySettings: safetySettings,
+      requestOptions: requestOptions,
       urlSession: .shared
     )
   }
@@ -58,11 +64,13 @@ public final class GenerativeModel {
        apiKey: String,
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
+       requestOptions: RequestOptions? = nil,
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
     generativeAIService = GenerativeAIService(apiKey: apiKey, urlSession: urlSession)
     self.generationConfig = generationConfig
     self.safetySettings = safetySettings
+    self.requestOptions = requestOptions
 
     Logging.default.info("""
     [GoogleGenerativeAI] Model \(
@@ -98,12 +106,14 @@ public final class GenerativeModel {
   /// - Parameter content: The input(s) given to the model as a prompt.
   /// - Returns: The generated content response from the model.
   /// - Throws: A ``GenerateContentError`` if the request failed.
-  public func generateContent(_ content: [ModelContent]) async throws -> GenerateContentResponse {
+  public func generateContent(_ content: [ModelContent]) async throws
+    -> GenerateContentResponse {
     let generateContentRequest = GenerateContentRequest(model: modelResourceName,
                                                         contents: content,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
-                                                        isStreaming: false)
+                                                        isStreaming: false,
+                                                        options: requestOptions)
     let response: GenerateContentResponse
     do {
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
@@ -156,7 +166,8 @@ public final class GenerativeModel {
                                                         contents: content,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
-                                                        isStreaming: true)
+                                                        isStreaming: true,
+                                                        options: requestOptions)
 
     var responseIterator = generativeAIService.loadRequestStream(request: generateContentRequest)
       .makeAsyncIterator()
@@ -220,7 +231,11 @@ public final class GenerativeModel {
   /// - Throws: A ``CountTokensError`` if the tokenization request failed.
   public func countTokens(_ content: [ModelContent]) async throws
     -> CountTokensResponse {
-    let countTokensRequest = CountTokensRequest(model: modelResourceName, contents: content)
+    let countTokensRequest = CountTokensRequest(
+      model: modelResourceName,
+      contents: content,
+      options: requestOptions
+    )
 
     do {
       return try await generativeAIService.loadRequest(request: countTokensRequest)
