@@ -472,6 +472,7 @@ final class GenerativeModelTests: XCTestCase {
     model = GenerativeModel(
       name: "my-model",
       apiKey: "API_KEY",
+      projectID: "test-project",
       requestOptions: requestOptions,
       urlSession: urlSession
     )
@@ -784,6 +785,7 @@ final class GenerativeModelTests: XCTestCase {
     model = GenerativeModel(
       name: "my-model",
       apiKey: "API_KEY",
+      projectID: "test-project",
       requestOptions: requestOptions,
       urlSession: urlSession
     )
@@ -841,6 +843,7 @@ final class GenerativeModelTests: XCTestCase {
     model = GenerativeModel(
       name: "my-model",
       apiKey: "API_KEY",
+      projectID: "test-project",
       requestOptions: requestOptions,
       urlSession: urlSession
     )
