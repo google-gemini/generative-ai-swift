@@ -20,9 +20,9 @@ import PackageDescription
 let package = Package(
   name: "generative-ai-swift",
   platforms: [
-    .iOS(.v15),
-    .macOS(.v11),
-    .macCatalyst(.v15),
+    .iOS(.v11),
+    .macOS(.v10_13),
+    .macCatalyst(.v13),
   ],
   products: [
     .library(

@@ -23,11 +23,13 @@ import UniformTypeIdentifiers
 private let imageCompressionQuality: CGFloat = 0.8
 
 /// A protocol describing any data that could be interpreted as model input data.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public protocol PartsRepresentable {
   var partsValue: [ModelContent.Part] { get }
 }
 
 /// Enables a `String` to be passed in as ``PartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension String: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
     return [.text(self)]
@@ -35,6 +37,7 @@ extension String: PartsRepresentable {
 }
 
 /// Enables a ``ModelContent.Part`` to be passed in as ``PartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension ModelContent.Part: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
     return [self]
@@ -43,6 +46,7 @@ extension ModelContent.Part: PartsRepresentable {
 
 /// Enable an `Array` of ``PartsRepresentable`` values to be passed in as a single
 /// ``PartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension [any PartsRepresentable]: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
     return flatMap { $0.partsValue }
@@ -51,6 +55,7 @@ extension [any PartsRepresentable]: PartsRepresentable {
 
 #if canImport(UIKit)
   /// Enables images to be representable as ``PartsRepresentable``.
+  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
   extension UIImage: PartsRepresentable {
     public var partsValue: [ModelContent.Part] {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
@@ -64,6 +69,7 @@ extension [any PartsRepresentable]: PartsRepresentable {
 
 #elseif canImport(AppKit)
   /// Enables images to be representable as ``PartsRepresentable``.
+  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
   extension NSImage: PartsRepresentable {
     public var partsValue: [ModelContent.Part] {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
@@ -81,6 +87,7 @@ extension [any PartsRepresentable]: PartsRepresentable {
   }
 #endif
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CGImage: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
     let output = NSMutableData()
@@ -102,6 +109,7 @@ extension CGImage: PartsRepresentable {
   }
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CIImage: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
     let context = CIContext()

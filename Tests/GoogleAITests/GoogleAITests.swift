@@ -20,6 +20,7 @@ import XCTest
   import UIKit // For UIImage extensions.
 #endif
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class GoogleGenerativeAITests: XCTestCase {
   func codeSamples() async throws {
     let config = GenerationConfig(temperature: 0.2,

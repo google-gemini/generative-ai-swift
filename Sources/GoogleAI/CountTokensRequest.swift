@@ -14,18 +14,21 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 struct CountTokensRequest {
   let model: String
   let contents: [ModelContent]
   let options: RequestOptions
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CountTokensRequest: Encodable {
   enum CodingKeys: CodingKey {
     case contents
   }
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CountTokensRequest: GenerativeAIRequest {
   typealias Response = CountTokensResponse
 
@@ -35,6 +38,7 @@ extension CountTokensRequest: GenerativeAIRequest {
 }
 
 /// The model's response to a count tokens request.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct CountTokensResponse: Decodable {
   /// The total number of tokens in the input given to the model as a prompt.
   public let totalTokens: Int
