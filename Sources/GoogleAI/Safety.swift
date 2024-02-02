@@ -17,6 +17,7 @@ import Foundation
 /// A type defining potentially harmful media categories and their model-assigned ratings. A value
 /// of this type may be assigned to a category for every model-generated response, not just
 /// responses that exceed a certain threshold.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct SafetyRating: Decodable, Equatable, Hashable {
   /// The category describing the potential harm a piece of content may pose. See
   /// ``SafetySetting/HarmCategory`` for a list of possible values.
@@ -74,6 +75,7 @@ public struct SafetyRating: Decodable, Equatable, Hashable {
 }
 
 /// Safety feedback for an entire request.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct SafetyFeedback: Decodable {
   /// Safety rating evaluated from content.
   public let rating: SafetyRating
@@ -90,6 +92,7 @@ public struct SafetyFeedback: Decodable {
 
 /// A type used to specify a threshold for harmful content, beyond which the model will return a
 /// fallback response instead of generated content.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct SafetySetting: Codable {
   /// A type describing safety attributes, which include harmful categories and topics that can
   /// be considered sensitive.

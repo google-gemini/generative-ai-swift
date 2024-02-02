@@ -15,6 +15,7 @@
 import Foundation
 
 /// Errors that occur when generating content from a model.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public enum GenerateContentError: Error {
   /// An internal error occurred. See the underlying error for more context.
   case internalError(underlying: Error)
