@@ -43,4 +43,14 @@ extension GenerateContentRequest: GenerativeAIRequest {
       URL(string: "\(GenerativeAISwift.baseURL)/\(model):generateContent")!
     }
   }
+
+  var previewOnly: Bool {
+    if tools != nil {
+      return true
+    } else if contents.previewOnly {
+      return true
+    }
+
+    return false
+  }
 }

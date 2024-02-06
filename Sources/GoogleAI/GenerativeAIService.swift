@@ -146,6 +146,10 @@ struct GenerativeAIService {
   // MARK: - Private Helpers
 
   private func urlRequest<T: GenerativeAIRequest>(request: T) throws -> URLRequest {
+    if request.previewOnly && !request.url.absoluteString.contains("v1beta") {
+      throw PreviewOnlyError()
+    }
+
     var urlRequest = URLRequest(url: request.url)
     urlRequest.httpMethod = "POST"
     urlRequest.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")

@@ -31,6 +31,10 @@ extension CountTokensRequest: GenerativeAIRequest {
   var url: URL {
     URL(string: "\(GenerativeAISwift.baseURL)/\(model):countTokens")!
   }
+
+  var previewOnly: Bool {
+    return contents.previewOnly
+  }
 }
 
 /// The model's response to a count tokens request.

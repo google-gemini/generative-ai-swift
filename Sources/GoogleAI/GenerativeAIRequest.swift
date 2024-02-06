@@ -18,4 +18,6 @@ protocol GenerativeAIRequest: Encodable {
   associatedtype Response: Decodable
 
   var url: URL { get }
+
+  var previewOnly: Bool { get }
 }

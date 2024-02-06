@@ -187,3 +187,5 @@ enum InvalidCandidateError: Error {
   case emptyContent(underlyingError: Error)
   case malformedContent(underlyingError: Error)
 }
+
+public struct PreviewOnlyError: Error {}

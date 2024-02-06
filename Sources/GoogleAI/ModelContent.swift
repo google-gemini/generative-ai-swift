@@ -143,3 +143,39 @@ public struct ModelContent: Codable, Equatable {
     self.init(role: role, parts: parts)
   }
 }
+
+extension ModelContent.Part {
+  var previewOnly: Bool {
+    if case .functionCall = self {
+      return true
+    } else if case .functionResponse = self {
+      return true
+    }
+
+    return false
+  }
+}
+
+extension ModelContent {
+  var previewOnly: Bool {
+    for part in parts {
+      if part.previewOnly {
+        return true
+      }
+    }
+
+    return false
+  }
+}
+
+extension [ModelContent] {
+  var previewOnly: Bool {
+    for modelContent in self {
+      if modelContent.previewOnly {
+        return true
+      }
+    }
+
+    return false
+  }
+}
