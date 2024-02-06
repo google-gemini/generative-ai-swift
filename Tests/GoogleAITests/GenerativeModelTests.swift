@@ -15,7 +15,7 @@
 @testable import GoogleGenerativeAI
 import XCTest
 
-@available(iOS 15.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, macCatalyst 15.0, *)
 final class GenerativeModelTests: XCTestCase {
   let testPrompt = "What sorts of questions can I ask you?"
   let safetyRatingsNegligible: [SafetyRating] = [

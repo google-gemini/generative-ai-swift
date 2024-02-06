@@ -40,9 +40,9 @@ extension GenerateContentRequest: GenerativeAIRequest {
 
   var url: URL {
     if isStreaming {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):streamGenerateContent?alt=sse")!
+      return URL(string: "\(GenerativeAISwift.baseURL)/\(model):streamGenerateContent?alt=sse")!
     } else {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):generateContent")!
+      return URL(string: "\(GenerativeAISwift.baseURL)/\(model):generateContent")!
     }
   }
 }
