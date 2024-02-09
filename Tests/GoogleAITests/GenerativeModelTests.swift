@@ -259,7 +259,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
+    } catch let GenerateContentError.internalError(underlying: rpcError as ServerError) {
       XCTAssertEqual(rpcError.status, .invalidArgument)
       XCTAssertEqual(rpcError.code, expectedStatusCode)
       XCTAssertEqual(rpcError.message, "Request contains an invalid argument.")
@@ -333,7 +333,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
+    } catch let GenerateContentError.internalError(underlying: rpcError as ServerError) {
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssertEqual(rpcError.code, expectedStatusCode)
       XCTAssertTrue(rpcError.message.hasPrefix("models/unknown is not found"))
@@ -670,7 +670,7 @@ final class GenerativeModelTests: XCTestCase {
         XCTAssertNotNil(content.text)
         responseCount += 1
       }
-    } catch let GenerateContentError.internalError(rpcError as RPCError) {
+    } catch let GenerateContentError.internalError(rpcError as ServerError) {
       XCTAssertEqual(rpcError.code, 499)
       XCTAssertEqual(rpcError.status, .cancelled)
 
@@ -814,7 +814,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.countTokens("Why is the sky blue?")
       XCTFail("Request should not have succeeded.")
-    } catch let CountTokensError.internalError(rpcError as RPCError) {
+    } catch let CountTokensError.internalError(rpcError as ServerError) {
       XCTAssertEqual(rpcError.code, 404)
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))

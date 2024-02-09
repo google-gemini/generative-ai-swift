@@ -14,7 +14,7 @@
 
 import Foundation
 
-struct RPCError: Error {
+struct ServerError: Error {
   enum ErrorDetails {
     case badRequest(BadRequest)
     case errorInfo(ErrorInfo)
@@ -132,7 +132,7 @@ enum InvalidCandidateError: Error {
 
 // MARK: - Decodable Conformance
 
-extension RPCError: Decodable {
+extension ServerError: Decodable {
   enum CodingKeys: CodingKey {
     case error
   }
@@ -140,8 +140,8 @@ extension RPCError: Decodable {
   struct ErrorStatus {
     let code: Int?
     let message: String?
-    let status: RPCError.Status?
-    let details: [RPCError.ErrorDetails]
+    let status: ServerError.Status?
+    let details: [ServerError.ErrorDetails]
   }
 
   init(from decoder: Decoder) throws {
@@ -170,7 +170,7 @@ extension RPCError: Decodable {
   }
 }
 
-extension RPCError.ErrorStatus: Decodable {
+extension ServerError.ErrorStatus: Decodable {
   enum CodingKeys: CodingKey {
     case code
     case message
@@ -183,19 +183,19 @@ extension RPCError.ErrorStatus: Decodable {
     code = try container.decodeIfPresent(Int.self, forKey: .code)
     message = try container.decodeIfPresent(String.self, forKey: .message)
     do {
-      status = try container.decodeIfPresent(RPCError.Status.self, forKey: .status)
+      status = try container.decodeIfPresent(ServerError.Status.self, forKey: .status)
     } catch {
       status = .unknown
     }
     if container.contains(.details) {
-      details = try container.decode([RPCError.ErrorDetails].self, forKey: .details)
+      details = try container.decode([ServerError.ErrorDetails].self, forKey: .details)
     } else {
       details = []
     }
   }
 }
 
-extension RPCError.ErrorDetails: Decodable {
+extension ServerError.ErrorDetails: Decodable {
   enum CodingKeys: String, CodingKey {
     case type = "@type"
   }
@@ -206,18 +206,18 @@ extension RPCError.ErrorDetails: Decodable {
     if type == BadRequest.type {
       let badRequestContainer = try decoder.singleValueContainer()
       let badRequest = try badRequestContainer.decode(BadRequest.self)
-      self = RPCError.ErrorDetails.badRequest(badRequest)
+      self = ServerError.ErrorDetails.badRequest(badRequest)
     } else if type == ErrorInfo.type {
       let errorInfoContainer = try decoder.singleValueContainer()
       let errorInfo = try errorInfoContainer.decode(ErrorInfo.self)
-      self = RPCError.ErrorDetails.errorInfo(errorInfo)
+      self = ServerError.ErrorDetails.errorInfo(errorInfo)
     } else {
-      self = RPCError.ErrorDetails.unknown(type)
+      self = ServerError.ErrorDetails.unknown(type)
     }
   }
 }
 
-extension RPCError.ErrorDetails.BadRequest: Decodable {
+extension ServerError.ErrorDetails.BadRequest: Decodable {
   enum CodingKeys: String, CodingKey {
     case type = "@type"
     case fieldViolations
@@ -230,7 +230,7 @@ extension RPCError.ErrorDetails.BadRequest: Decodable {
   }
 }
 
-extension RPCError.ErrorDetails.ErrorInfo: Decodable {
+extension ServerError.ErrorDetails.ErrorInfo: Decodable {
   enum CodingKeys: String, CodingKey {
     case type = "@type"
     case reason
