@@ -42,7 +42,8 @@ public final class GenerativeModel {
   /// Initializes a new remote model with the given parameters.
   ///
   /// - Parameters:
-  ///   - name: The name of the model to be used, e.g., "gemini-pro" or "models/gemini-pro".
+  ///   - name: The name of the model to be used, e.g., `"gemini-pro"` or `"models/gemini-pro"`; see
+  ///     [Gemini models](https://ai.google.dev/models/gemini) for a list of supported model names.
   ///   - apiKey: The API key for your project.
   ///   - generationConfig: The content generation parameters your model should use.
   ///   - safetySettings: A value describing what types of harmful content your model should allow.
