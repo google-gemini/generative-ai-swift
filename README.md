@@ -83,10 +83,15 @@ for more information on
 contributing to the Google AI SDK for Swift.
 
 
-## Developers who use the PaLM SDK for Swift
+## Developers who use the PaLM SDK for Swift (Deprecated)
 
-​​If you're using the PaLM SDK for Swift, review the information below to continue
-using the PaLM SDK until you've migrated to the new version that allows you to use Gemini.
+> [!IMPORTANT]
+> The PaLM API is deprecated for use with Google AI services and tools (but _not_ for Vertex AI).
+> Learn more about this deprecation, its timeline, and how to migrate to use Gemini in the
+> [PaLM API deprecation guide](http://ai.google.dev/palm_docs/deprecation).
+
+​​If you're using the PaLM SDK for Swift, review the information below to continue using the
+**deprecated** PaLM SDK until you've migrated to the new version that allows you to use Gemini.
 
 - To continue using PaLM models, make sure your app depends on version
 [`0.3.0`](https://github.com/google/generative-ai-swift/releases/tag/0.3.0)
