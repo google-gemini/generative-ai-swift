@@ -17,7 +17,7 @@ import Foundation
 /// Errors that occur when generating content from a model.
 public enum GenerateContentError: Error {
   /// An error occurred when constructing the prompt. Examine the related error for details.
-  case promptContentError(underlying: ImageConversionError)
+  case promptImageContentError(underlying: ImageConversionError)
 
   /// An internal error occurred. See the underlying error for more context.
   case internalError(underlying: Error)

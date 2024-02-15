@@ -48,7 +48,7 @@ public class Chat {
       newContent = try content().map(populateContentRole(_:))
     } catch let underlying {
       if let contentError = underlying as? ImageConversionError {
-        throw GenerateContentError.promptContentError(underlying: contentError)
+        throw GenerateContentError.promptImageContentError(underlying: contentError)
       } else {
         throw GenerateContentError.internalError(underlying: underlying)
       }
@@ -96,7 +96,7 @@ public class Chat {
       return AsyncThrowingStream { continuation in
         let error: Error
         if let contentError = underlying as? ImageConversionError {
-          error = GenerateContentError.promptContentError(underlying: contentError)
+          error = GenerateContentError.promptImageContentError(underlying: contentError)
         } else {
           error = GenerateContentError.internalError(underlying: underlying)
         }

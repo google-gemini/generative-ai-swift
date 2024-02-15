@@ -161,7 +161,7 @@ public final class GenerativeModel {
       return AsyncThrowingStream { continuation in
         let error: Error
         if let contentError = underlying as? ImageConversionError {
-          error = GenerateContentError.promptContentError(underlying: contentError)
+          error = GenerateContentError.promptImageContentError(underlying: contentError)
         } else {
           error = GenerateContentError.internalError(underlying: underlying)
         }
