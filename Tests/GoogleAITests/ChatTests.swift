@@ -16,7 +16,7 @@ import Foundation
 @testable import GoogleGenerativeAI
 import XCTest
 
-@available(iOS 15.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, macCatalyst 15.0, *)
 final class ChatTests: XCTestCase {
   var urlSession: URLSession!
 

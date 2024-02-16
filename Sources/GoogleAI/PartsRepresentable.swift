@@ -16,6 +16,7 @@ import Foundation
 
 /// A protocol describing any data that could be serialized to model-interpretable input data,
 /// where the serialization process might fail with an error.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public protocol ThrowingPartsRepresentable {
   func tryPartsValue() throws -> [ModelContent.Part]
 }
@@ -23,10 +24,12 @@ public protocol ThrowingPartsRepresentable {
 /// A protocol describing any data that could be serialized to model-interpretable input data,
 /// where the serialization process cannot fail with an error. For a failable conversion, see
 /// ``ThrowingPartsRepresentable``
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public protocol PartsRepresentable: ThrowingPartsRepresentable {
   func toPartsValue() -> [ModelContent.Part]
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public extension PartsRepresentable {
   func tryPartsValue() throws -> [ModelContent.Part] {
     return toPartsValue()
@@ -34,6 +37,7 @@ public extension PartsRepresentable {
 }
 
 /// Enables a ``ModelContent.Part`` to be passed in as ``ThrowingPartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension ModelContent.Part: ThrowingPartsRepresentable {
   public typealias ErrorType = Never
   public func tryPartsValue() throws -> [ModelContent.Part] {
@@ -43,6 +47,7 @@ extension ModelContent.Part: ThrowingPartsRepresentable {
 
 /// Enable an `Array` of ``ThrowingPartsRepresentable`` values to be passed in as a single
 /// ``ThrowingPartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension [ThrowingPartsRepresentable]: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     return try compactMap { element in
@@ -53,6 +58,7 @@ extension [ThrowingPartsRepresentable]: ThrowingPartsRepresentable {
 }
 
 /// Enables a `String` to be passed in as ``ThrowingPartsRepresentable``.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension String: PartsRepresentable {
   public func toPartsValue() -> [ModelContent.Part] {
     return [.text(self)]

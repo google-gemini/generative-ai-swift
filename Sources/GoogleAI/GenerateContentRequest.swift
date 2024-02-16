@@ -14,6 +14,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 struct GenerateContentRequest {
   /// Model name.
   let model: String
@@ -21,8 +22,10 @@ struct GenerateContentRequest {
   let generationConfig: GenerationConfig?
   let safetySettings: [SafetySetting]?
   let isStreaming: Bool
+  let options: RequestOptions
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension GenerateContentRequest: Encodable {
   enum CodingKeys: String, CodingKey {
     case contents
@@ -31,14 +34,16 @@ extension GenerateContentRequest: Encodable {
   }
 }
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension GenerateContentRequest: GenerativeAIRequest {
   typealias Response = GenerateContentResponse
 
   var url: URL {
+    let modelURL = "\(GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model)"
     if isStreaming {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):streamGenerateContent?alt=sse")!
+      return URL(string: "\(modelURL):streamGenerateContent?alt=sse")!
     } else {
-      URL(string: "\(GenerativeAISwift.baseURL)/\(model):generateContent")!
+      return URL(string: "\(modelURL):generateContent")!
     }
   }
 }

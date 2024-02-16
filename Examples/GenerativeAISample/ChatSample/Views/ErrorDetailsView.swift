@@ -142,6 +142,37 @@ struct ErrorDetailsView: View {
             SafetyRatingsSection(ratings: ratings)
           }
 
+        case GenerateContentError.invalidAPIKey:
+          Section("Error Type") {
+            Text("Invalid API Key")
+          }
+
+          Section("Details") {
+            SubtitleFormRow(title: "Error description", value: error.localizedDescription)
+            SubtitleMarkdownFormRow(
+              title: "Help",
+              value: """
+              Please provide a valid value for `API_KEY` in the `GenerativeAI-Info.plist` file.
+              """
+            )
+          }
+
+        case GenerateContentError.unsupportedUserLocation:
+          Section("Error Type") {
+            Text("Unsupported User Location")
+          }
+
+          Section("Details") {
+            SubtitleFormRow(title: "Error description", value: error.localizedDescription)
+            SubtitleMarkdownFormRow(
+              title: "Help",
+              value: """
+              The API is unsupported in your location (country / territory); please see the list of
+              [available regions](https://ai.google.dev/available_regions#available_regions).
+              """
+            )
+          }
+
         default:
           Section("Error Type") {
             Text("Some other error")
@@ -158,49 +189,59 @@ struct ErrorDetailsView: View {
   }
 }
 
-#Preview {
-  NavigationView {
-    let _ = GenerateContentError.promptBlocked(
-      response: GenerateContentResponse(candidates: [
-        CandidateResponse(content: ModelContent(role: "model", [
-          """
-            A _hypothetical_ model response.
-            Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
-          """,
-        ]),
-        safetyRatings: [
-          SafetyRating(category: .dangerousContent, probability: .high),
-          SafetyRating(category: .harassment, probability: .low),
-          SafetyRating(category: .hateSpeech, probability: .low),
-          SafetyRating(category: .sexuallyExplicit, probability: .low),
-        ],
-        finishReason: FinishReason.other,
-        citationMetadata: nil),
+#Preview("Response Stopped Early") {
+  let error = GenerateContentError.responseStoppedEarly(
+    reason: .maxTokens,
+    response: GenerateContentResponse(candidates: [
+      CandidateResponse(content: ModelContent(role: "model", [
+        """
+        A _hypothetical_ model response.
+        Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
+        """,
+      ]),
+      safetyRatings: [
+        SafetyRating(category: .dangerousContent, probability: .high),
+        SafetyRating(category: .harassment, probability: .low),
+        SafetyRating(category: .hateSpeech, probability: .low),
+        SafetyRating(category: .sexuallyExplicit, probability: .low),
       ],
-      promptFeedback: nil)
-    )
+      finishReason: FinishReason.maxTokens,
+      citationMetadata: nil),
+    ],
+    promptFeedback: nil)
+  )
 
-    let errorFinishedEarly = GenerateContentError.responseStoppedEarly(
-      reason: .maxTokens,
-      response: GenerateContentResponse(candidates: [
-        CandidateResponse(content: ModelContent(role: "model", [
-          """
-            A _hypothetical_ model response.
-            Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
-          """,
-        ]),
-        safetyRatings: [
-          SafetyRating(category: .dangerousContent, probability: .high),
-          SafetyRating(category: .harassment, probability: .low),
-          SafetyRating(category: .hateSpeech, probability: .low),
-          SafetyRating(category: .sexuallyExplicit, probability: .low),
-        ],
-        finishReason: FinishReason.maxTokens,
-        citationMetadata: nil),
+  return ErrorDetailsView(error: error)
+}
+
+#Preview("Prompt Blocked") {
+  let error = GenerateContentError.promptBlocked(
+    response: GenerateContentResponse(candidates: [
+      CandidateResponse(content: ModelContent(role: "model", [
+        """
+        A _hypothetical_ model response.
+        Cillum ex aliqua amet aliquip labore amet eiusmod consectetur reprehenderit sit commodo.
+        """,
+      ]),
+      safetyRatings: [
+        SafetyRating(category: .dangerousContent, probability: .high),
+        SafetyRating(category: .harassment, probability: .low),
+        SafetyRating(category: .hateSpeech, probability: .low),
+        SafetyRating(category: .sexuallyExplicit, probability: .low),
       ],
-      promptFeedback: nil)
-    )
+      finishReason: FinishReason.other,
+      citationMetadata: nil),
+    ],
+    promptFeedback: nil)
+  )
 
-    ErrorDetailsView(error: errorFinishedEarly)
-  }
+  return ErrorDetailsView(error: error)
+}
+
+#Preview("Invalid API Key") {
+  ErrorDetailsView(error: GenerateContentError.invalidAPIKey)
+}
+
+#Preview("Unsupported User Location") {
+  ErrorDetailsView(error: GenerateContentError.unsupportedUserLocation)
 }

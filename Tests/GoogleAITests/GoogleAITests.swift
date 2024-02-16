@@ -20,6 +20,7 @@ import XCTest
   import UIKit // For UIImage extensions.
 #endif
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class GoogleGenerativeAITests: XCTestCase {
   func codeSamples() async throws {
     let config = GenerationConfig(temperature: 0.2,
@@ -31,12 +32,12 @@ final class GoogleGenerativeAITests: XCTestCase {
     let filters = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockOnlyHigh)]
 
     // Permutations without optional arguments.
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY")
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY", safetySettings: filters)
-    let _ = GenerativeModel(name: "gemini-pro@001", apiKey: "API_KEY", generationConfig: config)
+    let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY")
+    let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY", safetySettings: filters)
+    let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY", generationConfig: config)
 
     // All arguments passed.
-    let genAI = GenerativeModel(name: "gemini-pro@001",
+    let genAI = GenerativeModel(name: "gemini-1.0-pro",
                                 apiKey: "API_KEY",
                                 generationConfig: config, // Optional
                                 safetySettings: filters // Optional

@@ -15,6 +15,7 @@
 import Foundation
 
 /// Errors that occur when generating content from a model.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public enum GenerateContentError: Error {
   /// An error occurred when constructing the prompt. Examine the related error for details.
   case promptImageContentError(underlying: ImageConversionError)
@@ -27,4 +28,17 @@ public enum GenerateContentError: Error {
 
   /// A response didn't fully complete. See the `FinishReason` for more information.
   case responseStoppedEarly(reason: FinishReason, response: GenerateContentResponse)
+
+  /// The provided API key is invalid.
+  case invalidAPIKey
+
+  /// The user's location (region) is not supported by the API.
+  ///
+  /// See the Google documentation for a
+  /// [list of regions](https://ai.google.dev/available_regions#available_regions)
+  /// (countries and territories) where the API is available.
+  ///
+  /// - Important: The API is only available in
+  /// [specific regions](https://ai.google.dev/available_regions#available_regions).
+  case unsupportedUserLocation
 }

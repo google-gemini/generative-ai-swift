@@ -38,6 +38,7 @@ public enum ImageConversionError: Error {
 
 #if canImport(UIKit)
   /// Enables images to be representable as ``ThrowingPartsRepresentable``.
+  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
   extension UIImage: ThrowingPartsRepresentable {
     public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
@@ -49,6 +50,7 @@ public enum ImageConversionError: Error {
 
 #elseif canImport(AppKit)
   /// Enables images to be representable as ``ThrowingPartsRepresentable``.
+  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
   extension NSImage: ThrowingPartsRepresentable {
     public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
@@ -64,6 +66,8 @@ public enum ImageConversionError: Error {
   }
 #endif
 
+/// Enables `CGImages` to be representable as model content.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CGImage: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     let output = NSMutableData()
@@ -83,6 +87,8 @@ extension CGImage: ThrowingPartsRepresentable {
   }
 }
 
+/// Enables `CIImages` to be representable as model content.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CIImage: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
     let context = CIContext()
