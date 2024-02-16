@@ -24,7 +24,6 @@ import XCTest
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class PartsRepresentableTests: XCTestCase {
-
   func testModelContentFromCGImageIsNotEmpty() throws {
     // adapted from https://forums.swift.org/t/creating-a-cgimage-from-color-array/18634/2
     var srgbArray = [UInt32](repeating: 0xFFFF_FFFF, count: 8 * 8)
