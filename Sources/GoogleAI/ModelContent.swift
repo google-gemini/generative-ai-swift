@@ -114,7 +114,7 @@ public struct ModelContent: Codable, Equatable {
   /// ``Part``. See ``ThrowingPartsRepresentable`` for types that can be interpreted as `Part`s.
   public init(role: String? = "user", parts: some PartsRepresentable) {
     self.role = role
-    self.parts = parts.toPartsValue()
+    self.parts = parts.partsValue
   }
 
   /// Creates a new value from a list of ``Part``s.
@@ -135,7 +135,7 @@ public struct ModelContent: Codable, Equatable {
   /// ``ThrowingPartsRepresentable``
   /// for types that can be interpreted as `Part`s.
   public init(role: String? = "user", _ parts: [PartsRepresentable]) {
-    let content = parts.flatMap { $0.toPartsValue() }
+    let content = parts.flatMap { $0.partsValue }
     self.init(role: role, parts: content)
   }
 }

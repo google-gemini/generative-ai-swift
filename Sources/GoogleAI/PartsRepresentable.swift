@@ -26,13 +26,13 @@ public protocol ThrowingPartsRepresentable {
 /// ``ThrowingPartsRepresentable``
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public protocol PartsRepresentable: ThrowingPartsRepresentable {
-  func toPartsValue() -> [ModelContent.Part]
+  var partsValue: [ModelContent.Part] { get }
 }
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public extension PartsRepresentable {
   func tryPartsValue() throws -> [ModelContent.Part] {
-    return toPartsValue()
+    return partsValue
   }
 }
 
@@ -60,7 +60,7 @@ extension [ThrowingPartsRepresentable]: ThrowingPartsRepresentable {
 /// Enables a `String` to be passed in as ``ThrowingPartsRepresentable``.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension String: PartsRepresentable {
-  public func toPartsValue() -> [ModelContent.Part] {
+  public var partsValue: [ModelContent.Part] {
     return [.text(self)]
   }
 }
