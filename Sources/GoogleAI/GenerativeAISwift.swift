@@ -22,5 +22,4 @@ import Foundation
 public enum GenerativeAISwift {
   /// String value of the SDK version
   public static let version = "0.4.8"
-  static let baseURL = "https://generativelanguage.googleapis.com"
 }

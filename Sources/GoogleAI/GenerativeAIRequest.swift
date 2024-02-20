@@ -29,8 +29,12 @@ public struct RequestOptions {
   /// The request’s timeout interval in seconds; if not specified uses the default value for a
   /// `URLRequest`.
   let timeout: TimeInterval?
+
   /// The API version to use in requests to the backend.
   let apiVersion: String
+
+  /// The hostname to use in requests to the backend.
+  let endpoint: String
 
   /// Asynchronous methods that manipulate the `URLRequest` before being sent.
   /// Similar in concept to
@@ -41,15 +45,19 @@ public struct RequestOptions {
   /// Initializes a request options object.
   ///
   /// - Parameters:
-  ///   - timeout The request’s timeout interval in seconds; if not specified uses the default value
-  ///   for a `URLRequest`.
-  ///   - apiVersion The API version to use in requests to the backend; defaults to "v1".
-  ///   - hooks An array of asynchronous methods that manipulate the `URLRequest` before
-  ///   being sent (e.g., to add headers); if none specified, the `URLRequest` is unchanged.
+  ///   - timeout: The request’s timeout interval in seconds; if not specified uses the default
+  ///     value for a `URLRequest`.
+  ///   - apiVersion: The API version to use in requests to the backend; defaults to "v1".
+  ///   - endpoint: The hostname to use in requests to the backend; defaults to
+  ///     "generativelanguage.googleapis.com".
+  ///   - hooks: An array of asynchronous methods that manipulate the `URLRequest` before being
+  ///     sent (e.g., to add headers); if none specified, the `URLRequest` is unchanged.
   public init(timeout: TimeInterval? = nil, apiVersion: String = "v1",
+              endpoint: String = "generativelanguage.googleapis.com",
               hooks: [(_: inout URLRequest) async throws -> Void] = []) {
     self.timeout = timeout
     self.apiVersion = apiVersion
+    self.endpoint = endpoint
     self.hooks = hooks
   }
 }
