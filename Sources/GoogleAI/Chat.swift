@@ -88,11 +88,11 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: A stream containing the model's response or an error if an error occurred.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ contentClosure: @autoclosure () throws -> [ModelContent])
+  public func sendMessageStream(_ content: @autoclosure () throws -> [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    let content: [ModelContent]
+    let resolvedContent: [ModelContent]
     do {
-      content = try contentClosure()
+      resolvedContent = try content()
     } catch let underlying {
       return AsyncThrowingStream { continuation in
         let error: Error
@@ -110,7 +110,7 @@ public class Chat {
         var aggregatedContent: [ModelContent] = []
 
         // Ensure that the new content has the role set.
-        let newContent: [ModelContent] = content.map(populateContentRole(_:))
+        let newContent: [ModelContent] = resolvedContent.map(populateContentRole(_:))
 
         // Send the history alongside the new message as context.
         let request = history + newContent

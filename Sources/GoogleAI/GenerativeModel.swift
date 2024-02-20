@@ -111,18 +111,21 @@ public final class GenerativeModel {
   /// - Parameter content: The input(s) given to the model as a prompt.
   /// - Returns: The generated content response from the model.
   /// - Throws: A ``GenerateContentError`` if the request failed.
-  public func generateContent(_ content: [ModelContent]) async throws
+  public func generateContent(_ content: @autoclosure () throws -> [ModelContent]) async throws
     -> GenerateContentResponse {
-    let generateContentRequest = GenerateContentRequest(model: modelResourceName,
-                                                        contents: content,
-                                                        generationConfig: generationConfig,
-                                                        safetySettings: safetySettings,
-                                                        isStreaming: false,
-                                                        options: requestOptions)
     let response: GenerateContentResponse
     do {
+      let generateContentRequest = try GenerateContentRequest(model: modelResourceName,
+                                                              contents: content(),
+                                                              generationConfig: generationConfig,
+                                                              safetySettings: safetySettings,
+                                                              isStreaming: false,
+                                                              options: requestOptions)
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
     } catch {
+      if let imageError = error as? ImageConversionError {
+        throw GenerateContentError.promptImageContentError(underlying: imageError)
+      }
       throw GenerativeModel.generateContentError(from: error)
     }
 
@@ -251,16 +254,16 @@ public final class GenerativeModel {
   /// - Parameter content: The input given to the model as a prompt.
   /// - Returns: The results of running the model's tokenizer on the input; contains
   /// ``CountTokensResponse/totalTokens``.
-  /// - Throws: A ``CountTokensError`` if the tokenization request failed.
-  public func countTokens(_ content: [ModelContent]) async throws
+  /// - Throws: A ``CountTokensError`` if the tokenization request failed or the input content was
+  /// invalid.
+  public func countTokens(_ content: @autoclosure () throws -> [ModelContent]) async throws
     -> CountTokensResponse {
-    let countTokensRequest = CountTokensRequest(
-      model: modelResourceName,
-      contents: content,
-      options: requestOptions
-    )
-
     do {
+      let countTokensRequest = try CountTokensRequest(
+        model: modelResourceName,
+        contents: content(),
+        options: requestOptions
+      )
       return try await generativeAIService.loadRequest(request: countTokensRequest)
     } catch {
       throw CountTokensError.internalError(underlying: error)
