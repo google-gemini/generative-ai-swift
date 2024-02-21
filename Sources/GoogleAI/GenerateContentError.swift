@@ -17,6 +17,9 @@ import Foundation
 /// Errors that occur when generating content from a model.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public enum GenerateContentError: Error {
+  /// An error occurred when constructing the prompt. Examine the related error for details.
+  case promptImageContentError(underlying: ImageConversionError)
+
   /// An internal error occurred. See the underlying error for more context.
   case internalError(underlying: Error)
 

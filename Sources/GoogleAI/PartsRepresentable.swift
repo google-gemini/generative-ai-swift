@@ -13,117 +13,54 @@
 // limitations under the License.
 
 import Foundation
-import UniformTypeIdentifiers
-#if canImport(UIKit)
-  import UIKit // For UIImage extensions.
-#elseif canImport(AppKit)
-  import AppKit // For NSImage extensions.
-#endif
 
-private let imageCompressionQuality: CGFloat = 0.8
-
-/// A protocol describing any data that could be interpreted as model input data.
+/// A protocol describing any data that could be serialized to model-interpretable input data,
+/// where the serialization process might fail with an error.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public protocol PartsRepresentable {
+public protocol ThrowingPartsRepresentable {
+  func tryPartsValue() throws -> [ModelContent.Part]
+}
+
+/// A protocol describing any data that could be serialized to model-interpretable input data,
+/// where the serialization process cannot fail with an error. For a failable conversion, see
+/// ``ThrowingPartsRepresentable``
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+public protocol PartsRepresentable: ThrowingPartsRepresentable {
   var partsValue: [ModelContent.Part] { get }
 }
 
-/// Enables a `String` to be passed in as ``PartsRepresentable``.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension String: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    return [.text(self)]
+public extension PartsRepresentable {
+  func tryPartsValue() throws -> [ModelContent.Part] {
+    return partsValue
   }
 }
 
-/// Enables a ``ModelContent.Part`` to be passed in as ``PartsRepresentable``.
+/// Enables a ``ModelContent.Part`` to be passed in as ``ThrowingPartsRepresentable``.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension ModelContent.Part: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
+extension ModelContent.Part: ThrowingPartsRepresentable {
+  public typealias ErrorType = Never
+  public func tryPartsValue() throws -> [ModelContent.Part] {
     return [self]
   }
 }
 
-/// Enable an `Array` of ``PartsRepresentable`` values to be passed in as a single
-/// ``PartsRepresentable``.
+/// Enable an `Array` of ``ThrowingPartsRepresentable`` values to be passed in as a single
+/// ``ThrowingPartsRepresentable``.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension [any PartsRepresentable]: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    return flatMap { $0.partsValue }
+extension [ThrowingPartsRepresentable]: ThrowingPartsRepresentable {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
+    return try compactMap { element in
+      try element.tryPartsValue()
+    }
+    .flatMap { $0 }
   }
 }
 
-#if canImport(UIKit)
-  /// Enables images to be representable as ``PartsRepresentable``.
-  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-  extension UIImage: PartsRepresentable {
-    public var partsValue: [ModelContent.Part] {
-      guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from UIImage.")
-        return []
-      }
-
-      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
-    }
-  }
-
-#elseif canImport(AppKit)
-  /// Enables images to be representable as ``PartsRepresentable``.
-  @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-  extension NSImage: PartsRepresentable {
-    public var partsValue: [ModelContent.Part] {
-      guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create CGImage from NSImage.")
-        return []
-      }
-      let bmp = NSBitmapImageRep(cgImage: cgImage)
-      guard let data = bmp.representation(using: .jpeg, properties: [.compressionFactor: 0.8])
-      else {
-        Logging.default.error("[GoogleGenerativeAI] Couldn't create BMP from CGImage.")
-        return []
-      }
-      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
-    }
-  }
-#endif
-
+/// Enables a `String` to be passed in as ``ThrowingPartsRepresentable``.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension CGImage: PartsRepresentable {
+extension String: PartsRepresentable {
   public var partsValue: [ModelContent.Part] {
-    let output = NSMutableData()
-    guard let imageDestination = CGImageDestinationCreateWithData(
-      output, UTType.jpeg.identifier as CFString, 1, nil
-    ) else {
-      Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CGImage.")
-      return []
-    }
-    CGImageDestinationAddImage(imageDestination, self, nil)
-    CGImageDestinationSetProperties(imageDestination, [
-      kCGImageDestinationLossyCompressionQuality: imageCompressionQuality,
-    ] as CFDictionary)
-    if CGImageDestinationFinalize(imageDestination) {
-      return [.data(mimetype: "image/jpeg", output as Data)]
-    }
-    Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CGImage.")
-    return []
-  }
-}
-
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension CIImage: PartsRepresentable {
-  public var partsValue: [ModelContent.Part] {
-    let context = CIContext()
-    let jpegData = (colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB))
-      .flatMap {
-        // The docs specify kCGImageDestinationLossyCompressionQuality as a supported option, but
-        // Swift's type system does not allow this.
-        // [kCGImageDestinationLossyCompressionQuality: imageCompressionQuality]
-        context.jpegRepresentation(of: self, colorSpace: $0, options: [:])
-      }
-    if let jpegData = jpegData {
-      return [.data(mimetype: "image/jpeg", jpegData)]
-    }
-    Logging.default.error("[GoogleGenerativeAI] Couldn't create JPEG from CIImage.")
-    return []
+    return [.text(self)]
   }
 }

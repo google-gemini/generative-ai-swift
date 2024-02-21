@@ -31,7 +31,8 @@ public class Chat {
   public var history: [ModelContent]
 
   /// See ``sendMessage(_:)-3ify5``.
-  public func sendMessage(_ parts: PartsRepresentable...) async throws -> GenerateContentResponse {
+  public func sendMessage(_ parts: any ThrowingPartsRepresentable...) async throws
+    -> GenerateContentResponse {
     return try await sendMessage([ModelContent(parts: parts)])
   }
 
@@ -40,9 +41,19 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: The model's response if no error occurred.
   /// - Throws: A ``GenerateContentError`` if an error occurred.
-  public func sendMessage(_ content: [ModelContent]) async throws -> GenerateContentResponse {
+  public func sendMessage(_ content: @autoclosure () throws -> [ModelContent]) async throws
+    -> GenerateContentResponse {
     // Ensure that the new content has the role set.
-    let newContent: [ModelContent] = content.map(populateContentRole(_:))
+    let newContent: [ModelContent]
+    do {
+      newContent = try content().map(populateContentRole(_:))
+    } catch let underlying {
+      if let contentError = underlying as? ImageConversionError {
+        throw GenerateContentError.promptImageContentError(underlying: contentError)
+      } else {
+        throw GenerateContentError.internalError(underlying: underlying)
+      }
+    }
 
     // Send the history alongside the new message as context.
     let request = history + newContent
@@ -67,9 +78,9 @@ public class Chat {
 
   /// See ``sendMessageStream(_:)-4abs3``.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ parts: PartsRepresentable...)
+  public func sendMessageStream(_ parts: any ThrowingPartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    return sendMessageStream([ModelContent(parts: parts)])
+    return try sendMessageStream([ModelContent(parts: parts)])
   }
 
   /// Sends a message using the existing history of this chat as context. If successful, the message
@@ -77,14 +88,29 @@ public class Chat {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: A stream containing the model's response or an error if an error occurred.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ content: [ModelContent])
+  public func sendMessageStream(_ content: @autoclosure () throws -> [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
+    let resolvedContent: [ModelContent]
+    do {
+      resolvedContent = try content()
+    } catch let underlying {
+      return AsyncThrowingStream { continuation in
+        let error: Error
+        if let contentError = underlying as? ImageConversionError {
+          error = GenerateContentError.promptImageContentError(underlying: contentError)
+        } else {
+          error = GenerateContentError.internalError(underlying: underlying)
+        }
+        continuation.finish(throwing: error)
+      }
+    }
+
     return AsyncThrowingStream { continuation in
       Task {
         var aggregatedContent: [ModelContent] = []
 
         // Ensure that the new content has the role set.
-        let newContent: [ModelContent] = content.map(populateContentRole(_:))
+        let newContent: [ModelContent] = resolvedContent.map(populateContentRole(_:))
 
         // Send the history alongside the new message as context.
         let request = history + newContent
