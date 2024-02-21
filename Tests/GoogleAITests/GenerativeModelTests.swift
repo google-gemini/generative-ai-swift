@@ -477,10 +477,8 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   private func addHeader(request: inout URLRequest) async throws {
-    print("Waiting for request hook.")
-    try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
-    request.addValue("hello-world", forHTTPHeaderField: "x-my-header")
-    print("Request hook finished.")
+    try await Task.sleep(nanoseconds: 1)
+    request.addValue("hello-world", forHTTPHeaderField: "x-hello-header")
   }
 
   func testGenerateContent_requestOptions_hook() async throws {

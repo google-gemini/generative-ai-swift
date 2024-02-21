@@ -53,17 +53,6 @@ struct GenerateContent: AsyncParsableCommand {
     }
   }
 
-  func addAppCheckHeader(request: inout URLRequest) async throws {
-    print("Adding App Check token header.")
-
-    // Pretend to call getTokenForcingRefresh asynchronously.
-    try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
-
-    let placeholderToken = "eyJlcnJvciI6IlVOS05PV05fRVJST1IifQ=="
-    request.addValue(placeholderToken, forHTTPHeaderField: "X-Firebase-AppCheck")
-    print("Added App Check token header.")
-  }
-
   mutating func run() async throws {
     do {
       let safetySettings = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockNone)]
@@ -77,13 +66,11 @@ struct GenerateContent: AsyncParsableCommand {
         stopSequences: nil
       )
 
-      let requestOptions = RequestOptions(hooks: [addAppCheckHeader])
       let model = GenerativeModel(
         name: modelNameOrDefault(),
         apiKey: apiKey,
         generationConfig: config,
-        safetySettings: safetySettings,
-        requestOptions: requestOptions
+        safetySettings: safetySettings
       )
 
       var parts = [ModelContent.Part]()
