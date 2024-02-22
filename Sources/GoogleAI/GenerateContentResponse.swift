@@ -154,9 +154,28 @@ extension CandidateResponse: Decodable {
 
 /// A collection of source attributions for a piece of content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct CitationMetadata: Decodable {
+public struct CitationMetadata {
   /// A list of individual cited sources and the parts of the content to which they apply.
   public let citationSources: [Citation]
+}
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension CitationMetadata: Decodable {
+  enum CodingKeys: CodingKey {
+    case citationSources
+    case citations
+  }
+  
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    if container.contains(.citationSources) {
+      self.citationSources = try container.decode([Citation].self, forKey: .citationSources)
+    } else if container.contains(.citations) {
+      self.citationSources = try container.decode([Citation].self, forKey: .citations)
+    } else {
+      self.citationSources = []
+    }
+  }
 }
 
 /// A struct describing a source attribution.
@@ -172,7 +191,7 @@ public struct Citation: Decodable {
   public let uri: String
 
   /// The license the cited source work is distributed under.
-  public let license: String
+  public let license: String?
 }
 
 /// A value enumerating possible reasons for a model to terminate a content generation request.

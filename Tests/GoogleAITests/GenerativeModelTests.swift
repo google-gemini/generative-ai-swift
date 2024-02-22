@@ -664,15 +664,23 @@ final class GenerativeModelTests: XCTestCase {
       )
 
     let stream = model.generateContentStream("Hi")
-    var citations: [Citation] = []
+    var citations = [Citation]()
+    var candidates = [CandidateResponse]()
     for try await content in stream {
       XCTAssertNotNil(content.text)
       let candidate = try XCTUnwrap(content.candidates.first)
-      XCTAssertEqual(candidate.finishReason, .stop)
+      candidates.append(candidate)
+      if let finishReason = candidate.finishReason {
+        XCTAssertEqual(finishReason, .stop)
+      }
       if let sources = candidate.citationMetadata?.citationSources {
         citations.append(contentsOf: sources)
       }
     }
+    
+    XCTAssertEqual(candidates.count, 7)
+    let lastCandidate = try XCTUnwrap(candidates.last)
+    XCTAssertEqual(lastCandidate.finishReason, .stop)
 
     XCTAssertEqual(citations.count, 8)
     XCTAssertTrue(citations
