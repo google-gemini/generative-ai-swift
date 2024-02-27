@@ -68,4 +68,24 @@ extension JSONValue: Decodable {
   }
 }
 
+extension JSONValue: Encodable {
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    switch self {
+    case .null:
+      try container.encodeNil()
+    case let .number(numberValue):
+      try container.encode(numberValue)
+    case let .string(stringValue):
+      try container.encode(stringValue)
+    case let .bool(boolValue):
+      try container.encode(boolValue)
+    case let .object(objectValue):
+      try container.encode(objectValue)
+    case let .array(arrayValue):
+      try container.encode(arrayValue)
+    }
+  }
+}
+
 extension JSONValue: Equatable {}
