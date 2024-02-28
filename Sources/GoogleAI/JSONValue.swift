@@ -75,6 +75,11 @@ extension JSONValue: Encodable {
     case .null:
       try container.encodeNil()
     case let .number(numberValue):
+      // Convert to `Decimal` before encoding for consistent floating-point serialization across
+      // platforms. E.g., `Double` serializes 3.14159 as 3.1415899999999999 in some cases and
+      // 3.14159 in others. See
+      // https://forums.swift.org/t/jsonencoder-encodable-floating-point-rounding-error/41390/4 for
+      // more details.
       try container.encode(Decimal(numberValue))
     case let .string(stringValue):
       try container.encode(stringValue)
