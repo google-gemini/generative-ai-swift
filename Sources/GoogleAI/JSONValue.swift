@@ -75,7 +75,7 @@ extension JSONValue: Encodable {
     case .null:
       try container.encodeNil()
     case let .number(numberValue):
-      try container.encode(numberValue)
+      try container.encode(Decimal(numberValue))
     case let .string(stringValue):
       try container.encode(stringValue)
     case let .bool(boolValue):

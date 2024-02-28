@@ -21,6 +21,7 @@ final class JSONValueTests: XCTestCase {
 
   let numberKey = "pi"
   let numberValue = 3.14159
+  let numberValueEncoded = "3.14159"
   let stringKey = "hello"
   let stringValue = "Hello, world!"
 
@@ -127,7 +128,10 @@ final class JSONValueTests: XCTestCase {
     let jsonData = try encoder.encode(JSONValue.object(objectValue))
 
     let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
-    XCTAssertEqual(json, "{\"\(stringKey)\":\"\(stringValue)\",\"\(numberKey)\":\(numberValue)}")
+    XCTAssertEqual(
+      json,
+      "{\"\(stringKey)\":\"\(stringValue)\",\"\(numberKey)\":\(numberValueEncoded)}"
+    )
   }
 
   func testEncodeArray() throws {
@@ -136,6 +140,6 @@ final class JSONValueTests: XCTestCase {
     let jsonData = try encoder.encode(JSONValue.array(arrayValue))
 
     let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
-    XCTAssertEqual(json, "[null,\(numberValue)]")
+    XCTAssertEqual(json, "[null,\(numberValueEncoded)]")
   }
 }
