@@ -16,46 +16,53 @@ import XCTest
 @testable import GoogleGenerativeAI
 
 final class JSONValueTests: XCTestCase {
+  let decoder = JSONDecoder()
+  let encoder = JSONEncoder()
+
+  let numberKey = "pi"
+  let numberValue = 3.14159
+  let numberValueEncoded = "3.14159"
+  let stringKey = "hello"
+  let stringValue = "Hello, world!"
+
+  override func setUp() {
+    encoder.outputFormatting = .sortedKeys
+  }
+
   func testDecodeNull() throws {
     let jsonData = try XCTUnwrap("null".data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
     XCTAssertEqual(jsonObject, .null)
   }
 
   func testDecodeNumber() throws {
-    let expectedNumber = 3.14159
-    let jsonData = try XCTUnwrap("\(expectedNumber)".data(using: .utf8))
+    let jsonData = try XCTUnwrap("\(numberValue)".data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
-    XCTAssertEqual(jsonObject, .number(expectedNumber))
+    XCTAssertEqual(jsonObject, .number(numberValue))
   }
 
   func testDecodeString() throws {
-    let expectedString = "hello-world"
-    let jsonData = try XCTUnwrap("\"\(expectedString)\"".data(using: .utf8))
+    let jsonData = try XCTUnwrap("\"\(stringValue)\"".data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
-    XCTAssertEqual(jsonObject, .string(expectedString))
+    XCTAssertEqual(jsonObject, .string(stringValue))
   }
 
   func testDecodeBool() throws {
     let expectedBool = true
     let jsonData = try XCTUnwrap("\(expectedBool)".data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
     XCTAssertEqual(jsonObject, .bool(expectedBool))
   }
 
   func testDecodeObject() throws {
-    let numberKey = "pi"
-    let numberValue = 3.14159
-    let stringKey = "hello"
-    let stringValue = "world"
     let expectedObject: JSONObject = [
       numberKey: .number(numberValue),
       stringKey: .string(stringValue),
@@ -68,18 +75,71 @@ final class JSONValueTests: XCTestCase {
     """
     let jsonData = try XCTUnwrap(json.data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
     XCTAssertEqual(jsonObject, .object(expectedObject))
   }
 
   func testDecodeArray() throws {
-    let numberValue = 3.14159
     let expectedArray: [JSONValue] = [.null, .number(numberValue)]
     let jsonData = try XCTUnwrap("[ null, \(numberValue) ]".data(using: .utf8))
 
-    let jsonObject = try XCTUnwrap(JSONDecoder().decode(JSONValue.self, from: jsonData))
+    let jsonObject = try XCTUnwrap(decoder.decode(JSONValue.self, from: jsonData))
 
     XCTAssertEqual(jsonObject, .array(expectedArray))
+  }
+
+  func testEncodeNull() throws {
+    let jsonData = try encoder.encode(JSONValue.null)
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, "null")
+  }
+
+  func testEncodeNumber() throws {
+    let jsonData = try encoder.encode(JSONValue.number(numberValue))
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, "\(numberValue)")
+  }
+
+  func testEncodeString() throws {
+    let jsonData = try encoder.encode(JSONValue.string(stringValue))
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, "\"\(stringValue)\"")
+  }
+
+  func testEncodeBool() throws {
+    let boolValue = true
+
+    let jsonData = try encoder.encode(JSONValue.bool(boolValue))
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, "\(boolValue)")
+  }
+
+  func testEncodeObject() throws {
+    let objectValue: JSONObject = [
+      numberKey: .number(numberValue),
+      stringKey: .string(stringValue),
+    ]
+
+    let jsonData = try encoder.encode(JSONValue.object(objectValue))
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(
+      json,
+      "{\"\(stringKey)\":\"\(stringValue)\",\"\(numberKey)\":\(numberValueEncoded)}"
+    )
+  }
+
+  func testEncodeArray() throws {
+    let arrayValue: [JSONValue] = [.null, .number(numberValue)]
+
+    let jsonData = try encoder.encode(JSONValue.array(arrayValue))
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, "[null,\(numberValueEncoded)]")
   }
 }
