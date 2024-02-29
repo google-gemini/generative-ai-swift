@@ -25,6 +25,7 @@ public struct ModelContent: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
       case text
       case inlineData
+      case functionCall
     }
 
     enum InlineDataKeys: String, CodingKey {
@@ -37,6 +38,9 @@ public struct ModelContent: Codable, Equatable {
 
     /// Data with a specified media type. Not all media types may be supported by the AI model.
     case data(mimetype: String, Data)
+
+    // TODO(andrewheard): Add DocC comments
+    case functionCall(FunctionCall)
 
     // MARK: Convenience Initializers
 
@@ -64,6 +68,9 @@ public struct ModelContent: Codable, Equatable {
         )
         try inlineDataContainer.encode(mimetype, forKey: .mimeType)
         try inlineDataContainer.encode(bytes, forKey: .bytes)
+      case .functionCall:
+        // TODO(andrewheard): Add DocC comments
+        fatalError("FunctionCall encoding not implemented.")
       }
     }
 
@@ -79,10 +86,12 @@ public struct ModelContent: Codable, Equatable {
         let mimetype = try dataContainer.decode(String.self, forKey: .mimeType)
         let bytes = try dataContainer.decode(Data.self, forKey: .bytes)
         self = .data(mimetype: mimetype, bytes)
+      } else if let functionCall = try? values.decode(FunctionCall.self, forKey: .functionCall) {
+        self = .functionCall(functionCall)
       } else {
         throw DecodingError.dataCorrupted(.init(
           codingPath: [CodingKeys.text, CodingKeys.inlineData],
-          debugDescription: "Neither text or inline data was found."
+          debugDescription: "No text, inline data or function call was found."
         ))
       }
     }

@@ -162,6 +162,10 @@ public class Chat {
           }
 
           parts.append(part)
+
+        case .functionCall:
+          // TODO(andrewheard): Add the function call to the chat history.
+          fatalError("FunctionCall Not yet implemented.")
         }
       }
     }
