@@ -86,8 +86,8 @@ public struct ModelContent: Codable, Equatable {
         let mimetype = try dataContainer.decode(String.self, forKey: .mimeType)
         let bytes = try dataContainer.decode(Data.self, forKey: .bytes)
         self = .data(mimetype: mimetype, bytes)
-      } else if let functionCall = try? values.decode(FunctionCall.self, forKey: .functionCall) {
-        self = .functionCall(functionCall)
+      } else if values.contains(.functionCall) {
+        self = try .functionCall(values.decode(FunctionCall.self, forKey: .functionCall))
       } else {
         throw DecodingError.dataCorrupted(.init(
           codingPath: [CodingKeys.text, CodingKeys.inlineData],
