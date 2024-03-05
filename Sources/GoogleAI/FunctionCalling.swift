@@ -14,10 +14,12 @@
 
 import Foundation
 
-// TODO(andrewheard): Add DocC comments
+/// A predicted function call returned from the model.
 public struct FunctionCall: Equatable {
+  /// The name of the function to call.
   let name: String
 
+  /// The function parameters and values.
   let args: JSONObject
 }
 

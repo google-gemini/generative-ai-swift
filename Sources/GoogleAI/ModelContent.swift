@@ -39,7 +39,7 @@ public struct ModelContent: Codable, Equatable {
     /// Data with a specified media type. Not all media types may be supported by the AI model.
     case data(mimetype: String, Data)
 
-    // TODO(andrewheard): Add DocC comments
+    /// A predicted function call returned from the model.
     case functionCall(FunctionCall)
 
     // MARK: Convenience Initializers
@@ -69,7 +69,7 @@ public struct ModelContent: Codable, Equatable {
         try inlineDataContainer.encode(mimetype, forKey: .mimeType)
         try inlineDataContainer.encode(bytes, forKey: .bytes)
       case .functionCall:
-        // TODO(andrewheard): Add DocC comments
+        // TODO(andrewheard): Encode FunctionCalls when when encoding is implemented.
         fatalError("FunctionCall encoding not implemented.")
       }
     }
