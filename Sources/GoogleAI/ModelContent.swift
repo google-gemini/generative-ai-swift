@@ -69,13 +69,13 @@ public struct ModelContent: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
       let values = try decoder.container(keyedBy: CodingKeys.self)
-      if let textVal = try? values.decode(String.self, forKey: .text) {
-        self = .text(textVal)
-      } else if let dataContainer = try? values.nestedContainer(
-        keyedBy: InlineDataKeys.self,
-        forKey: .inlineData
-      ) {
-        // Get the data here.
+      if values.contains(.text) {
+        self = try .text(values.decode(String.self, forKey: .text))
+      } else if values.contains(.inlineData) {
+        let dataContainer = try values.nestedContainer(
+          keyedBy: InlineDataKeys.self,
+          forKey: .inlineData
+        )
         let mimetype = try dataContainer.decode(String.self, forKey: .mimeType)
         let bytes = try dataContainer.decode(Data.self, forKey: .bytes)
         self = .data(mimetype: mimetype, bytes)
