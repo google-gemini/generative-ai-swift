@@ -169,6 +169,73 @@ final class GenerativeModelTests: XCTestCase {
     _ = try await model.generateContent(testPrompt)
   }
 
+  func testGenerateContent_success_functionCall_emptyArguments() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-function-call-empty-arguments",
+        withExtension: "json"
+      )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    let part = try XCTUnwrap(candidate.content.parts.first)
+    guard case let .functionCall(functionCall) = part else {
+      XCTFail("Part is not a FunctionCall.")
+      return
+    }
+    XCTAssertEqual(functionCall.name, "current_time")
+    XCTAssertTrue(functionCall.args.isEmpty)
+  }
+
+  func testGenerateContent_success_functionCall_noArguments() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-function-call-no-arguments",
+        withExtension: "json"
+      )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    let part = try XCTUnwrap(candidate.content.parts.first)
+    guard case let .functionCall(functionCall) = part else {
+      XCTFail("Part is not a FunctionCall.")
+      return
+    }
+    XCTAssertEqual(functionCall.name, "current_time")
+    XCTAssertTrue(functionCall.args.isEmpty)
+  }
+
+  func testGenerateContent_success_functionCall_withArguments() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-function-call-with-arguments",
+        withExtension: "json"
+      )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    XCTAssertEqual(candidate.content.parts.count, 1)
+    let part = try XCTUnwrap(candidate.content.parts.first)
+    guard case let .functionCall(functionCall) = part else {
+      XCTFail("Part is not a FunctionCall.")
+      return
+    }
+    XCTAssertEqual(functionCall.name, "sum")
+    XCTAssertEqual(functionCall.args.count, 2)
+    let argX = try XCTUnwrap(functionCall.args["x"])
+    XCTAssertEqual(argX, .number(4))
+    let argY = try XCTUnwrap(functionCall.args["y"])
+    XCTAssertEqual(argY, .number(5))
+  }
+
   func testGenerateContent_failure_invalidAPIKey() async throws {
     let expectedStatusCode = 400
     MockURLProtocol

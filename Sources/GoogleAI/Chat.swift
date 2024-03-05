@@ -162,6 +162,10 @@ public class Chat {
           }
 
           parts.append(part)
+
+        case .functionCall:
+          // TODO(andrewheard): Add function call to the chat history when encoding is implemented.
+          fatalError("Function calling not yet implemented in chat.")
         }
       }
     }
