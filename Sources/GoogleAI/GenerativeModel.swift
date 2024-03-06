@@ -285,9 +285,9 @@ public final class GenerativeModel {
   private static func generateContentError(from error: Error) -> GenerateContentError {
     if let error = error as? GenerateContentError {
       return error
-    } else if let error = error as? RPCError, error.isInvalidAPIKeyError() {
+    } else if let error = error as? ServerError, error.isInvalidAPIKeyError() {
       return GenerateContentError.invalidAPIKey
-    } else if let error = error as? RPCError, error.isUnsupportedUserLocationError() {
+    } else if let error = error as? ServerError, error.isUnsupportedUserLocationError() {
       return GenerateContentError.unsupportedUserLocation
     }
     return GenerateContentError.internalError(underlying: error)

@@ -205,7 +205,7 @@ struct GenerativeAIService {
 
   private func parseError(responseData: Data) -> Error {
     do {
-      return try JSONDecoder().decode(RPCError.self, from: responseData)
+      return try JSONDecoder().decode(ServerError.self, from: responseData)
     } catch {
       // TODO: Return an error about an unrecognized error payload with the response body
       return error
