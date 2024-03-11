@@ -36,6 +36,8 @@ public final class GenerativeModel {
   /// The safety settings to be used for prompts.
   let safetySettings: [SafetySetting]?
 
+  let tools: [Tool]?
+
   /// Configuration parameters for sending requests to the backend.
   let requestOptions: RequestOptions
 
@@ -52,12 +54,14 @@ public final class GenerativeModel {
                           apiKey: String,
                           generationConfig: GenerationConfig? = nil,
                           safetySettings: [SafetySetting]? = nil,
+                          tools: [Tool]? = nil,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
       apiKey: apiKey,
       generationConfig: generationConfig,
       safetySettings: safetySettings,
+      tools: tools,
       requestOptions: requestOptions,
       urlSession: .shared
     )
@@ -68,12 +72,14 @@ public final class GenerativeModel {
        apiKey: String,
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
+       tools: [Tool]? = nil,
        requestOptions: RequestOptions = RequestOptions(),
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
     generativeAIService = GenerativeAIService(apiKey: apiKey, urlSession: urlSession)
     self.generationConfig = generationConfig
     self.safetySettings = safetySettings
+    self.tools = tools
     self.requestOptions = requestOptions
 
     Logging.default.info("""
@@ -119,6 +125,7 @@ public final class GenerativeModel {
                                                               contents: content(),
                                                               generationConfig: generationConfig,
                                                               safetySettings: safetySettings,
+                                                              tools: tools,
                                                               isStreaming: false,
                                                               options: requestOptions)
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
@@ -190,6 +197,7 @@ public final class GenerativeModel {
                                                         contents: evaluatedContent,
                                                         generationConfig: generationConfig,
                                                         safetySettings: safetySettings,
+                                                        tools: tools,
                                                         isStreaming: true,
                                                         options: requestOptions)
 
@@ -270,6 +278,30 @@ public final class GenerativeModel {
     }
   }
 
+  func executeFunction(functionCall: FunctionCall) async throws -> FunctionResponse {
+    guard let tools = tools else {
+      throw GenerateContentError.internalError(underlying: FunctionCallError())
+    }
+    guard let tool = tools.first(where: { tool in
+      tool.functionDeclarations != nil
+    }) else {
+      throw GenerateContentError.internalError(underlying: FunctionCallError())
+    }
+    guard let functionDeclaration = tool.functionDeclarations?.first(where: { functionDeclaration in
+      functionDeclaration.name == functionCall.name
+    }) else {
+      throw GenerateContentError.internalError(underlying: FunctionCallError())
+    }
+    guard let function = functionDeclaration.function else {
+      throw GenerateContentError.internalError(underlying: FunctionCallError())
+    }
+
+    return try FunctionResponse(
+      name: functionCall.name,
+      response: await function(functionCall.args)
+    )
+  }
+
   /// Returns a model resource name of the form "models/model-name" based on `name`.
   private static func modelResourceName(name: String) -> String {
     if name.contains("/") {
@@ -299,3 +331,5 @@ public final class GenerativeModel {
 public enum CountTokensError: Error {
   case internalError(underlying: Error)
 }
+
+struct FunctionCallError: Error {}
