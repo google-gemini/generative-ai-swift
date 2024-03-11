@@ -70,8 +70,25 @@ struct GenerateContent: AsyncParsableCommand {
         name: modelNameOrDefault(),
         apiKey: apiKey,
         generationConfig: config,
-        safetySettings: safetySettings
+        safetySettings: safetySettings,
+        tools: [Tool(functionDeclarations: [
+          FunctionDeclaration(
+            name: "get_exchange_rate",
+            description: "Get the exchange rate for currencies between countries",
+            parameters: getExchangeRateSchema(),
+            function: getExchangeRateWrapper
+          ),
+          FunctionDeclaration(
+            name: "sum_integer_list",
+            description: "Sums a list of integer values",
+            parameters: sumIntegerListSchema(),
+            function: sumIntegerListWrapper
+          ),
+        ])],
+        requestOptions: RequestOptions(apiVersion: "v1beta")
       )
+
+      let chat = model.startChat()
 
       var parts = [ModelContent.Part]()
 
@@ -96,7 +113,7 @@ struct GenerateContent: AsyncParsableCommand {
       let input = [ModelContent(parts: parts)]
 
       if isStreaming {
-        let contentStream = model.generateContentStream(input)
+        let contentStream = chat.sendMessageStream(input)
         print("Generated Content <streaming>:")
         for try await content in contentStream {
           if let text = content.text {
@@ -104,7 +121,8 @@ struct GenerateContent: AsyncParsableCommand {
           }
         }
       } else {
-        let content = try await model.generateContent(input)
+        // Unary generate content
+        let content = try await chat.sendMessage(input)
         if let text = content.text {
           print("Generated Content:\n\(text)")
         }
@@ -122,6 +140,132 @@ struct GenerateContent: AsyncParsableCommand {
     } else {
       return "gemini-1.0-pro"
     }
+  }
+
+  // MARK: - Callable Functions
+
+  // Returns exchange rates from the Frankfurter API
+  // This is an example function that a developer might provide.
+  func getExchangeRate(amount: Double, date: String, from: String,
+                       to: String) async throws -> String {
+    var urlComponents = URLComponents(string: "https://api.frankfurter.app")!
+    urlComponents.path = "/\(date)"
+    urlComponents.queryItems = [
+      .init(name: "amount", value: String(amount)),
+      .init(name: "from", value: from),
+      .init(name: "to", value: to),
+    ]
+
+    let (data, _) = try await URLSession.shared.data(from: urlComponents.url!)
+    return String(data: data, encoding: .utf8)!
+  }
+
+  // This is a wrapper for the `getExchangeRate` function.
+  func getExchangeRateWrapper(args: JSONObject) async throws -> JSONObject {
+    // 1. Validate and extract the parameters provided by the model (from a `FunctionCall`)
+    guard case let .string(date) = args["currency_date"] else {
+      fatalError()
+    }
+    guard case let .string(from) = args["currency_from"] else {
+      fatalError()
+    }
+    guard case let .string(to) = args["currency_to"] else {
+      fatalError()
+    }
+    guard case let .number(amount) = args["amount"] else {
+      fatalError()
+    }
+
+    // 2. Call the wrapped function
+    let response = try await getExchangeRate(amount: amount, date: date, from: from, to: to)
+
+    // 3. Return the exchange rates as a JSON object (returned to the model in a `FunctionResponse`)
+    return ["content": .string(response)]
+  }
+
+  // Returns the schema of the `getExchangeRate` function
+  func getExchangeRateSchema() -> Schema {
+    return Schema(
+      type: .object,
+      properties: [
+        "currency_date": Schema(
+          type: .string,
+          description: """
+          A date that must always be in YYYY-MM-DD format or the value 'latest' if a time period
+          is not specified
+          """
+        ),
+        "currency_from": Schema(
+          type: .string,
+          description: "The currency to convert from in ISO 4217 format"
+        ),
+        "currency_to": Schema(
+          type: .string,
+          description: "The currency to convert to in ISO 4217 format"
+        ),
+        "amount": Schema(
+          type: .number,
+          description: "The amount of currency to convert as a double value"
+        ),
+      ],
+      required: ["currency_date", "currency_from", "currency_to", "amount"]
+    )
+  }
+
+  // Returns the sum of a list of integers.
+  // This is an example function that a developer could provide.
+  func sumIntegerList(_ integers: [Int]) -> Int {
+    var sum = 0
+    for integer in integers {
+      sum += integer
+    }
+    return sum
+  }
+
+  // This is a wrapper for the `sumIntegerList` function.
+  func sumIntegerListWrapper(args: JSONObject) -> JSONObject {
+    // 1. Validate and extract the parameters provided by the model (from a `FunctionCall`)
+    guard let values = args["values"] else {
+      fatalError("Expected a `values` parameter.")
+    }
+    guard case let .array(argArray) = values else {
+      fatalError("Expected `values` to be an array.")
+    }
+
+    var integerArray = [Int]()
+    for arg in argArray {
+      guard case let .number(number) = arg else {
+        fatalError("Expected `values` array elements to be numbers.")
+      }
+      guard let integer = Int(exactly: number) else {
+        fatalError("Expected `values` array numbers to be integers.")
+      }
+      integerArray.append(integer)
+    }
+
+    // 2. Call the wrapped function
+    let sum = sumIntegerList(integerArray)
+
+    // 3. Return the sum as a JSON object (to be returned to the model in a `FunctionResponse`)
+    return ["sum": .number(Double(sum))]
+  }
+
+  // Returns the schema of the `sumIntegerList` function.
+  func sumIntegerListSchema() -> Schema {
+    return Schema(
+      type: .object,
+      properties: [
+        "values": Schema(
+          type: .array,
+          description: "The integer values to sum",
+          items: Schema(
+            type: .integer,
+            format: "int64"
+          )
+        ),
+      ],
+      required: ["values"]
+    )
   }
 }
 
