@@ -43,6 +43,17 @@ public class Schema: Encodable {
 
   let required: [String]?
 
+  enum CodingKeys: String, CodingKey {
+    case type
+    case format
+    case description
+    case nullable
+    case enumValues = "enum"
+    case items
+    case properties
+    case required
+  }
+
   public init(type: DataType, format: String? = nil, description: String? = nil,
               nullable: Bool? = nil,
               enumValues: [String]? = nil, items: Schema? = nil,
@@ -75,9 +86,9 @@ public struct FunctionDeclaration {
 
   let description: String
 
-  let parameters: Schema
+  let parameters: Schema?
 
-  public init(name: String, description: String, parameters: Schema) {
+  public init(name: String, description: String, parameters: Schema?) {
     self.name = name
     self.description = description
     self.parameters = parameters
