@@ -278,30 +278,6 @@ public final class GenerativeModel {
     }
   }
 
-  func executeFunction(functionCall: FunctionCall) async throws -> FunctionResponse {
-    guard let tools = tools else {
-      throw GenerateContentError.internalError(underlying: FunctionCallError())
-    }
-    guard let tool = tools.first(where: { tool in
-      tool.functionDeclarations != nil
-    }) else {
-      throw GenerateContentError.internalError(underlying: FunctionCallError())
-    }
-    guard let functionDeclaration = tool.functionDeclarations?.first(where: { functionDeclaration in
-      functionDeclaration.name == functionCall.name
-    }) else {
-      throw GenerateContentError.internalError(underlying: FunctionCallError())
-    }
-    guard let function = functionDeclaration.function else {
-      throw GenerateContentError.internalError(underlying: FunctionCallError())
-    }
-
-    return try FunctionResponse(
-      name: functionCall.name,
-      response: await function(functionCall.args).jsonObject
-    )
-  }
-
   /// Returns a model resource name of the form "models/model-name" based on `name`.
   private static func modelResourceName(name: String) -> String {
     if name.contains("/") {
@@ -331,5 +307,3 @@ public final class GenerativeModel {
 public enum CountTokensError: Error {
   case internalError(underlying: Error)
 }
-
-struct FunctionCallError: Error {}

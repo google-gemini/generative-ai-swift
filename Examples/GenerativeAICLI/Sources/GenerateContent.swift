@@ -44,6 +44,12 @@ struct GenerateContent: AsyncParsableCommand {
     help: "Enable additional debug logging."
   ) var debugLogEnabled = false
 
+  // Function calls pending processing
+  var functionCalls = [FunctionCall]()
+
+  // Input to the model
+  var input = [ModelContent]()
+
   mutating func validate() throws {
     if textPrompt == nil && imageURL == nil {
       throw ValidationError(
@@ -75,20 +81,16 @@ struct GenerateContent: AsyncParsableCommand {
           FunctionDeclaration(
             name: "get_exchange_rate",
             description: "Get the exchange rate for currencies between countries",
-            parameters: getExchangeRateSchema(),
-            function: getExchangeRateWrapper
+            parameters: getExchangeRateSchema()
           ),
           FunctionDeclaration(
             name: "sum_integer_list",
             description: "Sums a list of integer values",
-            parameters: sumIntegerListSchema(),
-            function: sumIntegerListWrapper
+            parameters: sumIntegerListSchema()
           ),
         ])],
         requestOptions: RequestOptions(apiVersion: "v1beta")
       )
-
-      let chat = model.startChat()
 
       var parts = [ModelContent.Part]()
 
@@ -110,26 +112,78 @@ struct GenerateContent: AsyncParsableCommand {
         parts.append(.data(mimetype: mimeType, imageData))
       }
 
-      let input = [ModelContent(parts: parts)]
+      input = [ModelContent(parts: parts)]
 
-      if isStreaming {
-        let contentStream = chat.sendMessageStream(input)
-        print("Generated Content <streaming>:")
-        for try await content in contentStream {
-          if let text = content.text {
-            print(text)
+      repeat {
+        try await processFunctionCalls()
+
+        if isStreaming {
+          let contentStream = model.generateContentStream(input)
+          print("Generated Content <streaming>:")
+          for try await content in contentStream {
+            processResponseContent(content: content)
           }
+        } else {
+          // Unary generate content
+          let content = try await model.generateContent(input)
+          print("Generated Content:")
+          processResponseContent(content: content)
         }
-      } else {
-        // Unary generate content
-        let content = try await chat.sendMessage(input)
-        if let text = content.text {
-          print("Generated Content:\n\(text)")
-        }
-      }
+      } while !functionCalls.isEmpty
     } catch {
       print("Generate Content Error: \(error)")
     }
+  }
+
+  mutating func processResponseContent(content: GenerateContentResponse) {
+    guard let candidate = content.candidates.first else {
+      fatalError("No candidate.")
+    }
+
+    for part in candidate.content.parts {
+      switch part {
+      case let .text(text):
+        print(text)
+      case .data:
+        fatalError("Inline data not supported.")
+      case let .functionCall(functionCall):
+        functionCalls.append(functionCall)
+      case let .functionResponse(functionResponse):
+        print("FunctionResponse: \(functionResponse)")
+      }
+    }
+  }
+
+  mutating func processFunctionCalls() async throws {
+    for functionCall in functionCalls {
+      input.append(ModelContent(
+        role: "model",
+        parts: [ModelContent.Part.functionCall(functionCall)]
+      ))
+      switch functionCall.name {
+      case "sum_integer_list":
+        let sum = sumIntegerListWrapper(args: functionCall.args)
+        input.append(ModelContent(
+          role: "function",
+          parts: [ModelContent.Part.functionResponse(FunctionResponse(
+            name: "sum_integer_list",
+            response: sum
+          ))]
+        ))
+      case "get_exchange_rate":
+        let exchangeRates = try await getExchangeRateWrapper(args: functionCall.args)
+        input.append(ModelContent(
+          role: "function",
+          parts: [ModelContent.Part.functionResponse(FunctionResponse(
+            name: "get_exchange_rate",
+            response: exchangeRates
+          ))]
+        ))
+      default:
+        fatalError("Unknown function named \"\(functionCall.name)\".")
+      }
+    }
+    functionCalls = []
   }
 
   func modelNameOrDefault() -> String {

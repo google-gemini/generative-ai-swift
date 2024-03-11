@@ -77,14 +77,10 @@ public struct FunctionDeclaration {
 
   let parameters: Schema
 
-  let function: ((JSONObject) async throws -> JSONObjectRepresentable)?
-
-  public init(name: String, description: String, parameters: Schema,
-              function: ((JSONObject) async throws -> JSONObjectRepresentable)?) {
+  public init(name: String, description: String, parameters: Schema) {
     self.name = name
     self.description = description
     self.parameters = parameters
-    self.function = function
   }
 }
 
@@ -102,6 +98,11 @@ public struct FunctionResponse: Equatable, Encodable {
   let name: String
 
   let response: JSONObject
+
+  public init(name: String, response: JSONObject) {
+    self.name = name
+    self.response = response
+  }
 }
 
 // MARK: - Codable Conformance
