@@ -81,24 +81,21 @@ struct GenerateContent: AsyncParsableCommand {
           FunctionDeclaration(
             name: "get_exchange_rate",
             description: "Get the exchange rate for currencies between countries",
-            parameters: Schema(
-              type: .object,
-              properties: [
-                "currency_from": Schema(
-                  type: .string,
-                  format: "enum",
-                  description: "The currency to convert from in ISO 4217 format",
-                  enumValues: ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]
-                ),
-                "currency_to": Schema(
-                  type: .string,
-                  format: "enum",
-                  description: "The currency to convert to in ISO 4217 format",
-                  enumValues: ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]
-                ),
-              ],
-              required: ["currency_from", "currency_to"]
-            )
+            parameters: [
+              "currency_from": Schema(
+                type: .string,
+                format: "enum",
+                description: "The currency to convert from in ISO 4217 format",
+                enumValues: ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]
+              ),
+              "currency_to": Schema(
+                type: .string,
+                format: "enum",
+                description: "The currency to convert to in ISO 4217 format",
+                enumValues: ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]
+              ),
+            ],
+            requiredParameters: ["currency_from", "currency_to"]
           ),
         ])],
         requestOptions: RequestOptions(apiVersion: "v1beta")
