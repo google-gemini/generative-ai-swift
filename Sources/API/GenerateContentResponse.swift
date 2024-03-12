@@ -81,10 +81,10 @@ extension GenerateContentResponse: Decodable {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct CandidateResponse {
   /// The response's content.
-  public let content: ModelContentInternal
+  public let content: ModelContent
 
   /// The safety rating of the response content.
-  public let safetyRatings: [SafetyRatingInternal]
+  public let safetyRatings: [SafetyRating]
 
   /// The reason the model stopped generating content, if it exists; for example, if the model
   /// generated a predefined stop sequence.
@@ -94,7 +94,7 @@ public struct CandidateResponse {
   public let citationMetadata: CitationMetadata?
 
   /// Initializer for SwiftUI previews or tests.
-  public init(content: ModelContentInternal, safetyRatings: [SafetyRatingInternal], finishReason: FinishReason?,
+  public init(content: ModelContent, safetyRatings: [SafetyRating], finishReason: FinishReason?,
               citationMetadata: CitationMetadata?) {
     self.content = content
     self.safetyRatings = safetyRatings
@@ -119,10 +119,10 @@ extension CandidateResponse: Decodable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     do {
-      if let content = try container.decodeIfPresent(ModelContentInternal.self, forKey: .content) {
+      if let content = try container.decodeIfPresent(ModelContent.self, forKey: .content) {
         self.content = content
       } else {
-        content = ModelContentInternal(parts: [])
+        content = ModelContent(parts: [])
       }
     } catch {
       // Check if `content` can be decoded as an empty dictionary to detect the `"content": {}` bug.
@@ -135,7 +135,7 @@ extension CandidateResponse: Decodable {
     }
 
     if let safetyRatings = try container.decodeIfPresent(
-      [SafetyRatingInternal].self,
+      [SafetyRating].self,
       forKey: .safetyRatings
     ) {
       self.safetyRatings = safetyRatings
@@ -251,10 +251,10 @@ public struct PromptFeedback {
   public let blockReason: BlockReason?
 
   /// The safety ratings of the prompt.
-  public let safetyRatings: [SafetyRatingInternal]
+  public let safetyRatings: [SafetyRating]
 
   /// Initializer for SwiftUI previews or tests.
-  public init(blockReason: BlockReason?, safetyRatings: [SafetyRatingInternal]) {
+  public init(blockReason: BlockReason?, safetyRatings: [SafetyRating]) {
     self.blockReason = blockReason
     self.safetyRatings = safetyRatings
   }
@@ -275,7 +275,7 @@ extension PromptFeedback: Decodable {
       forKey: .blockReason
     )
     if let safetyRatings = try container.decodeIfPresent(
-      [SafetyRatingInternal].self,
+      [SafetyRating].self,
       forKey: .safetyRatings
     ) {
       self.safetyRatings = safetyRatings

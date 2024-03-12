@@ -13,27 +13,28 @@
 // limitations under the License.
 
 import Foundation
+import GoogleAIInternal
 
 /// An object that represents a back-and-forth chat with a model, capturing the history and saving
 /// the context in memory between each message sent.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public class ChatInternal {
-  private let model: GenerativeModelInternal
+public class Chat {
+  private let model: GenerativeModel
+  private let intern: ChatInternal
 
   /// Initializes a new chat representing a 1:1 conversation between model and user.
-  public init(model: GenerativeModelInternal, history: [ModelContentInternal]) {
-    self.model = model
-    self.history = history
+  init(model: GenerativeModel, history: [ModelContent]) {
+    self.intern = ChatInternal(model: model, history: history)
   }
 
   /// The previous content from the chat that has been successfully sent and received from the
   /// model. This will be provided to the model for each message sent as context for the discussion.
-  public var history: [ModelContentInternal]
+  public var history: [ModelContent]
 
   /// See ``sendMessage(_:)-3ify5``.
   public func sendMessage(_ parts: any ThrowingPartsRepresentable...) async throws
     -> GenerateContentResponse {
-    return try await sendMessage([ModelContentInternal(parts: parts)])
+    return try await sendMessage([ModelContent(parts: parts)])
   }
 
   /// Sends a message using the existing history of this chat as context. If successful, the message
@@ -41,10 +42,10 @@ public class ChatInternal {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: The model's response if no error occurred.
   /// - Throws: A ``GenerateContentError`` if an error occurred.
-  public func sendMessage(_ content: @autoclosure () throws -> [ModelContentInternal]) async throws
+  public func sendMessage(_ content: @autoclosure () throws -> [ModelContent]) async throws
     -> GenerateContentResponse {
     // Ensure that the new content has the role set.
-    let newContent: [ModelContentInternal]
+    let newContent: [ModelContent]
     do {
       newContent = try content().map(populateContentRole(_:))
     } catch let underlying {
@@ -68,7 +69,7 @@ public class ChatInternal {
     }
 
     // Make sure we inject the role into the content received.
-    let toAdd = ModelContentInternal(role: "model", parts: reply.parts)
+    let toAdd = ModelContent(role: "model", parts: reply.parts)
 
     // Append the request and successful result to history, then return the value.
     history.append(contentsOf: newContent)
@@ -80,7 +81,7 @@ public class ChatInternal {
   @available(macOS 12.0, *)
   public func sendMessageStream(_ parts: any ThrowingPartsRepresentable...)
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    return try sendMessageStream([ModelContentInternal(parts: parts)])
+    return try sendMessageStream([ModelContent(parts: parts)])
   }
 
   /// Sends a message using the existing history of this chat as context. If successful, the message
@@ -88,9 +89,9 @@ public class ChatInternal {
   /// - Parameter content: The new content to send as a single chat message.
   /// - Returns: A stream containing the model's response or an error if an error occurred.
   @available(macOS 12.0, *)
-  public func sendMessageStream(_ content: @autoclosure () throws -> [ModelContentInternal])
+  public func sendMessageStream(_ content: @autoclosure () throws -> [ModelContent])
     -> AsyncThrowingStream<GenerateContentResponse, Error> {
-    let resolvedContent: [ModelContentInternal]
+    let resolvedContent: [ModelContent]
     do {
       resolvedContent = try content()
     } catch let underlying {
@@ -107,10 +108,10 @@ public class ChatInternal {
 
     return AsyncThrowingStream { continuation in
       Task {
-        var aggregatedContent: [ModelContentInternal] = []
+        var aggregatedContent: [ModelContent] = []
 
         // Ensure that the new content has the role set.
-        let newContent: [ModelContentInternal] = resolvedContent.map(populateContentRole(_:))
+        let newContent: [ModelContent] = resolvedContent.map(populateContentRole(_:))
 
         // Send the history alongside the new message as context.
         let request = history + newContent
@@ -143,8 +144,8 @@ public class ChatInternal {
     }
   }
 
-  private func aggregatedChunks(_ chunks: [ModelContentInternal]) -> ModelContentInternal {
-    var parts: [ModelContentInternal.Part] = []
+  private func aggregatedChunks(_ chunks: [ModelContent]) -> ModelContent {
+    var parts: [ModelContent.Part] = []
     var combinedText = ""
     for aggregate in chunks {
       // Loop through all the parts, aggregating the text and adding the images.
@@ -170,15 +171,15 @@ public class ChatInternal {
       parts.append(.text(combinedText))
     }
 
-    return ModelContentInternal(role: "model", parts: parts)
+    return ModelContent(role: "model", parts: parts)
   }
 
   /// Populates the `role` field with `user` if it doesn't exist. Required in chat sessions.
-  private func populateContentRole(_ content: ModelContentInternal) -> ModelContentInternal {
+  private func populateContentRole(_ content: ModelContent) -> ModelContent {
     if content.role != nil {
       return content
     } else {
-      return ModelContentInternal(role: "user", parts: content.parts)
+      return ModelContent(role: "user", parts: content.parts)
     }
   }
 }

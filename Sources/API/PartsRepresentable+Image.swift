@@ -40,11 +40,11 @@ public enum ImageConversionError: Error {
   /// Enables images to be representable as ``ThrowingPartsRepresentable``.
   @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
   extension UIImage: ThrowingPartsRepresentable {
-    public func tryPartsValue() throws -> [ModelContentInternal.Part] {
+    public func tryPartsValue() throws -> [ModelContent.Part] {
       guard let data = jpegData(compressionQuality: imageCompressionQuality) else {
         throw ImageConversionError.couldNotConvertToJPEG(self)
       }
-      return [ModelContentInternal.Part.data(mimetype: "image/jpeg", data)]
+      return [ModelContent.Part.data(mimetype: "image/jpeg", data)]
     }
   }
 
@@ -69,7 +69,7 @@ public enum ImageConversionError: Error {
 /// Enables `CGImages` to be representable as model content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CGImage: ThrowingPartsRepresentable {
-  public func tryPartsValue() throws -> [ModelContentInternal.Part] {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
     let output = NSMutableData()
     guard let imageDestination = CGImageDestinationCreateWithData(
       output, UTType.jpeg.identifier as CFString, 1, nil
@@ -90,7 +90,7 @@ extension CGImage: ThrowingPartsRepresentable {
 /// Enables `CIImages` to be representable as model content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CIImage: ThrowingPartsRepresentable {
-  public func tryPartsValue() throws -> [ModelContentInternal.Part] {
+  public func tryPartsValue() throws -> [ModelContent.Part] {
     let context = CIContext()
     let jpegData = (colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB))
       .flatMap {

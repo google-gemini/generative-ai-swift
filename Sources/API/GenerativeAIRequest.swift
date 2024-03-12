@@ -14,18 +14,9 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-protocol GenerativeAIRequest: Encodable {
-  associatedtype Response: Decodable
-
-  var url: URL { get }
-
-  var options: RequestOptionsInternal { get }
-}
-
 /// Configuration parameters for sending requests to the backend.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct RequestOptionsInternal {
+public struct RequestOptions {
   /// The request’s timeout interval in seconds; if not specified uses the default value for a
   /// `URLRequest`.
   let timeout: TimeInterval?

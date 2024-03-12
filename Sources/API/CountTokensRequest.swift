@@ -15,35 +15,31 @@
 import Foundation
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-struct GenerateContentRequest {
-  /// Model name.
+struct CountTokensRequest {
   let model: String
-  let contents: [ModelContentInternal]
-  let generationConfig: GenerationConfigInternal?
-  let safetySettings: [SafetySetting]?
-  let isStreaming: Bool
-  let options: RequestOptionsInternal
+  let contents: [ModelContent]
+  let options: RequestOptions
 }
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension GenerateContentRequest: Encodable {
-  enum CodingKeys: String, CodingKey {
+extension CountTokensRequest: Encodable {
+  enum CodingKeys: CodingKey {
     case contents
-    case generationConfig
-    case safetySettings
   }
 }
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension GenerateContentRequest: GenerativeAIRequest {
-  typealias Response = GenerateContentResponse
+extension CountTokensRequest: GenerativeAIRequest {
+  typealias Response = CountTokensResponse
 
   var url: URL {
-    let modelURL = "\(GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model)"
-    if isStreaming {
-      return URL(string: "\(modelURL):streamGenerateContent?alt=sse")!
-    } else {
-      return URL(string: "\(modelURL):generateContent")!
-    }
+    URL(string: "\(GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model):countTokens")!
   }
+}
+
+/// The model's response to a count tokens request.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+public struct CountTokensResponse: Decodable {
+  /// The total number of tokens in the input given to the model as a prompt.
+  public let totalTokens: Int
 }

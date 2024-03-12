@@ -29,11 +29,20 @@ let package = Package(
       name: "GoogleGenerativeAI",
       targets: ["GoogleGenerativeAI"]
     ),
+    .library(
+      name: "GoogleAIInternal",
+      targets: ["GoogleAIInternal"]
+    ),
   ],
   targets: [
     .target(
       name: "GoogleGenerativeAI",
-      path: "Sources"
+      dependencies: ["GoogleAIInternal"],
+      path: "Sources/API"
+    ),
+    .target(
+      name: "GoogleAIInternal",
+      path: "Sources/GoogleAI"
     ),
     .testTarget(
       name: "GoogleGenerativeAITests",

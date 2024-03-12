@@ -17,8 +17,8 @@ import Foundation
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 struct CountTokensRequest {
   let model: String
-  let contents: [ModelContent]
-  let options: RequestOptions
+  let contents: [ModelContentInternal]
+  let options: RequestOptionsInternal
 }
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)

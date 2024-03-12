@@ -18,7 +18,7 @@ import Foundation
 /// request or response contains an `Array` of ``ModelContent``s, and each ``ModelContent`` value
 /// may comprise multiple heterogeneous ``ModelContent/Part``s.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct ModelContentInternal: Codable, Equatable {
+public struct ModelContent: Codable, Equatable {
   /// A discrete piece of data in a media format intepretable by an AI model. Within a single value
   /// of ``Part``, different data types may not mix.
   public enum Part: Codable, Equatable {
@@ -53,7 +53,7 @@ public struct ModelContentInternal: Codable, Equatable {
     // MARK: Codable Conformance
 
     public func encode(to encoder: Encoder) throws {
-      var container = encoder.container(keyedBy: ModelContentInternal.Part.CodingKeys.self)
+      var container = encoder.container(keyedBy: ModelContent.Part.CodingKeys.self)
       switch self {
       case let .text(a0):
         try container.encode(a0, forKey: .text)

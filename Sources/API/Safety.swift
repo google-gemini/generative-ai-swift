@@ -18,7 +18,7 @@ import Foundation
 /// of this type may be assigned to a category for every model-generated response, not just
 /// responses that exceed a certain threshold.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct SafetyRatingInternal: Decodable, Equatable, Hashable {
+public struct SafetyRating: Decodable, Equatable, Hashable {
   /// The category describing the potential harm a piece of content may pose. See
   /// ``SafetySetting/HarmCategory`` for a list of possible values.
   public let category: SafetySetting.HarmCategory
@@ -78,13 +78,13 @@ public struct SafetyRatingInternal: Decodable, Equatable, Hashable {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct SafetyFeedback: Decodable {
   /// Safety rating evaluated from content.
-  public let rating: SafetyRatingInternal
+  public let rating: SafetyRating
 
   /// Safety settings applied to the request.
   public let setting: SafetySetting
 
   /// Internal initializer.
-  init(rating: SafetyRatingInternal, setting: SafetySetting) {
+  init(rating: SafetyRating, setting: SafetySetting) {
     self.rating = rating
     self.setting = setting
   }
