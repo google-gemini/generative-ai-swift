@@ -21,11 +21,11 @@ import struct InternalGenerativeAI.RPCError
 @available(iOS 15.0, macOS 12.0, macCatalyst 15.0, *)
 final class GenerativeModelTests: XCTestCase {
   let testPrompt = "What sorts of questions can I ask you?"
-  let safetyRatingsNegligible: [SafetyRating] = [
-    .init(category: .sexuallyExplicit, probability: .negligible),
-    .init(category: .hateSpeech, probability: .negligible),
-    .init(category: .harassment, probability: .negligible),
-    .init(category: .dangerousContent, probability: .negligible),
+  let safetyRatingsNegligible = [
+    SafetyRating(category: .sexuallyExplicit, probability: .negligible),
+    SafetyRating(category: .hateSpeech, probability: .negligible),
+    SafetyRating(category: .harassment, probability: .negligible),
+    SafetyRating(category: .dangerousContent, probability: .negligible),
   ]
 
   var urlSession: URLSession!
@@ -202,8 +202,7 @@ final class GenerativeModelTests: XCTestCase {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
     } catch let GenerateContentError
-      .internalError(underlying: invalidCandidateError as GoogleGenerativeAI
-        .InvalidCandidateError) {
+      .internalError(underlying: invalidCandidateError as InvalidCandidateError) {
       guard case let .emptyContent(decodingError) = invalidCandidateError else {
         XCTFail("Not an InvalidCandidateError.emptyContent error: \(invalidCandidateError)")
         return
@@ -377,8 +376,7 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
-      .GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
@@ -402,8 +400,7 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
-      .GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
@@ -433,14 +430,12 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
-      .GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
     }
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? GoogleGenerativeAI
-      .InvalidCandidateError)
+    let invalidCandidateError = try XCTUnwrap(underlyingError as? InvalidCandidateError)
     guard case let .malformedContent(malformedContentUnderlyingError) = invalidCandidateError else {
       XCTFail("Not a malformed content error: \(invalidCandidateError)")
       return
