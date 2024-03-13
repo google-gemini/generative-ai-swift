@@ -21,11 +21,11 @@ import struct InternalGenerativeAI.RPCError
 @available(iOS 15.0, macOS 12.0, macCatalyst 15.0, *)
 final class GenerativeModelTests: XCTestCase {
   let testPrompt = "What sorts of questions can I ask you?"
-  let safetyRatingsNegligible = [
-    SafetyRating(category: .sexuallyExplicit, probability: .negligible),
-    SafetyRating(category: .hateSpeech, probability: .negligible),
-    SafetyRating(category: .harassment, probability: .negligible),
-    SafetyRating(category: .dangerousContent, probability: .negligible),
+  let safetyRatingsNegligible: [SafetyRating] = [
+    .init(category: .sexuallyExplicit, probability: .negligible),
+    .init(category: .hateSpeech, probability: .negligible),
+    .init(category: .harassment, probability: .negligible),
+    .init(category: .dangerousContent, probability: .negligible),
   ]
 
   var urlSession: URLSession!
@@ -138,10 +138,10 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContent_success_unknownEnum_safetyRatings() async throws {
-    let expectedSafetyRatings: [SafetyRating] = [
-      .init(category: .harassment, probability: .medium),
-      .init(category: .dangerousContent, probability: .unknown),
-      .init(category: .unknown, probability: .high),
+    let expectedSafetyRatings = [
+      SafetyRating(category: .harassment, probability: .medium),
+      SafetyRating(category: .dangerousContent, probability: .unknown),
+      SafetyRating(category: .unknown, probability: .high),
     ]
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
@@ -817,7 +817,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.countTokens("Why is the sky blue?")
       XCTFail("Request should not have succeeded.")
-    } catch let CountTokensError.internalError(underlying: rpcError as RPCError) {
+    } catch let CountTokensError.internalError(rpcError as RPCError) {
       XCTAssertEqual(rpcError.httpResponseCode, 404)
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))
