@@ -171,7 +171,7 @@ public enum RPCStatus: String, Decodable {
   case dataLoss = "DATA_LOSS"
 }
 
-enum InvalidCandidateError: Error {
+public enum InvalidCandidateError: Error {
   case emptyContent(underlyingError: Error)
   case malformedContent(underlyingError: Error)
 }

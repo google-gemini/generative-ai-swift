@@ -28,7 +28,7 @@ final class GenerativeModelTests: XCTestCase {
   ]
 
   var urlSession: URLSession!
-  var model: GenerativeModel!
+  var model: GoogleGenerativeAI.GenerativeModel!
 
   override func setUp() async throws {
     let configuration = URLSessionConfiguration.default
@@ -183,7 +183,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch GenerateContentError.invalidAPIKey {
+    } catch GoogleGenerativeAI.GenerateContentError.invalidAPIKey {
       // Do nothing, catching a GenerateContentError.invalidAPIKey error is expected.
     } catch {
       XCTFail("Should throw GenerateContentError.invalidAPIKey; error thrown: \(error)")
@@ -200,10 +200,9 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError
-      .internalError(underlying: invalidCandidateError as InternalGenerativeAI
+    } catch let GoogleGenerativeAI.GenerateContentError
+      .internalError(underlying: invalidCandidateError as GoogleGenerativeAI
         .InvalidCandidateError) {
-      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
       guard case let .emptyContent(decodingError) = invalidCandidateError else {
         XCTFail("Not an InvalidCandidateError.emptyContent error: \(invalidCandidateError)")
         return
@@ -225,7 +224,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
-    } catch let GenerateContentError.responseStoppedEarly(reason, response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.responseStoppedEarly(reason, response) {
       XCTAssertEqual(reason, .safety)
       XCTAssertEqual(response.text, "No")
     } catch {
@@ -243,7 +242,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
-    } catch let GenerateContentError.responseStoppedEarly(reason, response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.responseStoppedEarly(reason, response) {
       XCTAssertEqual(reason, .safety)
       XCTAssertNil(response.text)
     } catch {
@@ -263,7 +262,8 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
+    } catch let GoogleGenerativeAI.GenerateContentError
+      .internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.status, .invalidArgument)
       XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
       XCTAssertEqual(rpcError.message, "Request contains an invalid argument.")
@@ -282,7 +282,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
-    } catch let GenerateContentError.promptBlocked(response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.promptBlocked(response) {
       XCTAssertNil(response.text)
     } catch {
       XCTFail("Should throw a promptBlocked")
@@ -299,7 +299,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
-    } catch let GenerateContentError.responseStoppedEarly(reason, response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.responseStoppedEarly(reason, response) {
       XCTAssertEqual(reason, .unknown)
       XCTAssertEqual(response.text, "Some text")
     } catch {
@@ -317,7 +317,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw")
-    } catch let GenerateContentError.promptBlocked(response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.promptBlocked(response) {
       let promptFeedback = try XCTUnwrap(response.promptFeedback)
       XCTAssertEqual(promptFeedback.blockReason, .unknown)
     } catch {
@@ -337,7 +337,8 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
-    } catch let GenerateContentError.internalError(underlying: rpcError as RPCError) {
+    } catch let GoogleGenerativeAI.GenerateContentError
+      .internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssertEqual(rpcError.httpResponseCode, expectedStatusCode)
       XCTAssertTrue(rpcError.message.hasPrefix("models/unknown is not found"))
@@ -357,7 +358,7 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.unsupportedUserLocation; no error thrown.")
-    } catch GenerateContentError.unsupportedUserLocation {
+    } catch GoogleGenerativeAI.GenerateContentError.unsupportedUserLocation {
       return
     }
 
@@ -377,7 +378,8 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
+      .GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
@@ -401,7 +403,8 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
+      .GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
@@ -431,13 +434,13 @@ final class GenerativeModelTests: XCTestCase {
 
     XCTAssertNil(content)
     XCTAssertNotNil(responseError)
-    let generateContentError = try XCTUnwrap(responseError as? GenerateContentError)
+    let generateContentError = try XCTUnwrap(responseError as? GoogleGenerativeAI
+      .GenerateContentError)
     guard case let .internalError(underlyingError) = generateContentError else {
       XCTFail("Not an internal error: \(generateContentError)")
       return
     }
-    // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? InternalGenerativeAI
+    let invalidCandidateError = try XCTUnwrap(underlyingError as? GoogleGenerativeAI
       .InvalidCandidateError)
     guard case let .malformedContent(malformedContentUnderlyingError) = invalidCandidateError else {
       XCTFail("Not a malformed content error: \(invalidCandidateError)")
@@ -496,7 +499,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("No content is there, this shouldn't happen.")
       }
-    } catch GenerateContentError.invalidAPIKey {
+    } catch GoogleGenerativeAI.GenerateContentError.invalidAPIKey {
       // invalidAPIKey error is as expected, nothing else to check.
       return
     }
@@ -516,8 +519,8 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("No content is there, this shouldn't happen.")
       }
-    } catch GenerateContentError.internalError(_ as InternalGenerativeAI.InvalidCandidateError) {
-      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
+    } catch GoogleGenerativeAI.GenerateContentError
+      .internalError(_ as GoogleGenerativeAI.InvalidCandidateError) {
       // Underlying error is as expected, nothing else to check.
       return
     }
@@ -537,7 +540,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("Content shouldn't be shown, this shouldn't happen.")
       }
-    } catch let GenerateContentError.responseStoppedEarly(reason, _) {
+    } catch let GoogleGenerativeAI.GenerateContentError.responseStoppedEarly(reason, _) {
       XCTAssertEqual(reason, .safety)
       return
     }
@@ -557,7 +560,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("Content shouldn't be shown, this shouldn't happen.")
       }
-    } catch let GenerateContentError.promptBlocked(response) {
+    } catch let GoogleGenerativeAI.GenerateContentError.promptBlocked(response) {
       XCTAssertEqual(response.promptFeedback?.blockReason, .safety)
       return
     }
@@ -577,7 +580,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTAssertNotNil(content.text)
       }
-    } catch let GenerateContentError.responseStoppedEarly(reason, _) {
+    } catch let GoogleGenerativeAI.GenerateContentError.responseStoppedEarly(reason, _) {
       XCTAssertEqual(reason, .unknown)
       return
     }
@@ -677,7 +680,7 @@ final class GenerativeModelTests: XCTestCase {
         XCTAssertNotNil(content.text)
         responseCount += 1
       }
-    } catch let GenerateContentError.internalError(rpcError as RPCError) {
+    } catch let GoogleGenerativeAI.GenerateContentError.internalError(rpcError as RPCError) {
       XCTAssertEqual(rpcError.httpResponseCode, 499)
       XCTAssertEqual(rpcError.status, .cancelled)
 
@@ -697,7 +700,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch let GenerateContentError.internalError(underlying) {
+    } catch let GoogleGenerativeAI.GenerateContentError.internalError(underlying) {
       XCTAssertEqual(underlying.localizedDescription, "Response was not an HTTP response.")
       return
     }
@@ -717,7 +720,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch let GenerateContentError.internalError(underlying as DecodingError) {
+    } catch let GoogleGenerativeAI.GenerateContentError.internalError(underlying as DecodingError) {
       guard case let .dataCorrupted(context) = underlying else {
         XCTFail("Not a data corrupted error: \(underlying)")
         return
@@ -741,9 +744,8 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch let GenerateContentError
-      .internalError(underlyingError as InternalGenerativeAI.InvalidCandidateError) {
-      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
+    } catch let GoogleGenerativeAI.GenerateContentError
+      .internalError(underlyingError as GoogleGenerativeAI.InvalidCandidateError) {
       guard case let .malformedContent(contentError) = underlyingError else {
         XCTFail("Not a malformed content error: \(underlyingError)")
         return
@@ -769,7 +771,7 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch GenerateContentError.unsupportedUserLocation {
+    } catch GoogleGenerativeAI.GenerateContentError.unsupportedUserLocation {
       return
     }
 
@@ -823,7 +825,8 @@ final class GenerativeModelTests: XCTestCase {
     do {
       _ = try await model.countTokens("Why is the sky blue?")
       XCTFail("Request should not have succeeded.")
-    } catch let CountTokensError.internalError(rpcError as RPCError) {
+    } catch let GoogleGenerativeAI.CountTokensError
+      .internalError(underlying: rpcError as RPCError) {
       XCTAssertEqual(rpcError.httpResponseCode, 404)
       XCTAssertEqual(rpcError.status, .notFound)
       XCTAssert(rpcError.message.hasPrefix("models/test-model-name is not found"))
