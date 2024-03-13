@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Foundation
+import InternalGenerativeAI
 
 /// A type that represents a remote multimodal model (like Gemini), with the ability to generate
 /// content based on various input types.
@@ -116,12 +117,15 @@ public final class GenerativeModel {
     let response: GenerateContentResponse
     do {
       let generateContentRequest = try GenerateContentRequest(model: modelResourceName,
-                                                              contents: content(),
-                                                              generationConfig: generationConfig,
-                                                              safetySettings: safetySettings,
+                                                              contents: content().toInternal(),
+                                                              generationConfig: generationConfig?
+                                                                .toInternal(),
+                                                              safetySettings: safetySettings?
+                                                                .toInternal(),
                                                               isStreaming: false,
-                                                              options: requestOptions)
-      response = try await generativeAIService.loadRequest(request: generateContentRequest)
+                                                              options: requestOptions.toInternal())
+      response = try GenerateContentResponse(internalResponse: await generativeAIService
+        .loadRequest(request: generateContentRequest))
     } catch {
       if let imageError = error as? ImageConversionError {
         throw GenerateContentError.promptImageContentError(underlying: imageError)
@@ -187,11 +191,13 @@ public final class GenerativeModel {
     }
 
     let generateContentRequest = GenerateContentRequest(model: modelResourceName,
-                                                        contents: evaluatedContent,
-                                                        generationConfig: generationConfig,
-                                                        safetySettings: safetySettings,
+                                                        contents: evaluatedContent.toInternal(),
+                                                        generationConfig: generationConfig?
+                                                          .toInternal(),
+                                                        safetySettings: safetySettings?
+                                                          .toInternal(),
                                                         isStreaming: true,
-                                                        options: requestOptions)
+                                                        options: requestOptions.toInternal())
 
     var responseIterator = generativeAIService.loadRequestStream(request: generateContentRequest)
       .makeAsyncIterator()
@@ -199,6 +205,7 @@ public final class GenerativeModel {
       let response: GenerateContentResponse?
       do {
         response = try await responseIterator.next()
+          .flatMap { GenerateContentResponse(internalResponse: $0) }
       } catch {
         throw GenerativeModel.generateContentError(from: error)
       }
@@ -261,10 +268,11 @@ public final class GenerativeModel {
     do {
       let countTokensRequest = try CountTokensRequest(
         model: modelResourceName,
-        contents: content(),
-        options: requestOptions
+        contents: content().toInternal(),
+        options: requestOptions.toInternal()
       )
-      return try await generativeAIService.loadRequest(request: countTokensRequest)
+      let internalResponse = try await generativeAIService.loadRequest(request: countTokensRequest)
+      return CountTokensResponse(internalResponse: internalResponse)
     } catch {
       throw CountTokensError.internalError(underlying: error)
     }

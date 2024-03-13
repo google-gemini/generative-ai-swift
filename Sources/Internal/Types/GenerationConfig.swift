@@ -13,12 +13,11 @@
 // limitations under the License.
 
 import Foundation
-import InternalGenerativeAI
 
 /// A struct defining model parameters to be used when sending generative AI
 /// requests to the backend model.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct GenerationConfig {
+public struct GenerationConfig: Encodable {
   /// A parameter controlling the degree of randomness in token selection. A
   /// temperature of zero is deterministic, always choosing the
   /// highest-probability response. Typical values are between 0 and 1
@@ -72,9 +71,9 @@ public struct GenerationConfig {
   /// - Parameter candidateCount: See ``candidateCount``
   /// - Parameter maxOutputTokens: See ``maxOutputTokens``
   /// - Parameter stopSequences: See ``stopSequences``
-  public init(temperature: Float? = nil, topP: Float? = nil, topK: Int? = nil,
-              candidateCount: Int? = nil, maxOutputTokens: Int? = nil,
-              stopSequences: [String]? = nil) {
+  public init(temperature: Float?, topP: Float?, topK: Int?,
+              candidateCount: Int?, maxOutputTokens: Int?,
+              stopSequences: [String]?) {
     // Explicit init because otherwise if we re-arrange the above variables it changes the API
     // surface.
     self.temperature = temperature
@@ -83,16 +82,5 @@ public struct GenerationConfig {
     self.candidateCount = candidateCount
     self.maxOutputTokens = maxOutputTokens
     self.stopSequences = stopSequences
-  }
-
-  func toInternal() -> InternalGenerativeAI.GenerationConfig {
-    return InternalGenerativeAI.GenerationConfig(
-      temperature: temperature,
-      topP: topP,
-      topK: topK,
-      candidateCount: candidateCount,
-      maxOutputTokens: maxOutputTokens,
-      stopSequences: stopSequences
-    )
   }
 }

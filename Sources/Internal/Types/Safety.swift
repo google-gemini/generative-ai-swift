@@ -13,13 +13,12 @@
 // limitations under the License.
 
 import Foundation
-import InternalGenerativeAI
 
 /// A type defining potentially harmful media categories and their model-assigned ratings. A value
 /// of this type may be assigned to a category for every model-generated response, not just
 /// responses that exceed a certain threshold.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct SafetyRating: Equatable, Hashable {
+public struct SafetyRating: Decodable, Equatable, Hashable {
   /// The category describing the potential harm a piece of content may pose. See
   /// ``SafetySetting/HarmCategory`` for a list of possible values.
   public let category: SafetySetting.HarmCategory
@@ -37,57 +36,47 @@ public struct SafetyRating: Equatable, Hashable {
     self.probability = probability
   }
 
-  init(internalSafetyRating: InternalGenerativeAI.SafetyRating) {
-    self.init(
-      category: SafetySetting.HarmCategory(internalCategory: internalSafetyRating.category),
-      probability: HarmProbability(internalProbability: internalSafetyRating.probability)
-    )
-  }
-
   /// The probability that a given model output falls under a harmful content category. This does
   /// not indicate the severity of harm for a piece of content.
-  public enum HarmProbability {
+  public enum HarmProbability: String, Codable {
     /// Unknown. A new server value that isn't recognized by the SDK.
-    case unknown
+    case unknown = "UNKNOWN"
 
     /// The probability was not specified in the server response.
-    case unspecified
+    case unspecified = "HARM_PROBABILITY_UNSPECIFIED"
 
     /// The probability is zero or close to zero. For benign content, the probability across all
     /// categories will be this value.
-    case negligible
+    case negligible = "NEGLIGIBLE"
 
     /// The probability is small but non-zero.
-    case low
+    case low = "LOW"
 
     /// The probability is moderate.
-    case medium
+    case medium = "MEDIUM"
 
     /// The probability is high. The content described is very likely harmful.
-    case high
+    case high = "HIGH"
 
-    init(internalProbability: InternalGenerativeAI.SafetyRating.HarmProbability) {
-      switch internalProbability {
-      case .unknown:
+    /// Initializes a new `SafetyRating` from a decoder.
+    /// Not for external use. Initializer required for Decodable conformance.
+    public init(from decoder: Decoder) throws {
+      let value = try decoder.singleValueContainer().decode(String.self)
+      guard let decodedProbability = HarmProbability(rawValue: value) else {
+        Logging.default
+          .error("[GoogleGenerativeAI] Unrecognized HarmProbability with value \"\(value)\".")
         self = .unknown
-      case .unspecified:
-        self = .unspecified
-      case .negligible:
-        self = .negligible
-      case .low:
-        self = .low
-      case .medium:
-        self = .medium
-      case .high:
-        self = .high
+        return
       }
+
+      self = decodedProbability
     }
   }
 }
 
 /// Safety feedback for an entire request.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct SafetyFeedback {
+public struct SafetyFeedback: Decodable {
   /// Safety rating evaluated from content.
   public let rating: SafetyRating
 
@@ -95,7 +84,7 @@ public struct SafetyFeedback {
   public let setting: SafetySetting
 
   /// Internal initializer.
-  init(rating: SafetyRating, setting: SafetySetting) {
+  public init(rating: SafetyRating, setting: SafetySetting) {
     self.rating = rating
     self.setting = setting
   }
@@ -104,99 +93,79 @@ public struct SafetyFeedback {
 /// A type used to specify a threshold for harmful content, beyond which the model will return a
 /// fallback response instead of generated content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct SafetySetting {
+public struct SafetySetting: Codable {
   /// A type describing safety attributes, which include harmful categories and topics that can
   /// be considered sensitive.
-  public enum HarmCategory {
+  public enum HarmCategory: String, Codable {
     /// Unknown. A new server value that isn't recognized by the SDK.
-    case unknown
+    case unknown = "HARM_CATEGORY_UNKNOWN"
 
     /// Unspecified by the server.
-    case unspecified
+    case unspecified = "HARM_CATEGORY_UNSPECIFIED"
 
     /// Harassment content.
-    case harassment
+    case harassment = "HARM_CATEGORY_HARASSMENT"
 
     /// Negative or harmful comments targeting identity and/or protected attributes.
-    case hateSpeech
+    case hateSpeech = "HARM_CATEGORY_HATE_SPEECH"
 
     /// Contains references to sexual acts or other lewd content.
-    case sexuallyExplicit
+    case sexuallyExplicit = "HARM_CATEGORY_SEXUALLY_EXPLICIT"
 
     /// Promotes or enables access to harmful goods, services, or activities.
-    case dangerousContent
+    case dangerousContent = "HARM_CATEGORY_DANGEROUS_CONTENT"
 
-    init(internalCategory: InternalGenerativeAI.SafetySetting.HarmCategory) {
-      switch internalCategory {
-      case .unknown:
+    /// Do not explicitly use. Initializer required for Decodable conformance.
+    public init(from decoder: Decoder) throws {
+      let value = try decoder.singleValueContainer().decode(String.self)
+      guard let decodedCategory = HarmCategory(rawValue: value) else {
+        Logging.default
+          .error("[GoogleGenerativeAI] Unrecognized HarmCategory with value \"\(value)\".")
         self = .unknown
-      case .unspecified:
-        self = .unspecified
-      case .harassment:
-        self = .harassment
-      case .hateSpeech:
-        self = .hateSpeech
-      case .sexuallyExplicit:
-        self = .sexuallyExplicit
-      case .dangerousContent:
-        self = .dangerousContent
+        return
       }
-    }
 
-    func toInternal() -> InternalGenerativeAI.SafetySetting.HarmCategory {
-      switch self {
-      case .unknown:
-        return .unknown
-      case .unspecified:
-        return .unspecified
-      case .harassment:
-        return .harassment
-      case .hateSpeech:
-        return .hateSpeech
-      case .sexuallyExplicit:
-        return .sexuallyExplicit
-      case .dangerousContent:
-        return .dangerousContent
-      }
+      self = decodedCategory
     }
   }
 
   /// Block at and beyond a specified ``SafetyRating/HarmProbability``.
-  public enum BlockThreshold {
+  public enum BlockThreshold: String, Codable {
     /// Unknown. A new server value that isn't recognized by the SDK.
-    case unknown
+    case unknown = "UNKNOWN"
 
     /// Threshold is unspecified.
-    case unspecified
+    case unspecified = "HARM_BLOCK_THRESHOLD_UNSPECIFIED"
 
     // Content with `.negligible` will be allowed.
-    case blockLowAndAbove
+    case blockLowAndAbove = "BLOCK_LOW_AND_ABOVE"
 
     /// Content with `.negligible` and `.low` will be allowed.
-    case blockMediumAndAbove
+    case blockMediumAndAbove = "BLOCK_MEDIUM_AND_ABOVE"
 
     /// Content with `.negligible`, `.low`, and `.medium` will be allowed.
-    case blockOnlyHigh
+    case blockOnlyHigh = "BLOCK_ONLY_HIGH"
 
     /// All content will be allowed.
-    case blockNone
+    case blockNone = "BLOCK_NONE"
 
-    func toInternal() -> InternalGenerativeAI.SafetySetting.BlockThreshold {
-      switch self {
-      case .unknown:
-        return .unknown
-      case .unspecified:
-        return .unspecified
-      case .blockLowAndAbove:
-        return .blockLowAndAbove
-      case .blockMediumAndAbove:
-        return .blockMediumAndAbove
-      case .blockOnlyHigh:
-        return .blockOnlyHigh
-      case .blockNone:
-        return .blockNone
+    /// Do not explicitly use. Initializer required for Decodable conformance.
+    public init(from decoder: Decoder) throws {
+      let value = try decoder.singleValueContainer().decode(String.self)
+      guard let decodedThreshold = BlockThreshold(rawValue: value) else {
+        Logging.default
+          .error("[GoogleGenerativeAI] Unrecognized BlockThreshold with value \"\(value)\".")
+        self = .unknown
+        return
       }
+
+      self = decodedThreshold
     }
+  }
+
+  enum CodingKeys: String, CodingKey {
+    case harmCategory = "category"
+    case threshold
   }
 
   /// The category this safety setting should be applied to.
@@ -209,19 +178,5 @@ public struct SafetySetting {
   public init(harmCategory: HarmCategory, threshold: BlockThreshold) {
     self.harmCategory = harmCategory
     self.threshold = threshold
-  }
-
-  func toInternal() -> InternalGenerativeAI.SafetySetting {
-    return InternalGenerativeAI.SafetySetting(
-      harmCategory: harmCategory.toInternal(),
-      threshold: threshold.toInternal()
-    )
-  }
-}
-
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension [SafetySetting] {
-  func toInternal() -> [InternalGenerativeAI.SafetySetting] {
-    return self.map { $0.toInternal() }
   }
 }

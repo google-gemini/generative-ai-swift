@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Foundation
+import InternalGenerativeAI
 
 /// The model's response to a generate content request.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
@@ -42,37 +43,13 @@ public struct GenerateContentResponse {
     self.candidates = candidates
     self.promptFeedback = promptFeedback
   }
-}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension GenerateContentResponse: Decodable {
-  enum CodingKeys: CodingKey {
-    case candidates
-    case promptFeedback
-  }
-
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    guard container.contains(CodingKeys.candidates) || container
-      .contains(CodingKeys.promptFeedback) else {
-      let context = DecodingError.Context(
-        codingPath: [],
-        debugDescription: "Failed to decode GenerateContentResponse;" +
-          " missing keys 'candidates' and 'promptFeedback'."
-      )
-      throw DecodingError.dataCorrupted(context)
-    }
-
-    if let candidates = try container.decodeIfPresent(
-      [CandidateResponse].self,
-      forKey: .candidates
-    ) {
-      self.candidates = candidates
-    } else {
-      candidates = []
-    }
-    promptFeedback = try container.decodeIfPresent(PromptFeedback.self, forKey: .promptFeedback)
+  init(internalResponse: InternalGenerativeAI.GenerateContentResponse) {
+    self.init(
+      candidates: internalResponse.candidates.map { CandidateResponse(internalResponse: $0) },
+      promptFeedback: internalResponse.promptFeedback
+        .flatMap { PromptFeedback(internalFeedback: $0) }
+    )
   }
 }
 
@@ -101,67 +78,30 @@ public struct CandidateResponse {
     self.finishReason = finishReason
     self.citationMetadata = citationMetadata
   }
-}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension CandidateResponse: Decodable {
-  enum CodingKeys: CodingKey {
-    case content
-    case safetyRatings
-    case finishReason
-    case finishMessage
-    case citationMetadata
-  }
-
-  /// Initializes a response from a decoder. Used for decoding server responses; not for public
-  /// use.
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    do {
-      if let content = try container.decodeIfPresent(ModelContent.self, forKey: .content) {
-        self.content = content
-      } else {
-        content = ModelContent(parts: [])
-      }
-    } catch {
-      // Check if `content` can be decoded as an empty dictionary to detect the `"content": {}` bug.
-      if let content = try? container.decode([String: String].self, forKey: .content),
-         content.isEmpty {
-        throw InvalidCandidateError.emptyContent(underlyingError: error)
-      } else {
-        throw InvalidCandidateError.malformedContent(underlyingError: error)
-      }
-    }
-
-    if let safetyRatings = try container.decodeIfPresent(
-      [SafetyRating].self,
-      forKey: .safetyRatings
-    ) {
-      self.safetyRatings = safetyRatings
-    } else {
-      safetyRatings = []
-    }
-
-    finishReason = try container.decodeIfPresent(FinishReason.self, forKey: .finishReason)
-
-    citationMetadata = try container.decodeIfPresent(
-      CitationMetadata.self,
-      forKey: .citationMetadata
-    )
+  init(internalResponse: InternalGenerativeAI.CandidateResponse) {
+    content = ModelContent(internalContent: internalResponse.content)
+    safetyRatings = internalResponse.safetyRatings.map { SafetyRating(internalSafetyRating: $0) }
+    finishReason = internalResponse.finishReason.flatMap { FinishReason(internalReason: $0) }
+    citationMetadata = internalResponse.citationMetadata
+      .flatMap { CitationMetadata(internalMetadata: $0) }
   }
 }
 
 /// A collection of source attributions for a piece of content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct CitationMetadata: Decodable {
+public struct CitationMetadata {
   /// A list of individual cited sources and the parts of the content to which they apply.
   public let citationSources: [Citation]
+
+  init(internalMetadata: InternalGenerativeAI.CitationMetadata) {
+    citationSources = internalMetadata.citationSources.map { Citation(internalCitation: $0) }
+  }
 }
 
 /// A struct describing a source attribution.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct Citation: Decodable {
+public struct Citation {
   /// The inclusive beginning of a sequence in a model response that derives from a cited source.
   public let startIndex: Int
 
@@ -173,46 +113,56 @@ public struct Citation: Decodable {
 
   /// The license the cited source work is distributed under.
   public let license: String
+
+  init(internalCitation: InternalGenerativeAI.Citation) {
+    startIndex = internalCitation.startIndex
+    endIndex = internalCitation.endIndex
+    uri = internalCitation.uri
+    license = internalCitation.license
+  }
 }
 
 /// A value enumerating possible reasons for a model to terminate a content generation request.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public enum FinishReason: String {
-  case unknown = "FINISH_REASON_UNKNOWN"
+public enum FinishReason {
+  case unknown
 
-  case unspecified = "FINISH_REASON_UNSPECIFIED"
+  case unspecified
 
   /// Natural stop point of the model or provided stop sequence.
-  case stop = "STOP"
+  case stop
 
   /// The maximum number of tokens as specified in the request was reached.
-  case maxTokens = "MAX_TOKENS"
+  case maxTokens
 
   /// The token generation was stopped because the response was flagged for safety reasons.
   /// NOTE: When streaming, the Candidate.content will be empty if content filters blocked the
   /// output.
-  case safety = "SAFETY"
+  case safety
 
   /// The token generation was stopped because the response was flagged for unauthorized citations.
-  case recitation = "RECITATION"
+  case recitation
 
   /// All other reasons that stopped token generation.
-  case other = "OTHER"
-}
+  case other
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension FinishReason: Decodable {
-  /// Do not explicitly use. Initializer required for Decodable conformance.
-  public init(from decoder: Decoder) throws {
-    let value = try decoder.singleValueContainer().decode(String.self)
-    guard let decodedFinishReason = FinishReason(rawValue: value) else {
-      Logging.default
-        .error("[GoogleGenerativeAI] Unrecognized FinishReason with value \"\(value)\".")
+  init(internalReason: InternalGenerativeAI.FinishReason) {
+    switch internalReason {
+    case .unknown:
       self = .unknown
-      return
+    case .unspecified:
+      self = .unspecified
+    case .stop:
+      self = .stop
+    case .maxTokens:
+      self = .maxTokens
+    case .safety:
+      self = .safety
+    case .recitation:
+      self = .recitation
+    case .other:
+      self = .other
     }
-
-    self = decodedFinishReason
   }
 }
 
@@ -220,30 +170,30 @@ extension FinishReason: Decodable {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct PromptFeedback {
   /// A type describing possible reasons to block a prompt.
-  public enum BlockReason: String, Decodable {
+  public enum BlockReason {
     /// The block reason is unknown.
-    case unknown = "UNKNOWN"
+    case unknown
 
     /// The block reason was not specified in the server response.
-    case unspecified = "BLOCK_REASON_UNSPECIFIED"
+    case unspecified
 
     /// The prompt was blocked because it was deemed unsafe.
-    case safety = "SAFETY"
+    case safety
 
     /// All other block reasons.
-    case other = "OTHER"
+    case other
 
-    /// Do not explicitly use. Initializer required for Decodable conformance.
-    public init(from decoder: Decoder) throws {
-      let value = try decoder.singleValueContainer().decode(String.self)
-      guard let decodedBlockReason = BlockReason(rawValue: value) else {
-        Logging.default
-          .error("[GoogleGenerativeAI] Unrecognized BlockReason with value \"\(value)\".")
+    init(internalReason: InternalGenerativeAI.PromptFeedback.BlockReason) {
+      switch internalReason {
+      case .unknown:
         self = .unknown
-        return
+      case .unspecified:
+        self = .unspecified
+      case .safety:
+        self = .safety
+      case .other:
+        self = .other
       }
-
-      self = decodedBlockReason
     }
   }
 
@@ -258,29 +208,11 @@ public struct PromptFeedback {
     self.blockReason = blockReason
     self.safetyRatings = safetyRatings
   }
-}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension PromptFeedback: Decodable {
-  enum CodingKeys: CodingKey {
-    case blockReason
-    case safetyRatings
-  }
-
-  /// Do not explicitly use. Initializer required for Decodable conformance.
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    blockReason = try container.decodeIfPresent(
-      PromptFeedback.BlockReason.self,
-      forKey: .blockReason
+  init(internalFeedback: InternalGenerativeAI.PromptFeedback) {
+    self.init(
+      blockReason: internalFeedback.blockReason.flatMap { BlockReason(internalReason: $0) },
+      safetyRatings: internalFeedback.safetyRatings.map { SafetyRating(internalSafetyRating: $0) }
     )
-    if let safetyRatings = try container.decodeIfPresent(
-      [SafetyRating].self,
-      forKey: .safetyRatings
-    ) {
-      self.safetyRatings = safetyRatings
-    } else {
-      safetyRatings = []
-    }
   }
 }

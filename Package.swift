@@ -33,11 +33,19 @@ let package = Package(
   targets: [
     .target(
       name: "GoogleGenerativeAI",
-      path: "Sources"
+      dependencies: ["InternalGenerativeAI"],
+      path: "Sources/GoogleAI"
+    ),
+    .target(
+      name: "InternalGenerativeAI",
+      path: "Sources/Internal"
     ),
     .testTarget(
       name: "GoogleGenerativeAITests",
-      dependencies: ["GoogleGenerativeAI"],
+      dependencies: [
+        "GoogleGenerativeAI",
+        "InternalGenerativeAI",
+      ],
       path: "Tests",
       resources: [
         .process("GoogleAITests/CountTokenResponses"),

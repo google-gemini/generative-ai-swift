@@ -15,14 +15,24 @@
 import Foundation
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-struct GenerateContentRequest {
+public struct GenerateContentRequest {
   /// Model name.
-  let model: String
-  let contents: [ModelContent]
-  let generationConfig: GenerationConfig?
-  let safetySettings: [SafetySetting]?
-  let isStreaming: Bool
-  let options: RequestOptions
+  public let model: String
+  public let contents: [ModelContent]
+  public let generationConfig: GenerationConfig?
+  public let safetySettings: [SafetySetting]?
+  public let isStreaming: Bool
+  public let options: RequestOptions
+
+  public init(model: String, contents: [ModelContent], generationConfig: GenerationConfig?,
+              safetySettings: [SafetySetting]?, isStreaming: Bool, options: RequestOptions) {
+    self.model = model
+    self.contents = contents
+    self.generationConfig = generationConfig
+    self.safetySettings = safetySettings
+    self.isStreaming = isStreaming
+    self.options = options
+  }
 }
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
@@ -36,10 +46,10 @@ extension GenerateContentRequest: Encodable {
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension GenerateContentRequest: GenerativeAIRequest {
-  typealias Response = GenerateContentResponse
+  public typealias Response = GenerateContentResponse
 
-  var url: URL {
-    let modelURL = "\(GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model)"
+  public var url: URL {
+    let modelURL = "\(options.baseURL)/\(options.apiVersion)/\(model)"
     if isStreaming {
       return URL(string: "\(modelURL):streamGenerateContent?alt=sse")!
     } else {

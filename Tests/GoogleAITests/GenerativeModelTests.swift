@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@testable import GoogleGenerativeAI
+@testable import InternalGenerativeAI
 import XCTest
+
+@testable import GoogleGenerativeAI
 
 @available(iOS 15.0, macOS 12.0, macCatalyst 15.0, *)
 final class GenerativeModelTests: XCTestCase {
   let testPrompt = "What sorts of questions can I ask you?"
-  let safetyRatingsNegligible: [SafetyRating] = [
+  let safetyRatingsNegligible: [GoogleGenerativeAI.SafetyRating] = [
     .init(category: .sexuallyExplicit, probability: .negligible),
     .init(category: .hateSpeech, probability: .negligible),
     .init(category: .harassment, probability: .negligible),
@@ -135,10 +137,10 @@ final class GenerativeModelTests: XCTestCase {
   }
 
   func testGenerateContent_success_unknownEnum_safetyRatings() async throws {
-    let expectedSafetyRatings = [
-      SafetyRating(category: .harassment, probability: .medium),
-      SafetyRating(category: .dangerousContent, probability: .unknown),
-      SafetyRating(category: .unknown, probability: .high),
+    let expectedSafetyRatings: [GoogleGenerativeAI.SafetyRating] = [
+      .init(category: .harassment, probability: .medium),
+      .init(category: .dangerousContent, probability: .unknown),
+      .init(category: .unknown, probability: .high),
     ]
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
@@ -199,7 +201,9 @@ final class GenerativeModelTests: XCTestCase {
       _ = try await model.generateContent(testPrompt)
       XCTFail("Should throw GenerateContentError.internalError; no error thrown.")
     } catch let GenerateContentError
-      .internalError(underlying: invalidCandidateError as InvalidCandidateError) {
+      .internalError(underlying: invalidCandidateError as InternalGenerativeAI
+        .InvalidCandidateError) {
+      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
       guard case let .emptyContent(decodingError) = invalidCandidateError else {
         XCTFail("Not an InvalidCandidateError.emptyContent error: \(invalidCandidateError)")
         return
@@ -364,7 +368,7 @@ final class GenerativeModelTests: XCTestCase {
     MockURLProtocol.requestHandler = try nonHTTPRequestHandler()
 
     var responseError: Error?
-    var content: GenerateContentResponse?
+    var content: GoogleGenerativeAI.GenerateContentResponse?
     do {
       content = try await model.generateContent(testPrompt)
     } catch {
@@ -388,7 +392,7 @@ final class GenerativeModelTests: XCTestCase {
     )
 
     var responseError: Error?
-    var content: GenerateContentResponse?
+    var content: GoogleGenerativeAI.GenerateContentResponse?
     do {
       content = try await model.generateContent(testPrompt)
     } catch {
@@ -418,7 +422,7 @@ final class GenerativeModelTests: XCTestCase {
       )
 
     var responseError: Error?
-    var content: GenerateContentResponse?
+    var content: GoogleGenerativeAI.GenerateContentResponse?
     do {
       content = try await model.generateContent(testPrompt)
     } catch {
@@ -432,7 +436,9 @@ final class GenerativeModelTests: XCTestCase {
       XCTFail("Not an internal error: \(generateContentError)")
       return
     }
-    let invalidCandidateError = try XCTUnwrap(underlyingError as? InvalidCandidateError)
+    // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
+    let invalidCandidateError = try XCTUnwrap(underlyingError as? InternalGenerativeAI
+      .InvalidCandidateError)
     guard case let .malformedContent(malformedContentUnderlyingError) = invalidCandidateError else {
       XCTFail("Not a malformed content error: \(invalidCandidateError)")
       return
@@ -510,7 +516,8 @@ final class GenerativeModelTests: XCTestCase {
       for try await _ in stream {
         XCTFail("No content is there, this shouldn't happen.")
       }
-    } catch GenerateContentError.internalError(_ as InvalidCandidateError) {
+    } catch GenerateContentError.internalError(_ as InternalGenerativeAI.InvalidCandidateError) {
+      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
       // Underlying error is as expected, nothing else to check.
       return
     }
@@ -640,7 +647,7 @@ final class GenerativeModelTests: XCTestCase {
       )
 
     let stream = model.generateContentStream("Hi")
-    var citations: [Citation] = []
+    var citations: [GoogleGenerativeAI.Citation] = []
     for try await content in stream {
       XCTAssertNotNil(content.text)
       let candidate = try XCTUnwrap(content.candidates.first)
@@ -734,7 +741,9 @@ final class GenerativeModelTests: XCTestCase {
       for try await content in stream {
         XCTFail("Unexpected content in stream: \(content)")
       }
-    } catch let GenerateContentError.internalError(underlyingError as InvalidCandidateError) {
+    } catch let GenerateContentError
+      .internalError(underlyingError as InternalGenerativeAI.InvalidCandidateError) {
+      // TODO(andrewheard): Convert to GoogleGenerativeAI.InvalidCandidateError
       guard case let .malformedContent(contentError) = underlyingError else {
         XCTFail("Not a malformed content error: \(underlyingError)")
         return

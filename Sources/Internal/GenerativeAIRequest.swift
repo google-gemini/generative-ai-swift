@@ -15,7 +15,7 @@
 import Foundation
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-protocol GenerativeAIRequest: Encodable {
+public protocol GenerativeAIRequest: Encodable {
   associatedtype Response: Decodable
 
   var url: URL { get }
@@ -26,12 +26,14 @@ protocol GenerativeAIRequest: Encodable {
 /// Configuration parameters for sending requests to the backend.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct RequestOptions {
+  public let baseURL: String
+
   /// The request’s timeout interval in seconds; if not specified uses the default value for a
   /// `URLRequest`.
-  let timeout: TimeInterval?
+  public let timeout: TimeInterval?
 
   /// The API version to use in requests to the backend.
-  let apiVersion: String
+  public let apiVersion: String
 
   /// Initializes a request options object.
   ///
@@ -39,7 +41,8 @@ public struct RequestOptions {
   ///   - timeout The request’s timeout interval in seconds; if not specified uses the default value
   ///   for a `URLRequest`.
   ///   - apiVersion The API version to use in requests to the backend; defaults to "v1".
-  public init(timeout: TimeInterval? = nil, apiVersion: String = "v1") {
+  public init(baseURL: String, timeout: TimeInterval? = nil, apiVersion: String = "v1") {
+    self.baseURL = baseURL
     self.timeout = timeout
     self.apiVersion = apiVersion
   }

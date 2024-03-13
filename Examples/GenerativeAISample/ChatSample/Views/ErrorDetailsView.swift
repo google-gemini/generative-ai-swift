@@ -109,7 +109,7 @@ struct ErrorDetailsView: View {
 
           Section("Details") {
             if let reason = generateContentResponse.promptFeedback?.blockReason {
-              SubtitleFormRow(title: "Reason for blocking", value: reason.rawValue)
+              SubtitleFormRow(title: "Reason for blocking: ", value: String(describing: reason))
             }
 
             if let text = generateContentResponse.text {
@@ -131,7 +131,10 @@ struct ErrorDetailsView: View {
           }
 
           Section("Details") {
-            SubtitleFormRow(title: "Reason for finishing early", value: finishReason.rawValue)
+            SubtitleFormRow(
+              title: "Reason for finishing early: ",
+              value: String(describing: finishReason)
+            )
 
             if let text = generateContentResponse.text {
               SubtitleMarkdownFormRow(title: "Last chunk for the response", value: text)

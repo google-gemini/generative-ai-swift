@@ -15,18 +15,18 @@
 import Foundation
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-struct GenerativeAIService {
+public struct GenerativeAIService {
   /// Gives permission to talk to the backend.
   private let apiKey: String
 
   private let urlSession: URLSession
 
-  init(apiKey: String, urlSession: URLSession) {
+  public init(apiKey: String, urlSession: URLSession) {
     self.apiKey = apiKey
     self.urlSession = urlSession
   }
 
-  func loadRequest<T: GenerativeAIRequest>(request: T) async throws -> T.Response {
+  public func loadRequest<T: GenerativeAIRequest>(request: T) async throws -> T.Response {
     let urlRequest = try urlRequest(request: request)
 
     #if DEBUG
@@ -53,7 +53,7 @@ struct GenerativeAIService {
   }
 
   @available(macOS 12.0, *)
-  func loadRequestStream<T: GenerativeAIRequest>(request: T)
+  public func loadRequestStream<T: GenerativeAIRequest>(request: T)
     -> AsyncThrowingStream<T.Response, Error> {
     return AsyncThrowingStream { continuation in
       Task {
@@ -150,8 +150,8 @@ struct GenerativeAIService {
     var urlRequest = URLRequest(url: request.url)
     urlRequest.httpMethod = "POST"
     urlRequest.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
-    urlRequest.setValue("genai-swift/\(GenerativeAISwift.version)",
-                        forHTTPHeaderField: "x-goog-api-client")
+//    urlRequest.setValue("genai-swift/\(GenerativeAISwift.version)",
+//                        forHTTPHeaderField: "x-goog-api-client")
     urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
     let encoder = JSONEncoder()
     encoder.keyEncodingStrategy = .convertToSnakeCase
