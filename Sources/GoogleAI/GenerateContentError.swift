@@ -30,7 +30,7 @@ public enum GenerateContentError: Error {
   case responseStoppedEarly(reason: FinishReason, response: GenerateContentResponse)
 
   /// The provided API key is invalid.
-  case invalidAPIKey
+  case invalidAPIKey(message: String)
 
   /// The user's location (region) is not supported by the API.
   ///

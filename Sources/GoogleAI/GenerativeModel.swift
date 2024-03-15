@@ -286,7 +286,7 @@ public final class GenerativeModel {
     if let error = error as? GenerateContentError {
       return error
     } else if let error = error as? RPCError, error.isInvalidAPIKeyError() {
-      return GenerateContentError.invalidAPIKey
+      return GenerateContentError.invalidAPIKey(message: error.message)
     } else if let error = error as? RPCError, error.isUnsupportedUserLocationError() {
       return GenerateContentError.unsupportedUserLocation
     }
