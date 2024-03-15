@@ -21,9 +21,6 @@ public final class GenerativeModel {
   // The prefix for a model resource in the Gemini API.
   private static let modelResourcePrefix = "models/"
 
-  // The prefix for a tuned model resource in the Gemini API.
-  private static let tunedModelResourcePrefix = "tunedModels/"
-
   /// The resource name of the model in the backend; has the format "models/model-name".
   let modelResourceName: String
 
