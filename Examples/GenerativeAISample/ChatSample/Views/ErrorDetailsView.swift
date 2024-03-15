@@ -239,7 +239,7 @@ struct ErrorDetailsView: View {
 }
 
 #Preview("Invalid API Key") {
-  ErrorDetailsView(error: GenerateContentError.invalidAPIKey)
+  ErrorDetailsView(error: GenerateContentError.invalidAPIKey(message: "Fix API key placeholder"))
 }
 
 #Preview("Unsupported User Location") {
