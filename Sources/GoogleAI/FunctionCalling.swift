@@ -101,19 +101,19 @@ public class Schema: Encodable {
 public enum DataType: String, Encodable {
   /// A `String` type.
   case string = "STRING"
-  
+
   /// A floating-point number type.
   case number = "NUMBER"
-  
+
   /// An integer type.
   case integer = "INTEGER"
-  
+
   /// A boolean type.
   case boolean = "BOOLEAN"
-  
+
   /// An array type.
   case array = "ARRAY"
-  
+
   /// An object type.
   case object = "OBJECT"
 }
