@@ -43,6 +43,7 @@ public struct ModelContent: Codable, Equatable {
     /// A predicted function call returned from the model.
     case functionCall(FunctionCall)
 
+    /// A response to a function call.
     case functionResponse(FunctionResponse)
 
     // MARK: Convenience Initializers
