@@ -15,8 +15,6 @@
 import Foundation
 
 /// A predicted function call returned from the model.
-///
-/// REST Docs: https://ai.google.dev/api/rest/v1beta/Content#functioncall
 public struct FunctionCall: Equatable, Encodable {
   /// The name of the function to call.
   public let name: String
@@ -25,22 +23,33 @@ public struct FunctionCall: Equatable, Encodable {
   public let args: JSONObject
 }
 
-// REST Docs: https://ai.google.dev/api/rest/v1beta/Tool#schema
+/// A `Schema` object allows the definition of input and output data types.
+///
+/// These types can be objects, but also primitives and arrays. Represents a select subset of an
+/// [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema).
 public class Schema: Encodable {
+  /// The data type.
   let type: DataType
 
+  /// The format of the data.
   let format: String?
 
+  /// A brief description of the parameter.
   let description: String?
 
+  /// Indicates if the value may be null.
   let nullable: Bool?
 
+  /// Possible values of the element of type ``DataType/string`` with "enum" format.
   let enumValues: [String]?
 
+  /// Schema of the elements of type ``DataType/array``.
   let items: Schema?
 
+  /// Properties of type ``DataType/object``.
   let properties: [String: Schema]?
 
+  /// Required properties of type ``DataType/object``.
   let requiredProperties: [String]?
 
   enum CodingKeys: String, CodingKey {
@@ -54,6 +63,22 @@ public class Schema: Encodable {
     case requiredProperties = "required"
   }
 
+  /// Constructs a new `Schema`.
+  ///
+  /// - Parameters:
+  ///   - type: The data type.
+  ///   - format: The format of the data; used only for primitive datatypes.
+  ///     Supported formats:
+  ///     - ``DataType/integer``: int32, int64
+  ///     - ``DataType/number``: float, double
+  ///     - ``DataType/string``: enum
+  ///   - description: A brief description of the parameter; may be formatted as Markdown.
+  ///   - nullable: Indicates if the value may be null.
+  ///   - enumValues: Possible values of the element of type ``DataType/string`` with "enum" format.
+  ///     For example, an enum `Direction` may be defined as `["EAST", NORTH", "SOUTH", "WEST"]`.
+  ///   - items: Schema of the elements of type ``DataType/array``.
+  ///   - properties: Properties of type ``DataType/object``.
+  ///   - requiredProperties: Required properties of type ``DataType/object``.
   public init(type: DataType, format: String? = nil, description: String? = nil,
               nullable: Bool? = nil,
               enumValues: [String]? = nil, items: Schema? = nil,
@@ -70,24 +95,52 @@ public class Schema: Encodable {
   }
 }
 
-// REST Docs: https://ai.google.dev/api/rest/v1beta/Tool#Type
+/// A data type.
+///
+/// Contains the set of OpenAPI [data types](https://spec.openapis.org/oas/v3.0.3#data-types).
 public enum DataType: String, Encodable {
+  /// A `String` type.
   case string = "STRING"
+  
+  /// A floating-point number type.
   case number = "NUMBER"
+  
+  /// An integer type.
   case integer = "INTEGER"
+  
+  /// A boolean type.
   case boolean = "BOOLEAN"
+  
+  /// An array type.
   case array = "ARRAY"
+  
+  /// An object type.
   case object = "OBJECT"
 }
 
-// REST Docs: https://ai.google.dev/api/rest/v1beta/Tool#FunctionDeclaration
+/// Structured representation of a function declaration.
+///
+/// This `FunctionDeclaration` is a representation of a block of code that can be used as a ``Tool``
+/// by the model and executed by the client.
 public struct FunctionDeclaration {
+  /// The name of the function.
   let name: String
 
+  /// A brief description of the function.
   let description: String
 
+  /// Describes the parameters to this function; must be of type ``DataType/object``.
   let parameters: Schema?
 
+  /// Constructs a new `FunctionDeclaration`.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the function; must be a-z, A-Z, 0-9, or contain underscores and dashes,
+  ///   with a maximum length of 63.
+  ///   - description: A brief description of the function.
+  ///   - parameters: Describes the parameters to this function; the keys are parameter names and
+  ///   the values are ``Schema`` objects describing them.
+  ///   - requiredParameters: A list of required parameters by name.
   public init(name: String, description: String, parameters: [String: Schema]?,
               requiredParameters: [String]?) {
     self.name = name
@@ -100,21 +153,47 @@ public struct FunctionDeclaration {
   }
 }
 
-// REST Docs: https://ai.google.dev/api/rest/v1beta/Tool
+/// Helper tools that the model may use to generate response.
+///
+/// A `Tool` is a piece of code that enables the system to interact with external systems to
+/// perform an action, or set of actions, outside of knowledge and scope of the model.
 public struct Tool: Encodable {
+  /// A list of `FunctionDeclarations` available to the model.
   let functionDeclarations: [FunctionDeclaration]?
 
+  /// Constructs a new `Tool`.
+  ///
+  /// - Parameters:
+  ///   - functionDeclarations: A list of `FunctionDeclarations` available to the model that can be
+  ///   used for function calling.
+  ///   The model or system does not execute the function. Instead the defined function may be
+  ///   returned as a ``FunctionCall`` in ``ModelContent/Part/functionCall(_:)`` with arguments to
+  ///   the client side for execution. The model may decide to call a subset of these functions by
+  ///   populating ``FunctionCall`` in the response. The next conversation turn may contain a
+  ///   ``FunctionResponse`` in ``ModelContent/Part/functionResponse(_:)`` with the
+  ///   ``ModelContent/role`` "function", providing generation context for the next model turn.
   public init(functionDeclarations: [FunctionDeclaration]?) {
     self.functionDeclarations = functionDeclarations
   }
 }
 
-// REST Docs: https://ai.google.dev/api/rest/v1beta/Content#functionresponse
+/// Result output from a ``FunctionCall``.
+///
+/// Contains a string representing the `FunctionDeclaration.name` and a structured JSON object
+/// containing any output from the function is used as context to the model. This should contain the
+/// result of a ``FunctionCall`` made based on model prediction.
 public struct FunctionResponse: Equatable, Encodable {
+  /// The name of the function that was called.
   let name: String
 
+  /// The function's response.
   let response: JSONObject
 
+  /// Constructs a new `FunctionResponse`.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the function that was called.
+  ///   - response: The function's response.
   public init(name: String, response: JSONObject) {
     self.name = name
     self.response = response
