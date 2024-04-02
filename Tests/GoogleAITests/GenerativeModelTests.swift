@@ -63,6 +63,7 @@ final class GenerativeModelTests: XCTestCase {
     let promptFeedback = try XCTUnwrap(response.promptFeedback)
     XCTAssertNil(promptFeedback.blockReason)
     XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
+    XCTAssertEqual(response.functionCalls, [])
   }
 
   func testGenerateContent_success_basicReplyShort() async throws {
@@ -86,6 +87,7 @@ final class GenerativeModelTests: XCTestCase {
     let promptFeedback = try XCTUnwrap(response.promptFeedback)
     XCTAssertNil(promptFeedback.blockReason)
     XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
+    XCTAssertEqual(response.functionCalls, [])
   }
 
   func testGenerateContent_success_citations() async throws {
@@ -188,6 +190,7 @@ final class GenerativeModelTests: XCTestCase {
     }
     XCTAssertEqual(functionCall.name, "current_time")
     XCTAssertTrue(functionCall.args.isEmpty)
+    XCTAssertEqual(response.functionCalls, [functionCall])
   }
 
   func testGenerateContent_success_functionCall_noArguments() async throws {
@@ -209,6 +212,7 @@ final class GenerativeModelTests: XCTestCase {
     }
     XCTAssertEqual(functionCall.name, "current_time")
     XCTAssertTrue(functionCall.args.isEmpty)
+    XCTAssertEqual(response.functionCalls, [functionCall])
   }
 
   func testGenerateContent_success_functionCall_withArguments() async throws {
@@ -234,6 +238,7 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(argX, .number(4))
     let argY = try XCTUnwrap(functionCall.args["y"])
     XCTAssertEqual(argY, .number(5))
+    XCTAssertEqual(response.functionCalls, [functionCall])
   }
 
   func testGenerateContent_failure_invalidAPIKey() async throws {
