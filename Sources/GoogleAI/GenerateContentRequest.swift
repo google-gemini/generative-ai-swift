@@ -22,7 +22,7 @@ struct GenerateContentRequest {
   let generationConfig: GenerationConfig?
   let safetySettings: [SafetySetting]?
   let tools: [Tool]?
-  let toolConfig: ToolConfig
+  let toolConfig: ToolConfig?
   let isStreaming: Bool
   let options: RequestOptions
 }
