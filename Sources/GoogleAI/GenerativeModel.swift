@@ -36,7 +36,7 @@ public final class GenerativeModel {
   /// A list of tools the model may use to generate the next response.
   let tools: [Tool]?
 
-  // Tool configuration for any `Tool` specified in the request.
+  /// Tool configuration for any `Tool` specified in the request.
   let toolConfig: ToolConfig?
 
   /// Configuration parameters for sending requests to the backend.

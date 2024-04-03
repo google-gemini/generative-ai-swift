@@ -177,26 +177,26 @@ public struct Tool: Encodable {
   }
 }
 
-/// Defines the execution behavior for function calling by defining the
-/// execution mode.
-public enum FunctionCallingMode: String, Encodable {
-  /// The default behavior for function calling. The model calls functions to answer queries at its
-  /// discretion.
-  case auto = "AUTO"
-
-  /// The model always predicts a provided function call to answer every query.
-  case any = "ANY"
-
-  /// The model will never predict a function call to answer a query. This can also be achieved by
-  /// not passing any tools to the model.
-  case none = "NONE"
-}
-
 /// Configuration for specifying function calling behavior.
 public struct FunctionCallingConfig: Encodable {
+  /// Defines the execution behavior for function calling by defining the
+  /// execution mode.
+  public enum Mode: String, Encodable {
+    /// The default behavior for function calling. The model calls functions to answer queries at its
+    /// discretion.
+    case auto = "AUTO"
+
+    /// The model always predicts a provided function call to answer every query.
+    case any = "ANY"
+
+    /// The model will never predict a function call to answer a query. This can also be achieved by
+    /// not passing any tools to the model.
+    case none = "NONE"
+  }
+
   /// Specifies the mode in which function calling should execute. If
   /// unspecified, the default value will be set to AUTO.
-  let mode: FunctionCallingMode?
+  let mode: Mode?
 
   /// A set of function names that, when provided, limits the functions the model
   /// will call.
@@ -206,7 +206,7 @@ public struct FunctionCallingConfig: Encodable {
   /// predict a function call from the set of function names provided.
   let allowedFunctionNames: [String]?
 
-  public init(mode: FunctionCallingMode? = nil, allowedFunctionNames: [String]? = nil) {
+  public init(mode: FunctionCallingConfig.Mode? = nil, allowedFunctionNames: [String]? = nil) {
     self.mode = mode
     self.allowedFunctionNames = allowedFunctionNames
   }
