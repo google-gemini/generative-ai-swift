@@ -182,8 +182,8 @@ public struct FunctionCallingConfig: Encodable {
   /// Defines the execution behavior for function calling by defining the
   /// execution mode.
   public enum Mode: String, Encodable {
-    /// The default behavior for function calling. The model calls functions to answer queries at its
-    /// discretion.
+    /// The default behavior for function calling. The model calls functions to answer queries at
+    /// its discretion.
     case auto = "AUTO"
 
     /// The model always predicts a provided function call to answer every query.
