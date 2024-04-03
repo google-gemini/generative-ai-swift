@@ -191,16 +191,23 @@ public enum Mode: String, Encodable {
 }
 
 public struct FunctionCallingConfig: Encodable {
-  let mode: Mode
+  let mode: Mode?
+
+  let allowedFunctionNames: [String]?
+
+  public init(mode: Mode? = nil, allowedFunctionNames: [String]? = nil) {
+    self.mode = mode
+    self.allowedFunctionNames = allowedFunctionNames
+  }
 }
 
 /// Tool configuration for any `Tool` specified in the request.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct ToolConfig: Encodable {
-  let functionCallingConfig: FunctionCallingConfig
+  let functionCallingConfig: FunctionCallingConfig?
 
-  public init(mode: Mode = .auto) {
-    functionCallingConfig = FunctionCallingConfig(mode: mode)
+  public init(functionCallingConfig: FunctionCallingConfig? = nil) {
+    self.functionCallingConfig = functionCallingConfig
   }
 }
 

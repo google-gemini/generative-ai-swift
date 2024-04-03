@@ -98,7 +98,10 @@ struct GenerateContent: AsyncParsableCommand {
             requiredParameters: ["currency_from", "currency_to"]
           ),
         ])],
-        toolConfig: ToolConfig(mode: .any),
+        toolConfig: .init(functionCallingConfig: .init(
+          mode: .any,
+          allowedFunctionNames: ["get_exchange_rate"]
+        )),
         requestOptions: RequestOptions(apiVersion: "v1beta")
       )
 

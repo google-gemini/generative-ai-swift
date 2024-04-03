@@ -37,7 +37,7 @@ public final class GenerativeModel {
   let tools: [Tool]?
 
   // Tool configuration for any `Tool` specified in the request.
-  let toolConfig: ToolConfig
+  let toolConfig: ToolConfig?
 
   /// Configuration parameters for sending requests to the backend.
   let requestOptions: RequestOptions
@@ -58,7 +58,7 @@ public final class GenerativeModel {
                           generationConfig: GenerationConfig? = nil,
                           safetySettings: [SafetySetting]? = nil,
                           tools: [Tool]? = nil,
-                          toolConfig: ToolConfig = ToolConfig(mode: Mode.auto),
+                          toolConfig: ToolConfig? = nil,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
@@ -78,7 +78,7 @@ public final class GenerativeModel {
        generationConfig: GenerationConfig? = nil,
        safetySettings: [SafetySetting]? = nil,
        tools: [Tool]? = nil,
-       toolConfig: ToolConfig = ToolConfig(mode: Mode.auto),
+       toolConfig: ToolConfig? = nil,
        requestOptions: RequestOptions = RequestOptions(),
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
