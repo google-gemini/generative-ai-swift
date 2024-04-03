@@ -177,6 +177,33 @@ public struct Tool: Encodable {
   }
 }
 
+public enum Mode: String, Encodable {
+  /// The default behavior for function calling. The model calls functions to answer queries at its
+  /// discretion.
+  case auto = "AUTO"
+
+  /// The model always predicts a provided function call to answer every query.
+  case any = "ANY"
+
+  /// The model will never predict a function call to answer a query. This can also be achieved by
+  /// not passing any tools to the model.
+  case none = "NONE"
+}
+
+public struct FunctionCallingConfig: Encodable {
+  let mode: Mode
+}
+
+/// Tool configuration for any `Tool` specified in the request.
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+public struct ToolConfig: Encodable {
+  let functionCallingConfig: FunctionCallingConfig
+
+  public init(mode: Mode = .auto) {
+    functionCallingConfig = FunctionCallingConfig(mode: mode)
+  }
+}
+
 /// Result output from a ``FunctionCall``.
 ///
 /// Contains a string representing the `FunctionDeclaration.name` and a structured JSON object
