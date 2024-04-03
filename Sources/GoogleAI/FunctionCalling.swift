@@ -177,7 +177,9 @@ public struct Tool: Encodable {
   }
 }
 
-public enum Mode: String, Encodable {
+/// Defines the execution behavior for function calling by defining the
+/// execution mode.
+public enum FunctionCallingMode: String, Encodable {
   /// The default behavior for function calling. The model calls functions to answer queries at its
   /// discretion.
   case auto = "AUTO"
@@ -190,12 +192,21 @@ public enum Mode: String, Encodable {
   case none = "NONE"
 }
 
+/// Configuration for specifying function calling behavior.
 public struct FunctionCallingConfig: Encodable {
-  let mode: Mode?
+  /// Specifies the mode in which function calling should execute. If
+  /// unspecified, the default value will be set to AUTO.
+  let mode: FunctionCallingMode?
 
+  /// A set of function names that, when provided, limits the functions the model
+  /// will call.
+  ///
+  /// This should only be set when the Mode is ANY. Function names
+  /// should match [FunctionDeclaration.name]. With mode set to ANY, model will
+  /// predict a function call from the set of function names provided.
   let allowedFunctionNames: [String]?
 
-  public init(mode: Mode? = nil, allowedFunctionNames: [String]? = nil) {
+  public init(mode: FunctionCallingMode? = nil, allowedFunctionNames: [String]? = nil) {
     self.mode = mode
     self.allowedFunctionNames = allowedFunctionNames
   }
