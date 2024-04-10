@@ -17,7 +17,7 @@ import SwiftUI
 struct ContentView: View {
   @StateObject
   var viewModel = ConversationViewModel()
-  
+
   @StateObject
   var functionCallingViewModel = FunctionCallingViewModel()
 

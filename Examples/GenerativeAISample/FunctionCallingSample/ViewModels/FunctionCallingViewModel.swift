@@ -20,10 +20,10 @@ import UIKit
 class FunctionCallingViewModel: ObservableObject {
   /// This array holds both the user's and the system's chat messages
   @Published var messages = [ChatMessage]()
-  
+
   /// Indicates we're waiting for the model to finish
   @Published var busy = false
-  
+
   @Published var error: Error?
   var hasError: Bool {
     return error != nil
@@ -70,21 +70,21 @@ class FunctionCallingViewModel: ObservableObject {
   func sendMessage(_ text: String, streaming: Bool = true) async {
     error = nil
     chatTask?.cancel()
-    
+
     chatTask = Task {
       busy = true
       defer {
         busy = false
       }
-      
+
       // first, add the user's message to the chat
       let userMessage = ChatMessage(message: text, participant: .user)
       messages.append(userMessage)
-      
+
       // add a pending message while we're waiting for a response from the backend
       let systemMessage = ChatMessage.pending(participant: .system)
       messages.append(systemMessage)
-      
+
       print(messages)
       do {
         repeat {
@@ -102,14 +102,14 @@ class FunctionCallingViewModel: ObservableObject {
       }
     }
   }
-  
+
   func startNewChat() {
     stop()
     error = nil
     chat = model.startChat()
     messages.removeAll()
   }
-  
+
   func stop() {
     chatTask?.cancel()
     error = nil
@@ -145,81 +145,81 @@ class FunctionCallingViewModel: ObservableObject {
     processResponseContent(content: response)
     messages[pendingMessageIndex()].pending = false
   }
-  
-    func processResponseContent(content: GenerateContentResponse) {
-      guard let candidate = content.candidates.first else {
-        fatalError("No candidate.")
-      }
-  
-      for part in candidate.content.parts {
-        switch part {
-        case let .text(text):
-          // replace pending message with backend response
-          messages[pendingMessageIndex()].message += text
-        case let .functionCall(functionCall):
-          messages.insert(functionCall.chatMessage(), at: pendingMessageIndex())
-          functionCalls.append(functionCall)
-        case .data, .functionResponse:
-          fatalError("Unsupported response content.")
-        }
+
+  func processResponseContent(content: GenerateContentResponse) {
+    guard let candidate = content.candidates.first else {
+      fatalError("No candidate.")
+    }
+
+    for part in candidate.content.parts {
+      switch part {
+      case let .text(text):
+        // replace pending message with backend response
+        messages[pendingMessageIndex()].message += text
+      case let .functionCall(functionCall):
+        messages.insert(functionCall.chatMessage(), at: pendingMessageIndex())
+        functionCalls.append(functionCall)
+      case .data, .functionResponse:
+        fatalError("Unsupported response content.")
       }
     }
-  
-    func processFunctionCalls() async throws -> [FunctionResponse] {
-      var functionResponses = [FunctionResponse]()
-      for functionCall in functionCalls {
-        switch functionCall.name {
-        case "get_exchange_rate":
-          let exchangeRates = getExchangeRate(args: functionCall.args)
-          functionResponses.append(FunctionResponse(
-                          name: "get_exchange_rate",
-                          response: exchangeRates
-                        ))
-        default:
-          fatalError("Unknown function named \"\(functionCall.name)\".")
-        }
+  }
+
+  func processFunctionCalls() async throws -> [FunctionResponse] {
+    var functionResponses = [FunctionResponse]()
+    for functionCall in functionCalls {
+      switch functionCall.name {
+      case "get_exchange_rate":
+        let exchangeRates = getExchangeRate(args: functionCall.args)
+        functionResponses.append(FunctionResponse(
+          name: "get_exchange_rate",
+          response: exchangeRates
+        ))
+      default:
+        fatalError("Unknown function named \"\(functionCall.name)\".")
       }
-      functionCalls = []
-      
-      return functionResponses
     }
-  
+    functionCalls = []
+
+    return functionResponses
+  }
+
   private func pendingMessageIndex() -> Int {
     return messages.lastIndex(where: { chatMessage in
       chatMessage.participant == .system && chatMessage.pending
     }) ?? messages.endIndex
   }
-  
-    // MARK: - Callable Functions
-  
-    func getExchangeRate(args: JSONObject) -> JSONObject {
-      // 1. Validate and extract the parameters provided by the model (from a `FunctionCall`)
-      guard case let .string(from) = args["currency_from"] else {
-        fatalError("Missing `currency_from` parameter.")
-      }
-      guard case let .string(to) = args["currency_to"] else {
-        fatalError("Missing `currency_to` parameter.")
-      }
-  
-      // 2. Get the exchange rate
-      let allRates: [String: [String: Double]] = [
-        "AUD": ["CAD": 0.89265, "EUR": 0.6072, "GBP": 0.51714, "JPY": 97.75, "USD": 0.66379],
-        "CAD": ["AUD": 1.1203, "EUR": 0.68023, "GBP": 0.57933, "JPY": 109.51, "USD": 0.74362],
-        "EUR": ["AUD": 1.6469, "CAD": 1.4701, "GBP": 0.85168, "JPY": 160.99, "USD": 1.0932],
-        "GBP": ["AUD": 1.9337, "CAD": 1.7261, "EUR": 1.1741, "JPY": 189.03, "USD": 1.2836],
-        "JPY": ["AUD": 0.01023, "CAD": 0.00913, "EUR": 0.00621, "GBP": 0.00529, "USD": 0.00679],
-        "USD": ["AUD": 1.5065, "CAD": 1.3448, "EUR": 0.91475, "GBP": 0.77907, "JPY": 147.26],
-      ]
-      guard let fromRates = allRates[from] else {
-        return ["error": .string("No data for currency \(from).")]
-      }
-      guard let toRate = fromRates[to] else {
-        return ["error": .string("No data for currency \(to).")]
-      }
-  
-      // 3. Return the exchange rates as a JSON object (returned to the model in a `FunctionResponse`)
-      return ["rates": .number(toRate)]
+
+  // MARK: - Callable Functions
+
+  func getExchangeRate(args: JSONObject) -> JSONObject {
+    // 1. Validate and extract the parameters provided by the model (from a `FunctionCall`)
+    guard case let .string(from) = args["currency_from"] else {
+      fatalError("Missing `currency_from` parameter.")
     }
+    guard case let .string(to) = args["currency_to"] else {
+      fatalError("Missing `currency_to` parameter.")
+    }
+
+    // 2. Get the exchange rate
+    let allRates: [String: [String: Double]] = [
+      "AUD": ["CAD": 0.89265, "EUR": 0.6072, "GBP": 0.51714, "JPY": 97.75, "USD": 0.66379],
+      "CAD": ["AUD": 1.1203, "EUR": 0.68023, "GBP": 0.57933, "JPY": 109.51, "USD": 0.74362],
+      "EUR": ["AUD": 1.6469, "CAD": 1.4701, "GBP": 0.85168, "JPY": 160.99, "USD": 1.0932],
+      "GBP": ["AUD": 1.9337, "CAD": 1.7261, "EUR": 1.1741, "JPY": 189.03, "USD": 1.2836],
+      "JPY": ["AUD": 0.01023, "CAD": 0.00913, "EUR": 0.00621, "GBP": 0.00529, "USD": 0.00679],
+      "USD": ["AUD": 1.5065, "CAD": 1.3448, "EUR": 0.91475, "GBP": 0.77907, "JPY": 147.26],
+    ]
+    guard let fromRates = allRates[from] else {
+      return ["error": .string("No data for currency \(from).")]
+    }
+    guard let toRate = fromRates[to] else {
+      return ["error": .string("No data for currency \(to).")]
+    }
+
+    // 3. Return the exchange rates as a JSON object (returned to the model in a `FunctionResponse`)
+    return ["rates": .number(toRate)]
+  }
 }
 
 private extension FunctionCall {
@@ -237,7 +237,7 @@ private extension FunctionCall {
       fatalError("Failed to convert JSON data to a String.")
     }
     let messageText = "Function call requested by model:\n```\n\(json)\n```"
-    
+
     return ChatMessage(message: messageText, participant: .system)
   }
 }
@@ -246,7 +246,7 @@ private extension FunctionResponse {
   func chatMessage() -> ChatMessage {
     let encoder = JSONEncoder()
     encoder.outputFormatting = .prettyPrinted
-    
+
     let jsonData: Data
     do {
       jsonData = try encoder.encode(self)
@@ -257,7 +257,7 @@ private extension FunctionResponse {
       fatalError("Failed to convert JSON data to a String.")
     }
     let messageText = "Function response returned by app:\n```\n\(json)\n```"
-    
+
     return ChatMessage(message: messageText, participant: .user)
   }
 }
