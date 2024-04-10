@@ -39,6 +39,9 @@ public final class GenerativeModel {
   /// Tool configuration for any `Tool` specified in the request.
   let toolConfig: ToolConfig?
 
+  /// Instructions that direct the model to behave a certain way.
+  let systemInstruction: ModelContent?
+
   /// Configuration parameters for sending requests to the backend.
   let requestOptions: RequestOptions
 
@@ -51,6 +54,8 @@ public final class GenerativeModel {
   ///   - generationConfig: The content generation parameters your model should use.
   ///   - safetySettings: A value describing what types of harmful content your model should allow.
   ///   - tools: A list of ``Tool`` objects  that the model may use to generate the next response.
+  ///   - systemInstruction: Instructions that direct the model to behave a certain way; currently
+  ///     only text content is supported.
   ///   - toolConfig: Tool configuration for any `Tool` specified in the request.
   ///   - requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
@@ -59,6 +64,7 @@ public final class GenerativeModel {
                           safetySettings: [SafetySetting]? = nil,
                           tools: [Tool]? = nil,
                           toolConfig: ToolConfig? = nil,
+                          systemInstruction: ModelContent? = nil,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
@@ -67,6 +73,7 @@ public final class GenerativeModel {
       safetySettings: safetySettings,
       tools: tools,
       toolConfig: toolConfig,
+      systemInstruction: systemInstruction,
       requestOptions: requestOptions,
       urlSession: .shared
     )
@@ -79,6 +86,7 @@ public final class GenerativeModel {
        safetySettings: [SafetySetting]? = nil,
        tools: [Tool]? = nil,
        toolConfig: ToolConfig? = nil,
+       systemInstruction: ModelContent? = nil,
        requestOptions: RequestOptions = RequestOptions(),
        urlSession: URLSession) {
     modelResourceName = GenerativeModel.modelResourceName(name: name)
@@ -87,6 +95,7 @@ public final class GenerativeModel {
     self.safetySettings = safetySettings
     self.tools = tools
     self.toolConfig = toolConfig
+    self.systemInstruction = systemInstruction
     self.requestOptions = requestOptions
 
     Logging.default.info("""
@@ -134,6 +143,7 @@ public final class GenerativeModel {
                                                               safetySettings: safetySettings,
                                                               tools: tools,
                                                               toolConfig: toolConfig,
+                                                              systemInstruction: systemInstruction,
                                                               isStreaming: false,
                                                               options: requestOptions)
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
@@ -207,6 +217,7 @@ public final class GenerativeModel {
                                                         safetySettings: safetySettings,
                                                         tools: tools,
                                                         toolConfig: toolConfig,
+                                                        systemInstruction: systemInstruction,
                                                         isStreaming: true,
                                                         options: requestOptions)
 
