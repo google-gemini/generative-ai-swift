@@ -30,17 +30,24 @@ final class GoogleGenerativeAITests: XCTestCase {
                                   maxOutputTokens: 256,
                                   stopSequences: ["..."])
     let filters = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockOnlyHigh)]
+    let systemInstruction = ModelContent(role: "system", parts: [.text("Talk like a pirate.")])
 
     // Permutations without optional arguments.
     let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY")
     let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY", safetySettings: filters)
     let _ = GenerativeModel(name: "gemini-1.0-pro", apiKey: "API_KEY", generationConfig: config)
+    let _ = GenerativeModel(
+      name: "gemini-1.0-pro",
+      apiKey: "API_KEY",
+      systemInstruction: systemInstruction
+    )
 
     // All arguments passed.
     let genAI = GenerativeModel(name: "gemini-1.0-pro",
                                 apiKey: "API_KEY",
                                 generationConfig: config, // Optional
-                                safetySettings: filters // Optional
+                                safetySettings: filters, // Optional
+                                systemInstruction: systemInstruction // Optional
     )
     // Full Typed Usage
     let pngData = Data() // ....
