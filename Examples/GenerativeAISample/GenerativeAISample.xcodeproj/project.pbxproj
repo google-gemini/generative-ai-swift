@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		86FBBA072BBE0D49006031A1 /* FunctionCallingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FBBA052BBE0D49006031A1 /* FunctionCallingScreen.swift */; };
+		86FBBA272BBF0594006031A1 /* FunctionCallingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FBBA252BBF0594006031A1 /* FunctionCallingViewModel.swift */; };
 		880266762B0FC39000CF7CB6 /* PhotoReasoningViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802666F2B0FC39000CF7CB6 /* PhotoReasoningViewModel.swift */; };
 		880266792B0FC39000CF7CB6 /* PhotoReasoningScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880266752B0FC39000CF7CB6 /* PhotoReasoningScreen.swift */; };
 		881B753A2B0FDCE600528058 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88209C192B0FBDC300F64795 /* APIKey.swift */; };
@@ -64,6 +66,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		86FBBA052BBE0D49006031A1 /* FunctionCallingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunctionCallingScreen.swift; sourceTree = "<group>"; };
+		86FBBA252BBF0594006031A1 /* FunctionCallingViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunctionCallingViewModel.swift; sourceTree = "<group>"; };
 		8802666F2B0FC39000CF7CB6 /* PhotoReasoningViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoReasoningViewModel.swift; sourceTree = "<group>"; };
 		880266752B0FC39000CF7CB6 /* PhotoReasoningScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoReasoningScreen.swift; sourceTree = "<group>"; };
 		88209C142B0F928F00F64795 /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
@@ -140,6 +144,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8610C1BB2BBE09BC00987CF2 /* FunctionCallingSample */ = {
+			isa = PBXGroup;
+			children = (
+				86FBBA262BBF0594006031A1 /* ViewModels */,
+				86FBBA062BBE0D49006031A1 /* Screens */,
+			);
+			path = FunctionCallingSample;
+			sourceTree = "<group>";
+		};
+		86FBBA062BBE0D49006031A1 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				86FBBA052BBE0D49006031A1 /* FunctionCallingScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		86FBBA262BBF0594006031A1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				86FBBA252BBF0594006031A1 /* FunctionCallingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		8802666E2B0FC39000CF7CB6 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,6 +217,7 @@
 				8848C8452B0D051E007B434F /* GenerativeAITextSample */,
 				8848C8572B0D056C007B434F /* GenerativeAIMultimodalSample */,
 				88E10F432B110D5300C08E95 /* ChatSample */,
+				8610C1BB2BBE09BC00987CF2 /* FunctionCallingSample */,
 				8848C8302B0D04BC007B434F /* Products */,
 				88209C222B0FBE1700F64795 /* Frameworks */,
 			);
@@ -601,6 +631,7 @@
 				88263BF12B239C11008AB09B /* ErrorDetailsView.swift in Sources */,
 				8848C8352B0D04BC007B434F /* ContentView.swift in Sources */,
 				886F95D52B17BA010036F07A /* SummarizeScreen.swift in Sources */,
+				86FBBA072BBE0D49006031A1 /* FunctionCallingScreen.swift in Sources */,
 				881B753B2B0FDCE600528058 /* APIKey.swift in Sources */,
 				8848C8332B0D04BC007B434F /* GenerativeAISampleApp.swift in Sources */,
 				886F95E02B17D5010036F07A /* ConversationViewModel.swift in Sources */,
@@ -608,6 +639,7 @@
 				886F95DC2B17BAEF0036F07A /* PhotoReasoningScreen.swift in Sources */,
 				886F95DB2B17BAEF0036F07A /* PhotoReasoningViewModel.swift in Sources */,
 				886F95E12B17D5010036F07A /* ConversationScreen.swift in Sources */,
+				86FBBA272BBF0594006031A1 /* FunctionCallingViewModel.swift in Sources */,
 				88263BF02B239C09008AB09B /* ErrorView.swift in Sources */,
 				886F95D62B17BA010036F07A /* SummarizeViewModel.swift in Sources */,
 			);
