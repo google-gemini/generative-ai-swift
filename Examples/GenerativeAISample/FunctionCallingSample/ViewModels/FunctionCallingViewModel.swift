@@ -94,7 +94,6 @@ class FunctionCallingViewModel: ObservableObject {
             try await internalSendMessage(text)
           }
         } while !functionCalls.isEmpty
-        messages[pendingMessageIndex()].pending = false
       } catch {
         self.error = error
         print(error.localizedDescription)
@@ -122,7 +121,7 @@ class FunctionCallingViewModel: ObservableObject {
       responseStream = chat.sendMessageStream(text)
     } else {
       for functionResponse in functionResponses {
-        messages.insert(functionResponse.chatMessage(), at: pendingMessageIndex())
+        messages.insert(functionResponse.chatMessage(), at: messages.count - 1)
       }
       responseStream = chat.sendMessageStream(functionResponses.modelContent())
     }
@@ -138,12 +137,11 @@ class FunctionCallingViewModel: ObservableObject {
       response = try await chat.sendMessage(text)
     } else {
       for functionResponse in functionResponses {
-        messages.insert(functionResponse.chatMessage(), at: pendingMessageIndex())
+        messages.insert(functionResponse.chatMessage(), at: messages.count - 1)
       }
       response = try await chat.sendMessage(functionResponses.modelContent())
     }
     processResponseContent(content: response)
-    messages[pendingMessageIndex()].pending = false
   }
 
   func processResponseContent(content: GenerateContentResponse) {
@@ -155,9 +153,10 @@ class FunctionCallingViewModel: ObservableObject {
       switch part {
       case let .text(text):
         // replace pending message with backend response
-        messages[pendingMessageIndex()].message += text
+        messages[messages.count - 1].message += text
+        messages[messages.count - 1].pending = false
       case let .functionCall(functionCall):
-        messages.insert(functionCall.chatMessage(), at: pendingMessageIndex())
+        messages.insert(functionCall.chatMessage(), at: messages.count - 1)
         functionCalls.append(functionCall)
       case .data, .functionResponse:
         fatalError("Unsupported response content.")
@@ -182,12 +181,6 @@ class FunctionCallingViewModel: ObservableObject {
     functionCalls = []
 
     return functionResponses
-  }
-
-  private func pendingMessageIndex() -> Int {
-    return messages.lastIndex(where: { chatMessage in
-      chatMessage.participant == .system && chatMessage.pending
-    }) ?? messages.endIndex
   }
 
   // MARK: - Callable Functions
