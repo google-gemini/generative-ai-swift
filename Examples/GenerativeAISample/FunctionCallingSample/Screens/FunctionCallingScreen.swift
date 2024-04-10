@@ -46,7 +46,7 @@ struct FunctionCallingScreen: View {
         .listStyle(.plain)
         .onChange(of: viewModel.messages, perform: { newValue in
           if viewModel.hasError {
-            // wait for a short moment to make sure we can actually scroll to the bottom
+            // Wait for a short moment to make sure we can actually scroll to the bottom.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
               withAnimation {
                 scrollViewProxy.scrollTo("errorView", anchor: .bottom)
@@ -56,7 +56,7 @@ struct FunctionCallingScreen: View {
           } else {
             guard let lastMessage = viewModel.messages.last else { return }
 
-            // wait for a short moment to make sure we can actually scroll to the bottom
+            // Wait for a short moment to make sure we can actually scroll to the bottom.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
               withAnimation {
                 scrollViewProxy.scrollTo(lastMessage.id, anchor: .bottom)
