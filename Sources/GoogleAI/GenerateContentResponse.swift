@@ -51,7 +51,7 @@ public struct GenerateContentResponse {
   }
 
   /// Initializer for SwiftUI previews or tests.
-  public init(candidates: [CandidateResponse], promptFeedback: PromptFeedback?) {
+  public init(candidates: [CandidateResponse], promptFeedback: PromptFeedback? = nil) {
     self.candidates = candidates
     self.promptFeedback = promptFeedback
   }

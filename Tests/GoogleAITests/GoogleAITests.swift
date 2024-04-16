@@ -149,6 +149,18 @@ final class GoogleGenerativeAITests: XCTestCase {
     _ = genAI.startChat(history: [ModelContent(parts: "abc")])
   }
 
+  // Public API tests for GenerateContentResponse.
+  func generateContentResponseAPI() {
+    let response = GenerateContentResponse(candidates: [])
+
+    let _: [CandidateResponse] = response.candidates
+    let _: PromptFeedback? = response.promptFeedback
+
+    // Computed Properties
+    let _: String? = response.text
+    let _: [FunctionCall] = response.functionCalls
+  }
+
   // Result builder alternative
 
   /*
