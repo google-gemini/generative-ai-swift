@@ -45,13 +45,19 @@ public struct ModelContent: Codable, Equatable {
 
     /// Data with a specified media type.
     ///
-    /// > Note: Supported media types depends on the model.
+    /// > Note: Supported media types depends on the model; see
+    /// > [supported file
+    /// > formats](https://ai.google.dev/tutorials/prompting_with_media#supported_file_formats)
+    /// > for details.
     case data(mimetype: String, Data)
 
     /// URI-based data with a specified media type.
     ///
-    /// > Note: Supported media types depends on the model.
-    case fileData(mimetype: String, URL)
+    /// > Note: Supported media types depends on the model; see
+    /// > [supported file
+    /// > formats](https://ai.google.dev/tutorials/prompting_with_media#supported_file_formats)
+    /// > for details.
+    case fileData(mimetype: String, uri: String)
 
     /// A predicted function call returned from the model.
     case functionCall(FunctionCall)
