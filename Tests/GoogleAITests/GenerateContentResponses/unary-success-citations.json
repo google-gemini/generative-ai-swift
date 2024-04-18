@@ -32,10 +32,25 @@
       "citationMetadata": {
         "citationSources": [
           {
-            "startIndex": 574,
-            "endIndex": 705,
-            "uri": "https://www.example.com/some-citation",
+            "endIndex": 128,
+            "uri": "https://www.example.com/some-citation-1",
+          },
+          {
+            "startIndex": 130,
+            "endIndex": 265,
+            "uri": "https://www.example.com/some-citation-2",
+          },
+          {
+            "startIndex": 272,
+            "endIndex": 431,
+            "uri": "https://www.example.com/some-citation-3",
             "license": ""
+          },
+          {
+            "startIndex": 444,
+            "endIndex": 630,
+            "uri": "https://www.example.com/some-citation-4",
+            "license": "mit"
           }
         ]
       }
