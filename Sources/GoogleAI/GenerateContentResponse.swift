@@ -174,7 +174,7 @@ public struct CitationMetadata: Decodable {
 
 /// A struct describing a source attribution.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct Citation: Decodable {
+public struct Citation {
   /// The inclusive beginning of a sequence in a model response that derives from a cited source.
   public let startIndex: Int
 
@@ -295,5 +295,25 @@ extension PromptFeedback: Decodable {
     } else {
       safetyRatings = []
     }
+  }
+}
+
+// MARK: - Codable Conformances
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension Citation: Decodable {
+  enum CodingKeys: CodingKey {
+    case startIndex
+    case endIndex
+    case uri
+    case license
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    startIndex = try container.decodeIfPresent(Int.self, forKey: .startIndex) ?? 0
+    endIndex = try container.decode(Int.self, forKey: .endIndex)
+    uri = try container.decode(String.self, forKey: .uri)
+    license = try container.decodeIfPresent(String.self, forKey: .license) ?? ""
   }
 }
