@@ -61,8 +61,7 @@ class FunctionCallingViewModel: ObservableObject {
           ],
           requiredParameters: ["currency_from", "currency_to"]
         ),
-      ])],
-      requestOptions: RequestOptions(apiVersion: "v1beta")
+      ])]
     )
     chat = model.startChat()
   }
