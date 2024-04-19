@@ -184,8 +184,8 @@ public struct Citation {
   /// A link to the cited source.
   public let uri: String
 
-  /// The license the cited source work is distributed under.
-  public let license: String
+  /// The license the cited source work is distributed under, if specified.
+  public let license: String?
 }
 
 /// A value enumerating possible reasons for a model to terminate a content generation request.
@@ -314,6 +314,11 @@ extension Citation: Decodable {
     startIndex = try container.decodeIfPresent(Int.self, forKey: .startIndex) ?? 0
     endIndex = try container.decode(Int.self, forKey: .endIndex)
     uri = try container.decode(String.self, forKey: .uri)
-    license = try container.decodeIfPresent(String.self, forKey: .license) ?? ""
+    if let license = try container.decodeIfPresent(String.self, forKey: .license),
+       !license.isEmpty {
+      self.license = license
+    } else {
+      license = nil
+    }
   }
 }
