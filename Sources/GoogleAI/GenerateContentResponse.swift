@@ -57,38 +57,6 @@ public struct GenerateContentResponse {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension GenerateContentResponse: Decodable {
-  enum CodingKeys: CodingKey {
-    case candidates
-    case promptFeedback
-  }
-
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    guard container.contains(CodingKeys.candidates) || container
-      .contains(CodingKeys.promptFeedback) else {
-      let context = DecodingError.Context(
-        codingPath: [],
-        debugDescription: "Failed to decode GenerateContentResponse;" +
-          " missing keys 'candidates' and 'promptFeedback'."
-      )
-      throw DecodingError.dataCorrupted(context)
-    }
-
-    if let candidates = try container.decodeIfPresent(
-      [CandidateResponse].self,
-      forKey: .candidates
-    ) {
-      self.candidates = candidates
-    } else {
-      candidates = []
-    }
-    promptFeedback = try container.decodeIfPresent(PromptFeedback.self, forKey: .promptFeedback)
-  }
-}
-
 /// A struct representing a possible reply to a content generation prompt. Each content generation
 /// prompt may produce multiple candidate responses.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
@@ -116,58 +84,9 @@ public struct CandidateResponse {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension CandidateResponse: Decodable {
-  enum CodingKeys: CodingKey {
-    case content
-    case safetyRatings
-    case finishReason
-    case finishMessage
-    case citationMetadata
-  }
-
-  /// Initializes a response from a decoder. Used for decoding server responses; not for public
-  /// use.
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    do {
-      if let content = try container.decodeIfPresent(ModelContent.self, forKey: .content) {
-        self.content = content
-      } else {
-        content = ModelContent(parts: [])
-      }
-    } catch {
-      // Check if `content` can be decoded as an empty dictionary to detect the `"content": {}` bug.
-      if let content = try? container.decode([String: String].self, forKey: .content),
-         content.isEmpty {
-        throw InvalidCandidateError.emptyContent(underlyingError: error)
-      } else {
-        throw InvalidCandidateError.malformedContent(underlyingError: error)
-      }
-    }
-
-    if let safetyRatings = try container.decodeIfPresent(
-      [SafetyRating].self,
-      forKey: .safetyRatings
-    ) {
-      self.safetyRatings = safetyRatings
-    } else {
-      safetyRatings = []
-    }
-
-    finishReason = try container.decodeIfPresent(FinishReason.self, forKey: .finishReason)
-
-    citationMetadata = try container.decodeIfPresent(
-      CitationMetadata.self,
-      forKey: .citationMetadata
-    )
-  }
-}
-
 /// A collection of source attributions for a piece of content.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public struct CitationMetadata: Decodable {
+public struct CitationMetadata {
   /// A list of individual cited sources and the parts of the content to which they apply.
   public let citationSources: [Citation]
 }
@@ -213,27 +132,11 @@ public enum FinishReason: String {
   case other = "OTHER"
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension FinishReason: Decodable {
-  /// Do not explicitly use. Initializer required for Decodable conformance.
-  public init(from decoder: Decoder) throws {
-    let value = try decoder.singleValueContainer().decode(String.self)
-    guard let decodedFinishReason = FinishReason(rawValue: value) else {
-      Logging.default
-        .error("[GoogleGenerativeAI] Unrecognized FinishReason with value \"\(value)\".")
-      self = .unknown
-      return
-    }
-
-    self = decodedFinishReason
-  }
-}
-
 /// A metadata struct containing any feedback the model had on the prompt it was provided.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public struct PromptFeedback {
   /// A type describing possible reasons to block a prompt.
-  public enum BlockReason: String, Decodable {
+  public enum BlockReason: String {
     /// The block reason is unknown.
     case unknown = "UNKNOWN"
 
@@ -245,19 +148,6 @@ public struct PromptFeedback {
 
     /// All other block reasons.
     case other = "OTHER"
-
-    /// Do not explicitly use. Initializer required for Decodable conformance.
-    public init(from decoder: Decoder) throws {
-      let value = try decoder.singleValueContainer().decode(String.self)
-      guard let decodedBlockReason = BlockReason(rawValue: value) else {
-        Logging.default
-          .error("[GoogleGenerativeAI] Unrecognized BlockReason with value \"\(value)\".")
-        self = .unknown
-        return
-      }
-
-      self = decodedBlockReason
-    }
   }
 
   /// The reason a prompt was blocked, if it was blocked.
@@ -273,20 +163,69 @@ public struct PromptFeedback {
   }
 }
 
+// MARK: - Codable Conformances
+
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-extension PromptFeedback: Decodable {
+extension GenerateContentResponse: Decodable {
   enum CodingKeys: CodingKey {
-    case blockReason
-    case safetyRatings
+    case candidates
+    case promptFeedback
   }
 
-  /// Do not explicitly use. Initializer required for Decodable conformance.
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    blockReason = try container.decodeIfPresent(
-      PromptFeedback.BlockReason.self,
-      forKey: .blockReason
-    )
+
+    guard container.contains(CodingKeys.candidates) || container
+      .contains(CodingKeys.promptFeedback) else {
+      let context = DecodingError.Context(
+        codingPath: [],
+        debugDescription: "Failed to decode GenerateContentResponse;" +
+          " missing keys 'candidates' and 'promptFeedback'."
+      )
+      throw DecodingError.dataCorrupted(context)
+    }
+
+    if let candidates = try container.decodeIfPresent(
+      [CandidateResponse].self,
+      forKey: .candidates
+    ) {
+      self.candidates = candidates
+    } else {
+      candidates = []
+    }
+    promptFeedback = try container.decodeIfPresent(PromptFeedback.self, forKey: .promptFeedback)
+  }
+}
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension CandidateResponse: Decodable {
+  enum CodingKeys: CodingKey {
+    case content
+    case safetyRatings
+    case finishReason
+    case finishMessage
+    case citationMetadata
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    do {
+      if let content = try container.decodeIfPresent(ModelContent.self, forKey: .content) {
+        self.content = content
+      } else {
+        content = ModelContent(parts: [])
+      }
+    } catch {
+      // Check if `content` can be decoded as an empty dictionary to detect the `"content": {}` bug.
+      if let content = try? container.decode([String: String].self, forKey: .content),
+         content.isEmpty {
+        throw InvalidCandidateError.emptyContent(underlyingError: error)
+      } else {
+        throw InvalidCandidateError.malformedContent(underlyingError: error)
+      }
+    }
+
     if let safetyRatings = try container.decodeIfPresent(
       [SafetyRating].self,
       forKey: .safetyRatings
@@ -295,10 +234,18 @@ extension PromptFeedback: Decodable {
     } else {
       safetyRatings = []
     }
+
+    finishReason = try container.decodeIfPresent(FinishReason.self, forKey: .finishReason)
+
+    citationMetadata = try container.decodeIfPresent(
+      CitationMetadata.self,
+      forKey: .citationMetadata
+    )
   }
 }
 
-// MARK: - Codable Conformances
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension CitationMetadata: Decodable {}
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension Citation: Decodable {
@@ -319,6 +266,60 @@ extension Citation: Decodable {
       self.license = license
     } else {
       license = nil
+    }
+  }
+}
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension FinishReason: Decodable {
+  public init(from decoder: Decoder) throws {
+    let value = try decoder.singleValueContainer().decode(String.self)
+    guard let decodedFinishReason = FinishReason(rawValue: value) else {
+      Logging.default
+        .error("[GoogleGenerativeAI] Unrecognized FinishReason with value \"\(value)\".")
+      self = .unknown
+      return
+    }
+
+    self = decodedFinishReason
+  }
+}
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension PromptFeedback.BlockReason: Decodable {
+  public init(from decoder: Decoder) throws {
+    let value = try decoder.singleValueContainer().decode(String.self)
+    guard let decodedBlockReason = PromptFeedback.BlockReason(rawValue: value) else {
+      Logging.default
+        .error("[GoogleGenerativeAI] Unrecognized BlockReason with value \"\(value)\".")
+      self = .unknown
+      return
+    }
+
+    self = decodedBlockReason
+  }
+}
+
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+extension PromptFeedback: Decodable {
+  enum CodingKeys: CodingKey {
+    case blockReason
+    case safetyRatings
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    blockReason = try container.decodeIfPresent(
+      PromptFeedback.BlockReason.self,
+      forKey: .blockReason
+    )
+    if let safetyRatings = try container.decodeIfPresent(
+      [SafetyRating].self,
+      forKey: .safetyRatings
+    ) {
+      self.safetyRatings = safetyRatings
+    } else {
+      safetyRatings = []
     }
   }
 }
