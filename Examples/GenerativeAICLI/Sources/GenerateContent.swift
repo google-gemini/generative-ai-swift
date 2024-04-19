@@ -117,10 +117,8 @@ struct GenerateContent: AsyncParsableCommand {
   func modelNameOrDefault() -> String {
     if let modelName = modelName {
       return modelName
-    } else if imageURL != nil {
-      return "gemini-1.0-pro-vision-latest"
     } else {
-      return "gemini-1.0-pro"
+      return "gemini-1.5-pro-latest"
     }
   }
 }

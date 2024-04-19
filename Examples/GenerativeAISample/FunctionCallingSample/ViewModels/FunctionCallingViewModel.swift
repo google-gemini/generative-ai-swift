@@ -39,7 +39,7 @@ class FunctionCallingViewModel: ObservableObject {
 
   init() {
     model = GenerativeModel(
-      name: "gemini-1.0-pro",
+      name: "gemini-1.5-pro-latest",
       apiKey: APIKey.default,
       tools: [Tool(functionDeclarations: [
         FunctionDeclaration(
