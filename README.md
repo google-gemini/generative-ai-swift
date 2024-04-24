@@ -4,10 +4,10 @@
 # Google AI SDK for Swift
 
 > [!CAUTION]
-> The Google AI Swift SDK is recommended for prototyping only. If you plan to enable billing, we
-> strongly recommend that you use a backend SDK to access the Google AI Gemini API. You risk
-> potentially exposing your API key to malicious actors if you embed your API key directly in your
-> Swift app or fetch it remotely at runtime.
+> **The Google AI SDK for Swift is recommended for prototyping only.** If you plan to enable
+> billing, we strongly recommend that you use a backend SDK to access the Google AI Gemini API. You
+> risk potentially exposing your API key to malicious actors if you embed your API key directly in
+> your Swift app or fetch it remotely at runtime.
 
 The Google AI SDK for Swift enables developers to use Google's state-of-the-art generative AI models
 (like Gemini) to build AI-powered features and applications. This SDK supports use cases like:
