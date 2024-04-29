@@ -64,6 +64,40 @@ public final class GenerativeModel {
                           safetySettings: [SafetySetting]? = nil,
                           tools: [Tool]? = nil,
                           toolConfig: ToolConfig? = nil,
+                          systemInstruction: any ThrowingPartsRepresentable...,
+                          requestOptions: RequestOptions = RequestOptions()) {
+    self.init(
+      name: name,
+      apiKey: apiKey,
+      generationConfig: generationConfig,
+      safetySettings: safetySettings,
+      tools: tools,
+      toolConfig: toolConfig,
+      systemInstruction: try? ModelContent(role: "system", parts: systemInstruction),
+      requestOptions: requestOptions,
+      urlSession: .shared
+    )
+  }
+
+  /// Initializes a new remote model with the given parameters.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the model to use, e.g., `"gemini-1.5-pro-latest"`; see
+  ///     [Gemini models](https://ai.google.dev/models/gemini) for a list of supported model names.
+  ///   - apiKey: The API key for your project.
+  ///   - generationConfig: The content generation parameters your model should use.
+  ///   - safetySettings: A value describing what types of harmful content your model should allow.
+  ///   - tools: A list of ``Tool`` objects  that the model may use to generate the next response.
+  ///   - systemInstruction: Instructions that direct the model to behave a certain way; currently
+  ///     only text content is supported.
+  ///   - toolConfig: Tool configuration for any `Tool` specified in the request.
+  ///   - requestOptions Configuration parameters for sending requests to the backend.
+  public convenience init(name: String,
+                          apiKey: String,
+                          generationConfig: GenerationConfig? = nil,
+                          safetySettings: [SafetySetting]? = nil,
+                          tools: [Tool]? = nil,
+                          toolConfig: ToolConfig? = nil,
                           systemInstruction: ModelContent? = nil,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
