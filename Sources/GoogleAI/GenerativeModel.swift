@@ -55,7 +55,7 @@ public final class GenerativeModel {
   ///   - safetySettings: A value describing what types of harmful content your model should allow.
   ///   - tools: A list of ``Tool`` objects  that the model may use to generate the next response.
   ///   - systemInstruction: Instructions that direct the model to behave a certain way; currently
-  ///     only text content is supported.
+  ///     only text content is supported, e.g., "You are a cat. Your name is Neko."
   ///   - toolConfig: Tool configuration for any `Tool` specified in the request.
   ///   - requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
@@ -64,7 +64,7 @@ public final class GenerativeModel {
                           safetySettings: [SafetySetting]? = nil,
                           tools: [Tool]? = nil,
                           toolConfig: ToolConfig? = nil,
-                          systemInstruction: any ThrowingPartsRepresentable...,
+                          systemInstruction: String,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
@@ -73,7 +73,7 @@ public final class GenerativeModel {
       safetySettings: safetySettings,
       tools: tools,
       toolConfig: toolConfig,
-      systemInstruction: try? ModelContent(role: "system", parts: systemInstruction),
+      systemInstruction: ModelContent(role: "system", parts: systemInstruction),
       requestOptions: requestOptions,
       urlSession: .shared
     )
@@ -89,7 +89,8 @@ public final class GenerativeModel {
   ///   - safetySettings: A value describing what types of harmful content your model should allow.
   ///   - tools: A list of ``Tool`` objects  that the model may use to generate the next response.
   ///   - systemInstruction: Instructions that direct the model to behave a certain way; currently
-  ///     only text content is supported.
+  ///     only text content is supported, e.g.,
+  ///     `ModelContent(role: "system", parts: "You are a cat. Your name is Neko.")`.
   ///   - toolConfig: Tool configuration for any `Tool` specified in the request.
   ///   - requestOptions Configuration parameters for sending requests to the backend.
   public convenience init(name: String,
