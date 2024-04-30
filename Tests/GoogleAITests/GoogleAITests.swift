@@ -53,7 +53,13 @@ final class GoogleGenerativeAITests: XCTestCase {
     let _ = GenerativeModel(
       name: "gemini-1.5-pro-latest",
       apiKey: "API_KEY",
-      systemInstruction: "Talk like a pirate"
+      systemInstruction: "Talk like a pirate."
+    )
+
+    let _ = GenerativeModel(
+      name: "gemini-1.5-pro-latest",
+      apiKey: "API_KEY",
+      systemInstruction: "Talk like a pirate.", "Your name is Francis Drake."
     )
 
     // All arguments passed.
