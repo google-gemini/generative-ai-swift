@@ -64,7 +64,7 @@ public final class GenerativeModel {
                           safetySettings: [SafetySetting]? = nil,
                           tools: [Tool]? = nil,
                           toolConfig: ToolConfig? = nil,
-                          systemInstruction: String,
+                          systemInstruction: String...,
                           requestOptions: RequestOptions = RequestOptions()) {
     self.init(
       name: name,
@@ -73,7 +73,10 @@ public final class GenerativeModel {
       safetySettings: safetySettings,
       tools: tools,
       toolConfig: toolConfig,
-      systemInstruction: ModelContent(role: "system", parts: systemInstruction),
+      systemInstruction: ModelContent(
+        role: "system",
+        parts: systemInstruction.map { ModelContent.Part.text($0) }
+      ),
       requestOptions: requestOptions,
       urlSession: .shared
     )
