@@ -82,11 +82,9 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(candidate.safetyRatings, safetyRatingsNegligible)
     XCTAssertEqual(candidate.content.parts.count, 1)
     let part = try XCTUnwrap(candidate.content.parts.first)
-    XCTAssertEqual(part.text, "Mountain View, California, United States")
+    XCTAssertEqual(part.text, "Mountain View, California")
     XCTAssertEqual(response.text, part.text)
-    let promptFeedback = try XCTUnwrap(response.promptFeedback)
-    XCTAssertNil(promptFeedback.blockReason)
-    XCTAssertEqual(promptFeedback.safetyRatings, safetyRatingsNegligible)
+    XCTAssertNil(response.promptFeedback)
     XCTAssertEqual(response.functionCalls, [])
   }
 
@@ -254,6 +252,22 @@ final class GenerativeModelTests: XCTestCase {
     let argY = try XCTUnwrap(functionCall.args["y"])
     XCTAssertEqual(argY, .number(5))
     XCTAssertEqual(response.functionCalls, [functionCall])
+  }
+
+  func testGenerateContent_usageMetadata() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-basic-reply-short",
+        withExtension: "json"
+      )
+
+    let response = try await model.generateContent(testPrompt)
+
+    let usageMetadata = try XCTUnwrap(response.usageMetadata)
+    // TODO(andrewheard): Re-run prompt when `promptTokenCount` and `totalTokenCount` added.
+    XCTAssertEqual(usageMetadata.promptTokenCount, 0)
+    XCTAssertEqual(usageMetadata.candidatesTokenCount, 4)
+    XCTAssertEqual(usageMetadata.totalTokenCount, 0)
   }
 
   func testGenerateContent_failure_invalidAPIKey() async throws {
@@ -754,6 +768,33 @@ final class GenerativeModelTests: XCTestCase {
       .contains(where: {
         $0.startIndex == 444 && $0.endIndex == 630 && !$0.uri.isEmpty && $0.license == "mit"
       }))
+  }
+
+  func testGenerateContentStream_usageMetadata() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "streaming-success-basic-reply-short",
+        withExtension: "txt"
+      )
+    var responses = [GenerateContentResponse]()
+
+    let stream = model.generateContentStream(testPrompt)
+    for try await response in stream {
+      responses.append(response)
+    }
+
+    for (index, response) in responses.enumerated() {
+      if index == responses.endIndex - 1 {
+        let usageMetadata = try XCTUnwrap(response.usageMetadata)
+        // TODO(andrewheard): Re-run prompt when `promptTokenCount` and `totalTokenCount` added.
+        XCTAssertEqual(usageMetadata.promptTokenCount, 0)
+        XCTAssertEqual(usageMetadata.candidatesTokenCount, 4)
+        XCTAssertEqual(usageMetadata.totalTokenCount, 0)
+      } else {
+        // Only the last streamed response contains usage metadata
+        XCTAssertNil(response.usageMetadata)
+      }
+    }
   }
 
   func testGenerateContentStream_errorMidStream() async throws {
