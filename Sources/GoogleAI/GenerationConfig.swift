@@ -63,17 +63,26 @@ public struct GenerationConfig {
   /// The stop sequence will not be included as part of the response.
   public let stopSequences: [String]?
 
+  /// Output response MIME type of the generated candidate text.
+  ///
+  /// Supported MIME types:
+  /// - `text/plain`: Text output; the default behavior if unspecified.
+  /// - `application/json`: JSON response in the candidates.
+  public let responseMIMEType: String?
+
   /// Creates a new `GenerationConfig` value.
   ///
-  /// - Parameter temperature: See ``temperature``
-  /// - Parameter topP: See ``topP``
-  /// - Parameter topK: See ``topK``
-  /// - Parameter candidateCount: See ``candidateCount``
-  /// - Parameter maxOutputTokens: See ``maxOutputTokens``
-  /// - Parameter stopSequences: See ``stopSequences``
+  /// - Parameters:
+  ///   - temperature: See ``temperature``.
+  ///   - topP: See ``topP``.
+  ///   - topK: See ``topK``.
+  ///   - candidateCount: See ``candidateCount``.
+  ///   - maxOutputTokens: See ``maxOutputTokens``.
+  ///   - stopSequences: See ``stopSequences``.
+  ///   - responseMIMEType: See ``responseMIMEType``.
   public init(temperature: Float? = nil, topP: Float? = nil, topK: Int? = nil,
               candidateCount: Int? = nil, maxOutputTokens: Int? = nil,
-              stopSequences: [String]? = nil) {
+              stopSequences: [String]? = nil, responseMIMEType: String? = nil) {
     // Explicit init because otherwise if we re-arrange the above variables it changes the API
     // surface.
     self.temperature = temperature
@@ -82,6 +91,7 @@ public struct GenerationConfig {
     self.candidateCount = candidateCount
     self.maxOutputTokens = maxOutputTokens
     self.stopSequences = stopSequences
+    self.responseMIMEType = responseMIMEType
   }
 }
 
