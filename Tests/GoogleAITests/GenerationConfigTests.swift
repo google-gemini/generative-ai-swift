@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import Foundation
+import GoogleGenerativeAI
 import XCTest
-
-@testable import GoogleGenerativeAI
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class GenerationConfigTests: XCTestCase {
