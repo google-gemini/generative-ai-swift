@@ -91,6 +91,13 @@ final class GoogleGenerativeAITests: XCTestCase {
     let _ = try await genAI.generateContent(str)
     let _ = try await genAI.generateContent([str])
     let _ = try await genAI.generateContent(str, "abc", "def")
+    let _ = try await genAI.generateContent(
+      str,
+      ModelContent.Part.fileData(
+        mimetype: "image/jpeg",
+        uri: "https://generativelanguage.googleapis.com/v1beta/files/rand0mha5sh"
+      )
+    )
     #if canImport(UIKit)
       _ = try await genAI.generateContent(UIImage())
       _ = try await genAI.generateContent([UIImage()])

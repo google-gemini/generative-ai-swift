@@ -35,6 +35,10 @@ public struct ModelContent: Equatable {
 
     /// URI-based data with a specified media type.
     ///
+    /// > Important: Files must be uploaded using the
+    /// > [`media.upload` REST API](https://ai.google.dev/api/rest/v1beta/media/upload) or another
+    /// > Gemini SDK.
+    ///
     /// > Note: Supported media types depends on the model; see
     /// > [supported file
     /// > formats](https://ai.google.dev/tutorials/prompting_with_media#supported_file_formats)
