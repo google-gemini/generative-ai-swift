@@ -43,7 +43,7 @@ final class GenerationConfigTests: XCTestCase {
 
   func testEncodeGenerationConfig_allOptions() throws {
     let temperature: Float = 0.5
-    let topP: Float = 0.95
+    let topP: Float = 0.75
     let topK = 40
     let candidateCount = 2
     let maxOutputTokens = 256
