@@ -55,7 +55,7 @@ public struct GenerateContentResponse {
       Logging.default.error("Could not get a text part from the first candidate.")
       return nil
     }
-    return textValues.joined()
+    return textValues.joined(separator: " ")
   }
 
   /// Returns function calls found in any `Part`s of the first candidate of the response, if any.

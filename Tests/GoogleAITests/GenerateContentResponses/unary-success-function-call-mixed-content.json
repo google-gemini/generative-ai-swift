@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "The sum of [1, 2"
+            "text": "The sum of [1, 2,"
           },
           {
             "functionCall": {
@@ -16,7 +16,7 @@
             }
           },
           {
-            "text": ", 3] is "
+            "text": "3] is"
           },
           {
             "functionCall": {
