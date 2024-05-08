@@ -17,10 +17,11 @@ import Foundation
   #warning("Only iOS, macOS, and Catalyst targets are currently fully supported.")
 #endif
 
-/// Constants associated with the GenerativeAISwift SDK
+/// Constants associated with the GenerativeAISwift SDK.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public enum GenerativeAISwift {
   /// String value of the SDK version
   public static let version = "0.5.2"
+  /// The Google AI backend endpoint URL.
   static let baseURL = "https://generativelanguage.googleapis.com"
 }
