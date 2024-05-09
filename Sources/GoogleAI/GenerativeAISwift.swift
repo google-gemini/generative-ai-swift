@@ -21,7 +21,7 @@ import Foundation
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 public enum GenerativeAISwift {
   /// String value of the SDK version
-  public static let version = "0.5.2"
+  public static let version = "0.5.3"
   /// The Google AI backend endpoint URL.
   static let baseURL = "https://generativelanguage.googleapis.com"
 }
