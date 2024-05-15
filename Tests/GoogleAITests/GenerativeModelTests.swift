@@ -611,6 +611,27 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(response.candidates.count, 1)
   }
 
+  func testGenerateContent_requestOptions_nilTimeout() async throws {
+    let expectedTimeout: TimeInterval? = nil
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-basic-reply-short",
+        withExtension: "json",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+  }
+
   // MARK: - Generate Content (Streaming)
 
   func testGenerateContentStream_failureInvalidAPIKey() async throws {
@@ -967,6 +988,32 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(responses, 1)
   }
 
+  func testGenerateContentStream_requestOptions_nilTimeout() async throws {
+    let expectedTimeout: TimeInterval? = nil
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "streaming-success-basic-reply-short",
+        withExtension: "txt",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    var responses = 0
+    let stream = model.generateContentStream(testPrompt)
+    for try await content in stream {
+      XCTAssertNotNil(content.text)
+      responses += 1
+    }
+
+    XCTAssertEqual(responses, 1)
+  }
+
   // MARK: - Count Tokens
 
   func testCountTokens_succeeds() async throws {
@@ -1000,6 +1047,27 @@ final class GenerativeModelTests: XCTestCase {
 
   func testCountTokens_requestOptions_customTimeout() async throws {
     let expectedTimeout = 150.0
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "success-total-tokens",
+        withExtension: "json",
+        timeout: expectedTimeout
+      )
+    let requestOptions = RequestOptions(timeout: expectedTimeout)
+    model = GenerativeModel(
+      name: "my-model",
+      apiKey: "API_KEY",
+      requestOptions: requestOptions,
+      urlSession: urlSession
+    )
+
+    let response = try await model.countTokens(testPrompt)
+
+    XCTAssertEqual(response.totalTokens, 6)
+  }
+
+  func testCountTokens_requestOptions_nilTimeout() async throws {
+    let expectedTimeout: TimeInterval? = nil
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
         forResource: "success-total-tokens",
@@ -1067,8 +1135,8 @@ final class GenerativeModelTests: XCTestCase {
   private func httpRequestHandler(forResource name: String,
                                   withExtension ext: String,
                                   statusCode: Int = 200,
-                                  timeout: TimeInterval = URLRequest
-                                    .defaultTimeoutInterval()) throws -> ((URLRequest) throws -> (
+                                  timeout: TimeInterval? = RequestOptions()
+                                    .timeout) throws -> ((URLRequest) throws -> (
     URLResponse,
     AsyncLineSequence<URL.AsyncBytes>?
   )) {
@@ -1076,7 +1144,11 @@ final class GenerativeModelTests: XCTestCase {
     return { request in
       let requestURL = try XCTUnwrap(request.url)
       XCTAssertEqual(requestURL.path.occurrenceCount(of: "models/"), 1)
-      XCTAssertEqual(request.timeoutInterval, timeout)
+      if let timeout {
+        XCTAssertEqual(request.timeoutInterval, timeout)
+      } else {
+        XCTAssertEqual(request.timeoutInterval, URLRequest.defaultTimeoutInterval())
+      }
       let response = try XCTUnwrap(HTTPURLResponse(
         url: requestURL,
         statusCode: statusCode,

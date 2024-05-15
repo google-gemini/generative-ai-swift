@@ -36,10 +36,9 @@ public struct RequestOptions {
   /// Initializes a request options object.
   ///
   /// - Parameters:
-  ///   - timeout The request’s timeout interval in seconds; if not specified uses the default value
-  ///   for a `URLRequest`.
-  ///   - apiVersion The API version to use in requests to the backend; defaults to "v1beta".
-  public init(timeout: TimeInterval? = nil, apiVersion: String = "v1beta") {
+  ///   - timeout: The request’s timeout interval in seconds; defaults to 300 seconds (5 minutes).
+  ///   - apiVersion: The API version to use in requests to the backend; defaults to "v1beta".
+  public init(timeout: TimeInterval? = 300.0, apiVersion: String = "v1beta") {
     self.timeout = timeout
     self.apiVersion = apiVersion
   }
