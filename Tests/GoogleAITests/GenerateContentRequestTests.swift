@@ -36,6 +36,7 @@ final class GenerateContentRequestTests: XCTestCase {
     let content = [ModelContent(role: role, parts: prompt)]
     let request = GenerateContentRequest(
       model: modelName,
+      isModelEncoded: true,
       contents: content,
       generationConfig: GenerationConfig(temperature: 0.5),
       safetySettings: [SafetySetting(
@@ -108,10 +109,11 @@ final class GenerateContentRequestTests: XCTestCase {
     """)
   }
 
-  func testEncodeRequest_optionalFieldsOmitted() throws {
+  func testEncodeRequest_optionalFieldsOmitted_modelNameEncoded() throws {
     let content = [ModelContent(role: role, parts: prompt)]
     let request = GenerateContentRequest(
       model: modelName,
+      isModelEncoded: true,
       contents: content,
       generationConfig: nil,
       safetySettings: nil,
@@ -138,6 +140,40 @@ final class GenerateContentRequestTests: XCTestCase {
         }
       ],
       "model" : "\(modelName)"
+    }
+    """)
+  }
+
+  func testEncodeRequest_optionalFieldsOmitted_modelNameNotEncoded() throws {
+    let content = [ModelContent(role: role, parts: prompt)]
+    let request = GenerateContentRequest(
+      model: modelName,
+      isModelEncoded: false,
+      contents: content,
+      generationConfig: nil,
+      safetySettings: nil,
+      tools: nil,
+      toolConfig: nil,
+      systemInstruction: nil,
+      isStreaming: false,
+      options: RequestOptions()
+    )
+
+    let jsonData = try encoder.encode(request)
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, """
+    {
+      "contents" : [
+        {
+          "parts" : [
+            {
+              "text" : "\(prompt)"
+            }
+          ],
+          "role" : "\(role)"
+        }
+      ]
     }
     """)
   }
