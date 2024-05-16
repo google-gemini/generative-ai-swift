@@ -55,23 +55,7 @@ struct GenerateContent: AsyncParsableCommand {
 
   mutating func run() async throws {
     do {
-      let safetySettings = [SafetySetting(harmCategory: .dangerousContent, threshold: .blockNone)]
-      // Let the server pick the default config.
-      let config = GenerationConfig(
-        temperature: 0.2,
-        topP: 0.1,
-        topK: 16,
-        candidateCount: 1,
-        maxOutputTokens: isStreaming ? nil : 256,
-        stopSequences: nil
-      )
-
-      let model = GenerativeModel(
-        name: modelNameOrDefault(),
-        apiKey: apiKey,
-        generationConfig: config,
-        safetySettings: safetySettings
-      )
+      let model = GenerativeModel(name: modelNameOrDefault(), apiKey: apiKey)
 
       var parts = [ModelContent.Part]()
 
@@ -115,12 +99,10 @@ struct GenerateContent: AsyncParsableCommand {
   }
 
   func modelNameOrDefault() -> String {
-    if let modelName = modelName {
+    if let modelName {
       return modelName
-    } else if imageURL != nil {
-      return "gemini-1.0-pro-vision-latest"
     } else {
-      return "gemini-1.0-pro"
+      return "gemini-1.5-flash-latest"
     }
   }
 }

@@ -19,7 +19,7 @@ For example, with just a few lines of code, you can access Gemini's multimodal c
 generate text from text-and-image input:
 
 ```swift
-let model = GenerativeModel(name: "gemini-1.5-pro-latest", apiKey: "YOUR_API_KEY")
+let model = GenerativeModel(name: "gemini-1.5-flash-latest", apiKey: "YOUR_API_KEY")
 let cookieImage = UIImage(...)
 let prompt = "Do these look store-bought or homemade?"
 
