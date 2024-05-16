@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import GenerativeAIUIComponents
 import GoogleGenerativeAI
+import GenerativeAIUIComponents
 import SwiftUI
 
 struct FunctionCallingScreen: View {
@@ -65,6 +65,9 @@ struct FunctionCallingScreen: View {
             }
           }
         })
+        .onTapGesture {
+          focusedField = nil
+        }
       }
       InputField("Message...", text: $userPrompt) {
         Image(systemName: viewModel.busy ? "stop.circle.fill" : "arrow.up.circle.fill")

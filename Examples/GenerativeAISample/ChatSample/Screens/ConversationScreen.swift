@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import GenerativeAIUIComponents
 import GoogleGenerativeAI
+import GenerativeAIUIComponents
 import SwiftUI
 
 struct ConversationScreen: View {
@@ -94,6 +94,8 @@ struct ConversationScreen: View {
   }
 
   private func sendOrStop() {
+    focusedField = nil
+
     if viewModel.busy {
       viewModel.stop()
     } else {
