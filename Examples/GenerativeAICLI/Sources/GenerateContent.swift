@@ -16,6 +16,21 @@ import ArgumentParser
 import Foundation
 import GoogleGenerativeAI
 
+// TODO(andrewheard): Revert the changes in this file after manual testing.
+
+struct CartoonCharacter: Decodable {
+  let firstName: String
+  let lastName: String
+  let occupation: String
+  let children: [ChildCartoonCharacter]
+  let birthYear: Int
+}
+
+struct ChildCartoonCharacter: Decodable {
+  let firstName: String
+  let lastName: String
+}
+
 @main
 struct GenerateContent: AsyncParsableCommand {
   @Option(help: "The API key to use when calling the Generative Language API.")
@@ -54,8 +69,47 @@ struct GenerateContent: AsyncParsableCommand {
   }
 
   mutating func run() async throws {
+    let responseSchema = Schema(
+      type: .array,
+      description: "List of characters.",
+      items: Schema(
+        type: .object,
+        description: "Details about a character.",
+        properties: [
+          "firstName": Schema(type: .string, description: "The character's first name."),
+          "lastName": Schema(type: .string, description: "The character's last name."),
+          "occupation": Schema(type: .string, description: "The character's occupation."),
+          "children": Schema(
+            type: .array,
+            description: "A list of the character's children ordered from oldest to youngest.",
+            items: Schema(
+              type: .object,
+              description: "Details about a child character.",
+              properties: [
+                "firstName": Schema(type: .string,
+                                    description: "The child character's first name."),
+                "lastName": Schema(type: .string, description: "The child character's last name."),
+              ],
+              requiredProperties: ["firstName", "lastName"]
+            )
+          ),
+          "birthYear": Schema(type: .integer, format: "int32",
+                              description: "The character's birth year."),
+        ],
+        requiredProperties: ["firstName", "lastName", "occupation", "children", "birthYear"]
+      )
+    )
+    let generationConfig = GenerationConfig(
+      responseMIMEType: "application/json",
+      responseSchema: responseSchema
+    )
+
     do {
-      let model = GenerativeModel(name: modelNameOrDefault(), apiKey: apiKey)
+      let model = GenerativeModel(
+        name: modelNameOrDefault(),
+        apiKey: apiKey,
+        generationConfig: generationConfig
+      )
 
       var parts = [ModelContent.Part]()
 
@@ -79,19 +133,32 @@ struct GenerateContent: AsyncParsableCommand {
 
       let input = [ModelContent(parts: parts)]
 
+      var generatedText = ""
       if isStreaming {
         let contentStream = model.generateContentStream(input)
         print("Generated Content <streaming>:")
         for try await content in contentStream {
-          if let text = content.text {
-            print(text)
+          guard let text = content.text else {
+            fatalError("No text generated.")
           }
+          generatedText += text
         }
       } else {
         let content = try await model.generateContent(input)
-        if let text = content.text {
-          print("Generated Content:\n\(text)")
+        guard let text = content.text else {
+          fatalError("No text generated.")
         }
+        generatedText += text
+      }
+
+      guard let jsonData = generatedText.data(using: .utf8) else {
+        fatalError("Generated text is not UTF-8 compatible.")
+      }
+
+      let jsonDecoder = JSONDecoder()
+      let cartoonCharacters = try jsonDecoder.decode([CartoonCharacter].self, from: jsonData)
+      for cartoonCharacter in cartoonCharacters {
+        print(cartoonCharacter)
       }
     } catch {
       print("Generate Content Error: \(error)")
