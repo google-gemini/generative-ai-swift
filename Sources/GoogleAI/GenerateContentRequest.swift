@@ -31,6 +31,7 @@ struct GenerateContentRequest {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension GenerateContentRequest: Encodable {
   enum CodingKeys: String, CodingKey {
+    case model
     case contents
     case generationConfig
     case safetySettings
