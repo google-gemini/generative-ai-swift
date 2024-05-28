@@ -48,7 +48,11 @@ final class GenerationConfigTests: XCTestCase {
     let candidateCount = 2
     let maxOutputTokens = 256
     let stopSequences = ["END", "DONE"]
-    let responseMIMEType = "text/plain"
+    let responseMIMEType = "application/json"
+    let schemaType = DataType.object
+    let fieldName = "test-field"
+    let fieldType = DataType.string
+    let responseSchema = Schema(type: schemaType, properties: [fieldName: Schema(type: fieldType)])
     let generationConfig = GenerationConfig(
       temperature: temperature,
       topP: topP,
@@ -56,7 +60,8 @@ final class GenerationConfigTests: XCTestCase {
       candidateCount: candidateCount,
       maxOutputTokens: maxOutputTokens,
       stopSequences: stopSequences,
-      responseMIMEType: responseMIMEType
+      responseMIMEType: responseMIMEType,
+      responseSchema: responseSchema
     )
 
     let jsonData = try encoder.encode(generationConfig)
@@ -67,6 +72,14 @@ final class GenerationConfigTests: XCTestCase {
       "candidateCount" : \(candidateCount),
       "maxOutputTokens" : \(maxOutputTokens),
       "responseMIMEType" : "\(responseMIMEType)",
+      "responseSchema" : {
+        "properties" : {
+          "\(fieldName)" : {
+            "type" : "\(fieldType.rawValue)"
+          }
+        },
+        "type" : "\(schemaType.rawValue)"
+      },
       "stopSequences" : [
         "END",
         "DONE"
@@ -79,7 +92,7 @@ final class GenerationConfigTests: XCTestCase {
   }
 
   func testEncodeGenerationConfig_responseMIMEType() throws {
-    let mimeType = "image/jpeg"
+    let mimeType = "text/plain"
     let generationConfig = GenerationConfig(responseMIMEType: mimeType)
 
     let jsonData = try encoder.encode(generationConfig)
@@ -88,6 +101,29 @@ final class GenerationConfigTests: XCTestCase {
     XCTAssertEqual(json, """
     {
       "responseMIMEType" : "\(mimeType)"
+    }
+    """)
+  }
+
+  func testEncodeGenerationConfig_responseMIMETypeWithSchema() throws {
+    let mimeType = "application/json"
+    let schemaType = DataType.array
+    let arrayItemType = DataType.integer
+    let schema = Schema(type: schemaType, items: Schema(type: arrayItemType))
+    let generationConfig = GenerationConfig(responseMIMEType: mimeType, responseSchema: schema)
+
+    let jsonData = try encoder.encode(generationConfig)
+
+    let json = try XCTUnwrap(String(data: jsonData, encoding: .utf8))
+    XCTAssertEqual(json, """
+    {
+      "responseMIMEType" : "\(mimeType)",
+      "responseSchema" : {
+        "items" : {
+          "type" : "\(arrayItemType.rawValue)"
+        },
+        "type" : "\(schemaType.rawValue)"
+      }
     }
     """)
   }
