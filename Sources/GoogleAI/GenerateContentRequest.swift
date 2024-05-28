@@ -16,8 +16,11 @@ import Foundation
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 struct GenerateContentRequest {
-  /// Model name.
+  // Model name.
   let model: String
+  // If true, the `model` field above is encoded in requests; currently only required when nested in
+  // a `CountTokensRequest`.
+  let isModelEncoded: Bool
   let contents: [ModelContent]
   let generationConfig: GenerationConfig?
   let safetySettings: [SafetySetting]?
@@ -31,12 +34,37 @@ struct GenerateContentRequest {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension GenerateContentRequest: Encodable {
   enum CodingKeys: String, CodingKey {
+    case model
     case contents
     case generationConfig
     case safetySettings
     case tools
     case toolConfig
     case systemInstruction
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+
+    if isModelEncoded {
+      try container.encode(model, forKey: .model)
+    }
+    try container.encode(contents, forKey: .contents)
+    if let generationConfig {
+      try container.encode(generationConfig, forKey: .generationConfig)
+    }
+    if let safetySettings {
+      try container.encode(safetySettings, forKey: .safetySettings)
+    }
+    if let tools {
+      try container.encode(tools, forKey: .tools)
+    }
+    if let toolConfig {
+      try container.encode(toolConfig, forKey: .toolConfig)
+    }
+    if let systemInstruction {
+      try container.encode(systemInstruction, forKey: .systemInstruction)
+    }
   }
 }
 

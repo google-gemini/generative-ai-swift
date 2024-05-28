@@ -17,7 +17,7 @@ import Foundation
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 struct CountTokensRequest {
   let model: String
-  let contents: [ModelContent]
+  let generateContentRequest: GenerateContentRequest
   let options: RequestOptions
 }
 
@@ -42,7 +42,7 @@ public struct CountTokensResponse {
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CountTokensRequest: Encodable {
   enum CodingKeys: CodingKey {
-    case contents
+    case generateContentRequest
   }
 }
 

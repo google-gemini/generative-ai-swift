@@ -175,15 +175,18 @@ public final class GenerativeModel {
     -> GenerateContentResponse {
     let response: GenerateContentResponse
     do {
-      let generateContentRequest = try GenerateContentRequest(model: modelResourceName,
-                                                              contents: content(),
-                                                              generationConfig: generationConfig,
-                                                              safetySettings: safetySettings,
-                                                              tools: tools,
-                                                              toolConfig: toolConfig,
-                                                              systemInstruction: systemInstruction,
-                                                              isStreaming: false,
-                                                              options: requestOptions)
+      let generateContentRequest = try GenerateContentRequest(
+        model: modelResourceName,
+        isModelEncoded: false,
+        contents: content(),
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        tools: tools,
+        toolConfig: toolConfig,
+        systemInstruction: systemInstruction,
+        isStreaming: false,
+        options: requestOptions
+      )
       response = try await generativeAIService.loadRequest(request: generateContentRequest)
     } catch {
       if let imageError = error as? ImageConversionError {
@@ -249,15 +252,18 @@ public final class GenerativeModel {
       }
     }
 
-    let generateContentRequest = GenerateContentRequest(model: modelResourceName,
-                                                        contents: evaluatedContent,
-                                                        generationConfig: generationConfig,
-                                                        safetySettings: safetySettings,
-                                                        tools: tools,
-                                                        toolConfig: toolConfig,
-                                                        systemInstruction: systemInstruction,
-                                                        isStreaming: true,
-                                                        options: requestOptions)
+    let generateContentRequest = GenerateContentRequest(
+      model: modelResourceName,
+      isModelEncoded: false,
+      contents: evaluatedContent,
+      generationConfig: generationConfig,
+      safetySettings: safetySettings,
+      tools: tools,
+      toolConfig: toolConfig,
+      systemInstruction: systemInstruction,
+      isStreaming: true,
+      options: requestOptions
+    )
 
     var responseIterator = generativeAIService.loadRequestStream(request: generateContentRequest)
       .makeAsyncIterator()
@@ -325,9 +331,19 @@ public final class GenerativeModel {
   public func countTokens(_ content: @autoclosure () throws -> [ModelContent]) async throws
     -> CountTokensResponse {
     do {
-      let countTokensRequest = try CountTokensRequest(
+      let generateContentRequest = try GenerateContentRequest(model: modelResourceName,
+                                                              isModelEncoded: true,
+                                                              contents: content(),
+                                                              generationConfig: generationConfig,
+                                                              safetySettings: safetySettings,
+                                                              tools: tools,
+                                                              toolConfig: toolConfig,
+                                                              systemInstruction: systemInstruction,
+                                                              isStreaming: false,
+                                                              options: requestOptions)
+      let countTokensRequest = CountTokensRequest(
         model: modelResourceName,
-        contents: content(),
+        generateContentRequest: generateContentRequest,
         options: requestOptions
       )
       return try await generativeAIService.loadRequest(request: countTokensRequest)
