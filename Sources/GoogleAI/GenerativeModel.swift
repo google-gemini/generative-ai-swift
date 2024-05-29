@@ -325,9 +325,18 @@ public final class GenerativeModel {
   public func countTokens(_ content: @autoclosure () throws -> [ModelContent]) async throws
     -> CountTokensResponse {
     do {
-      let countTokensRequest = try CountTokensRequest(
+      let generateContentRequest = try GenerateContentRequest(model: modelResourceName,
+                                                              contents: content(),
+                                                              generationConfig: generationConfig,
+                                                              safetySettings: safetySettings,
+                                                              tools: tools,
+                                                              toolConfig: toolConfig,
+                                                              systemInstruction: systemInstruction,
+                                                              isStreaming: false,
+                                                              options: requestOptions)
+      let countTokensRequest = CountTokensRequest(
         model: modelResourceName,
-        contents: content(),
+        generateContentRequest: generateContentRequest,
         options: requestOptions
       )
       return try await generativeAIService.loadRequest(request: countTokensRequest)
