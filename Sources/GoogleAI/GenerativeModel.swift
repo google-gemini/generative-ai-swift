@@ -48,7 +48,7 @@ public final class GenerativeModel {
   /// Initializes a new remote model with the given parameters.
   ///
   /// - Parameters:
-  ///   - name: The name of the model to use, for example `"gemini-1.5-pro-latest"`; see
+  ///   - name: The name of the model to use, for example `"gemini-1.5-flash"`; see
   ///     [Gemini models](https://ai.google.dev/models/gemini) for a list of supported model names.
   ///   - apiKey: The API key for your project.
   ///   - generationConfig: The content generation parameters your model should use.
@@ -83,7 +83,7 @@ public final class GenerativeModel {
   /// Initializes a new remote model with the given parameters.
   ///
   /// - Parameters:
-  ///   - name: The name of the model to use, e.g., `"gemini-1.5-pro-latest"`; see
+  ///   - name: The name of the model to use, e.g., `"gemini-1.5-flash"`; see
   ///     [Gemini models](https://ai.google.dev/models/gemini) for a list of supported model names.
   ///   - apiKey: The API key for your project.
   ///   - generationConfig: The content generation parameters your model should use.

@@ -34,37 +34,29 @@ final class GoogleGenerativeAITests: XCTestCase {
     let systemInstruction = ModelContent(role: "system", parts: [.text("Talk like a pirate.")])
 
     // Permutations without optional arguments.
-    let _ = GenerativeModel(name: "gemini-1.5-pro-latest", apiKey: "API_KEY")
+    let _ = GenerativeModel(name: "gemini-1.5-flash", apiKey: "API_KEY")
+    let _ = GenerativeModel(name: "gemini-1.5-flash", apiKey: "API_KEY", safetySettings: filters)
+    let _ = GenerativeModel(name: "gemini-1.5-flash", apiKey: "API_KEY", generationConfig: config)
     let _ = GenerativeModel(
-      name: "gemini-1.5-pro-latest",
-      apiKey: "API_KEY",
-      safetySettings: filters
-    )
-    let _ = GenerativeModel(
-      name: "gemini-1.5-pro-latest",
-      apiKey: "API_KEY",
-      generationConfig: config
-    )
-    let _ = GenerativeModel(
-      name: "gemini-1.5-pro-latest",
+      name: "gemini-1.5-flash",
       apiKey: "API_KEY",
       systemInstruction: systemInstruction
     )
 
     let _ = GenerativeModel(
-      name: "gemini-1.5-pro-latest",
+      name: "gemini-1.5-flash",
       apiKey: "API_KEY",
       systemInstruction: "Talk like a pirate."
     )
 
     let _ = GenerativeModel(
-      name: "gemini-1.5-pro-latest",
+      name: "gemini-1.5-flash",
       apiKey: "API_KEY",
       systemInstruction: "Talk like a pirate.", "Your name is Francis Drake."
     )
 
     // All arguments passed.
-    let genAI = GenerativeModel(name: "gemini-1.5-pro-latest",
+    let genAI = GenerativeModel(name: "gemini-1.5-flash",
                                 apiKey: "API_KEY",
                                 generationConfig: config, // Optional
                                 safetySettings: filters, // Optional
