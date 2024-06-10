@@ -102,7 +102,7 @@ struct GenerateContent: AsyncParsableCommand {
     if let modelName {
       return modelName
     } else {
-      return "gemini-1.5-flash-latest"
+      return "gemini-1.5-flash"
     }
   }
 }

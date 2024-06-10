@@ -36,7 +36,7 @@ class ConversationViewModel: ObservableObject {
   private var chatTask: Task<Void, Never>?
 
   init() {
-    model = GenerativeModel(name: "gemini-1.5-flash-latest", apiKey: APIKey.default)
+    model = GenerativeModel(name: "gemini-1.5-flash", apiKey: APIKey.default)
     chat = model.startChat()
   }
 
