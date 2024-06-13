@@ -1,5 +1,5 @@
 // swift-tools-version: 5.7.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 5.10
 
 // Copyright 2023 Google LLC
 //
@@ -18,31 +18,42 @@
 import PackageDescription
 
 let package = Package(
-  name: "generative-ai-swift",
-  platforms: [
-    .iOS(.v11),
-    .macOS(.v10_13),
-    .macCatalyst(.v13),
-  ],
-  products: [
-    .library(
-      name: "GoogleGenerativeAI",
-      targets: ["GoogleGenerativeAI"]
-    ),
-  ],
-  targets: [
-    .target(
-      name: "GoogleGenerativeAI",
-      path: "Sources"
-    ),
-    .testTarget(
-      name: "GoogleGenerativeAITests",
-      dependencies: ["GoogleGenerativeAI"],
-      path: "Tests",
-      resources: [
-        .process("GoogleAITests/CountTokenResponses"),
-        .process("GoogleAITests/GenerateContentResponses"),
-      ]
-    ),
-  ]
+    name: "Gemini",
+    platforms: [
+        .iOS(.v16),
+        .macOS(.v13),
+        .macCatalyst(.v16),
+    ],
+    products: [
+        .library(
+            name: "GoogleGenerativeAI",
+            targets: [
+                "GoogleGenerativeAI"
+            ]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/PreternaturalAI/AI.git", branch: "main"),
+    ],
+    targets: [
+        .target(
+            name: "GoogleGenerativeAI",
+            dependencies: [
+                "AI"
+            ],
+            path: "Sources"
+        ),
+        .testTarget(
+            name: "GoogleGenerativeAITests",
+            dependencies: [
+                "GoogleGenerativeAI"
+            ],
+            path: "Tests",
+            resources: [
+                .process("GoogleAITests/CountTokenResponses"),
+                .process("GoogleAITests/GenerateContentResponses"),
+            ]
+        ),
+    ],
+    swiftLanguageVersions: [.v5]
 )
