@@ -1,5 +1,4 @@
-// swift-tools-version: 5.7.1
-// swift-tools-version: 5.10
+// swift-tools-version:5.10
 
 // Copyright 2023 Google LLC
 //
@@ -26,9 +25,9 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "GoogleGenerativeAI",
+            name: "Gemini",
             targets: [
-                "GoogleGenerativeAI"
+                "Gemini"
             ]
         ),
     ],
@@ -37,16 +36,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GoogleGenerativeAI",
+            name: "Gemini",
             dependencies: [
                 "AI"
             ],
             path: "Sources"
         ),
         .testTarget(
-            name: "GoogleGenerativeAITests",
+            name: "GeminiTests",
             dependencies: [
-                "GoogleGenerativeAI"
+                "Gemini"
             ],
             path: "Tests",
             resources: [
