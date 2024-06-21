@@ -43,25 +43,15 @@ extension Gemini.Client: LLMRequestHandling {
         parameters: AbstractLLM.TextCompletionParameters
     ) async throws -> AbstractLLM.TextCompletion {
         
-        let model = try await _model(for: prompt)
+        let modelName = try await _model(for: prompt).rawValue
         let content = try modelContent(from: prompt)
         let config = generationConfig(from: parameters)
         
-        let request = GenerateContentRequest(
-            model: model.rawValue,
-            contents: content,
-            generationConfig: config,
-            safetySettings: nil,
-            tools: nil,
-            toolConfig: nil,
-            systemInstruction: nil,
-            isStreaming: false,
-            options: RequestOptions()
+        let model = GenerativeModel(name: modelName, 
+                                    apiKey: configuration.apiKey,
+                                    generationConfig: config
         )
-        
-        let sessionConfiguration = URLSessionConfiguration.default
-        let generativeAIService = GenerativeAIService(apiKey: configuration.apiKey, urlSession: URLSession(configuration: sessionConfiguration))
-        let response = try await generativeAIService.loadRequest(request: request)
+        let response = try await model.generateContent(content)
         
         return AbstractLLM.TextCompletion(
             prefix: .init(_lazy: prompt.prefix),
