@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import Foundation
-import GoogleGenerativeAI
+import Gemini
 import XCTest
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
