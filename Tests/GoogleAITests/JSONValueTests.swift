@@ -13,7 +13,7 @@
 // limitations under the License.
 import XCTest
 
-@testable import GoogleGenerativeAI
+@testable import Gemini
 
 final class JSONValueTests: XCTestCase {
   let decoder = JSONDecoder()
