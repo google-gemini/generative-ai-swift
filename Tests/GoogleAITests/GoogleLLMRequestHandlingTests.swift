@@ -18,7 +18,7 @@ import XCTest
 
 final class GoogleLLMRequestHandlingTestCase: XCTestCase {
     
-    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyDia48yzK7towXixN0r6CLXQA8hmavfArM")
+    let client: any LLMRequestHandling = Gemini.Client(apiKey: "API")
     
     func testAvailableModels() {
         let models = client._availableModels
