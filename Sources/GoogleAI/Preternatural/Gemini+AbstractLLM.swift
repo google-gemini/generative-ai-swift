@@ -4,11 +4,12 @@
 
 @_spi(Internal) import LargeLanguageModels
 import Swallow
+import SwiftUIX
 
 extension ModelContent {
     public init(
         _from message: AbstractLLM.ChatMessage
-    ) throws {
+    ) async throws {
         let role = try _Role(from: message.role)
         var parts: [Part] = []
         
@@ -16,14 +17,18 @@ extension ModelContent {
         
         for component in messageContent.components {
             switch component.payload {
-                case .string(let string):
-                    parts.append(.text(string))
-                case .image:
-                    TODO.unimplemented
-                case .functionCall:
-                    TODO.unimplemented
-                case .functionInvocation:
-                    TODO.unimplemented
+            case .string(let string):
+                parts.append(.text(string))
+            case .image(let image):
+                if case .url(let url) = image {
+                    let (data, response) = try await URLSession.shared.data(from: url)
+                    let mimeType = response.mimeType ?? "image/png"
+                    parts.append(.data(mimetype: mimeType, data))
+                }
+            case .functionCall:
+                TODO.unimplemented
+            case .functionInvocation:
+                TODO.unimplemented
             }
         }
         

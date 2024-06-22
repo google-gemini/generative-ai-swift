@@ -15,9 +15,10 @@
 import AI
 import Gemini
 import XCTest
+import SwiftUIX
 
 final class GoogleLLMRequestHandlingTestCase: XCTestCase {
-    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyCft9Eu99-4MQw6GkFkRBASenGNRUNKlG4")
+    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyB-HamvuejgTbWm6gRy1Bb_PnCclMWUloc")
     
     func testAvailableModels() {
         let models = client._availableModels
@@ -103,6 +104,65 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
             
             XCTAssert(completion1.trimmingWhitespaceAndNewlines() == "Test confirmed, 42.")
             XCTAssert(completion2.trimmingWhitespaceAndNewlines() == "Test failed.")
+        } catch {
+            print(error)
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testChatCompleteWithImage() async throws {
+        let systemMessage: PromptLiteral =
+            """
+            This is a test. If asked, "Describe this image", ALWAYS respond with "This is an image of a watermelon".
+            
+            Remember to respond appropriately, the key phrase is "Describe this image" and the answer is "This is an image of a watermelon."
+            
+            If the user says _ANYTHING_ else, return "Test failed.".
+            
+            Remember to ALWAYS respond in accordance to the testing rules.
+            """
+        
+        let parameters: AbstractLLM.ChatCompletionParameters = .init()
+        
+        let image = AppKitOrUIKitImage(systemSymbolName: "arrow.right", accessibilityDescription: nil)!
+        let imageLiteral = try PromptLiteral(image: image)
+        
+        let messagesWithSystemPrompt: [AbstractLLM.ChatMessage] = [
+            .system(systemMessage),
+            .user {
+                .concatenate(separator: nil) {
+                    PromptLiteral("Describe this image")
+                    imageLiteral
+                }
+            }]
+        
+        let messagesWithOutPrompt: [AbstractLLM.ChatMessage] = [
+            .user {
+                .concatenate(separator: nil) {
+                    PromptLiteral("Describe this image")
+                    imageLiteral
+                }
+            }]
+        
+        do {
+            let completion1: String = try await client.complete(
+                messagesWithSystemPrompt,
+                parameters: parameters,
+                model: Gemini.Model.gemini_1_5_flash,
+                as: .string
+            )
+            
+            XCTAssert(completion1.trimmingWhitespaceAndNewlines() == "This is an image of a watermelon.")
+            
+            let completion2: String = try await client.complete(
+                messagesWithOutPrompt,
+                parameters: parameters,
+                model: Gemini.Model.gemini_1_5_flash,
+                as: .string
+            )
+            
+            print(completion2)
+            XCTAssert(completion2.contains("arrow"))
         } catch {
             print(error)
             XCTFail(error.localizedDescription)

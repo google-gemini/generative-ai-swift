@@ -64,7 +64,7 @@ extension Gemini.Client: LLMRequestHandling {
     ) async throws -> AbstractLLM.ChatCompletion {
         let model: Gemini.Model = try await _model(from: prompt)
         
-        let (systemInstruction, modelContent) = try _makeSystemInstructionAndModelContent(messages: prompt.messages)
+        let (systemInstruction, modelContent) = try await _makeSystemInstructionAndModelContent(messages: prompt.messages)
         
         let generativeModel = GenerativeModel(
             name: model.rawValue,
@@ -104,14 +104,14 @@ extension Gemini.Client {
 
     private func _makeSystemInstructionAndModelContent(
         messages: [AbstractLLM.ChatMessage]
-    ) throws -> (systemInstruction: ModelContent?, content: [ModelContent]) {
+    ) async throws -> (systemInstruction: ModelContent?, content: [ModelContent]) {
         var messages: [AbstractLLM.ChatMessage] = messages
         var systemInstruction: ModelContent?
         
         if messages.first?.role == .system {
             let systemMessage: AbstractLLM.ChatMessage = messages.removeFirst()
             
-            systemInstruction = try ModelContent(_from: systemMessage)
+            systemInstruction = try await ModelContent(_from: systemMessage)
         }
         
         var content: [ModelContent] = []
@@ -119,7 +119,7 @@ extension Gemini.Client {
         for message in messages {
            try  _tryAssert(message.role != .system)
             
-            content.append(try ModelContent(_from: message))
+            content.append(try await ModelContent(_from: message))
         }
         
         return (systemInstruction, content)
