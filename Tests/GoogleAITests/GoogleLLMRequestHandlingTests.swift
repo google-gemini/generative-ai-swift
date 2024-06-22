@@ -17,11 +17,11 @@ import Gemini
 import XCTest
 
 final class GoogleLLMRequestHandlingTestCase: XCTestCase {
-    
-    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyDia48yzK7towXixN0r6CLXQA8hmavfArM")
+    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyCft9Eu99-4MQw6GkFkRBASenGNRUNKlG4")
     
     func testAvailableModels() {
         let models = client._availableModels
+        
         XCTAssertNotNil(models)
         XCTAssertFalse(models!.isEmpty)
     }
@@ -39,7 +39,7 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
         }
     }
     
-    func testCompleteChatPrompt() async {
+    func testChatCompleteWithSingleMessage() async {
         let prompt: PromptLiteral = "hello"
         
         let messages: [AbstractLLM.ChatMessage] = [
@@ -57,6 +57,52 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
             )
             
             print(completion)
+        } catch {
+            print(error)
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testChatCompleteWithMultipleMessages() async {
+        let systemMessage: AbstractLLM.ChatMessage =  .system {
+            """
+            This is a test. If asked, "How's it going", ALWAYS respond with "Test confirmed, 42.".
+            
+            Remember to respond appropriately, the key phrase is "How's it going" and the answer is "Test confirmed, 42."
+            
+            If the user says _ANYTHING_ else, return "Test failed.".
+            
+            Remember to ALWAYS respond in accordance to the testing rules.
+            """
+        }
+        
+        let parameters: AbstractLLM.ChatCompletionParameters = .init(tokenLimit: .max)
+        
+        let testMessages1: [AbstractLLM.ChatMessage] = [
+            systemMessage,
+            .user("How's it going")
+        ]
+        let testMessages2: [AbstractLLM.ChatMessage] = [
+            systemMessage,
+            .user("What's up")
+        ]
+        
+        do {
+            let completion1: String = try await client.complete(
+                testMessages1,
+                parameters: parameters,
+                model: Gemini.Model.gemini_1_5_flash,
+                as: .string
+            )
+            let completion2: String = try await client.complete(
+                testMessages2,
+                parameters: parameters,
+                model: Gemini.Model.gemini_1_5_flash,
+                as: .string
+            )
+            
+            XCTAssert(completion1.trimmingWhitespaceAndNewlines() == "Test confirmed, 42.")
+            XCTAssert(completion2.trimmingWhitespaceAndNewlines() == "Test failed.")
         } catch {
             print(error)
             XCTFail(error.localizedDescription)
