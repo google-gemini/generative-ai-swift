@@ -5,10 +5,6 @@
 import AI
 import Merge
 
-public enum Gemini {
-    
-}
-
 extension Gemini {
     public final class Client: ObservableObject {
         public struct Configuration: Codable, Hashable, Sendable {
