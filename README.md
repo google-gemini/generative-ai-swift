@@ -3,7 +3,7 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle-gemini%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/google-gemini/generative-ai-swift)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle-gemini%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/google-gemini/generative-ai-swift)
 
-The Google AI Swift SDK is the easiest way for Swift developers to build with the Gemini API. The Gemini API gives you access to Gemini [models](https://ai.google.dev/models/gemini) created by [Google DeepMind](https://deepmind.google/technologies/gemini/#introduction). Gemini models are built from the ground up to be multimodal, so you can reason seamlessly across text, images, and code. 
+The Google AI Swift SDK is the easiest way for Swift developers to build with the Gemini API. The Gemini API gives you access to Gemini [models](https://ai.google.dev/models/gemini) created by [Google DeepMind](https://deepmind.google/technologies/gemini/#introduction). Gemini models are built from the ground up to be multimodal, so you can reason seamlessly across text, images, and code.
 
 > [!CAUTION]
 > **The Google AI SDK for Swift is recommended for prototyping only.** If you plan to enable
@@ -11,11 +11,8 @@ The Google AI Swift SDK is the easiest way for Swift developers to build with th
 > risk potentially exposing your API key to malicious actors if you embed your API key directly in
 > your Swift app or fetch it remotely at runtime.
 
-For example, with just a few lines of code, you can access Gemini's multimodal capabilities to
-generate text from text-and-image input:
-
-
 ## Get started with the Gemini API
+
 1. Go to [Google AI Studio](https://aistudio.google.com/).
 2. Login with your Google account.
 3. [Create](https://aistudio.google.com/app/apikey) an API key. Note that in Europe the free tier is not available.
@@ -84,7 +81,6 @@ See the [Gemini API Cookbook](https://github.com/google-gemini/gemini-api-cookbo
 
 See [Contributing](https://github.com/google/generative-ai-swift/blob/main/docs/CONTRIBUTING.md)
 for more information on contributing to the Google AI SDK for Swift.
-
 
 ## Developers who use the PaLM SDK for Swift (Deprecated)
 
