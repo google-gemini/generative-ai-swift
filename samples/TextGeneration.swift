@@ -15,6 +15,12 @@
 import GoogleGenerativeAI
 import XCTest
 
+// Set up your API Key
+// ====================
+// To use the Gemini API, you'll need an API key. To learn more, see the "Set up your API Key"
+// section in the Gemini API quickstart:
+// https://ai.google.dev/gemini-api/docs/quickstart?lang=swift#set-up-api-key
+
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class TextGeneration: XCTestCase {
   override func setUpWithError() throws {
