@@ -44,5 +44,10 @@ let package = Package(
         .process("GoogleAITests/GenerateContentResponses"),
       ]
     ),
+    .testTarget(
+      name: "CodeSnippetTests",
+      dependencies: ["GoogleGenerativeAI"],
+      path: "samples"
+    ),
   ]
 )
