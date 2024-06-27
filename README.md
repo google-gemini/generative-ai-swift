@@ -26,22 +26,22 @@ The Google AI Swift SDK is the easiest way for Swift developers to build with th
 
 ## Usage example
 
-Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to your Xcode project
+1. Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to your Xcode project
 using Swift Package Manager.
 
-Import the `GoogleGenerativeAI` module
+2. Import the `GoogleGenerativeAI` module
 
 ```swift
 import GoogleGenerativeAI
 ```
 
-Initialize the model
+3. Initialize the model
 
 ```swift
 let model = GenerativeModel(name: "gemini-1.5-flash-latest", apiKey: "YOUR_API_KEY")
 ```
 
-Run a prompt
+4. Run a prompt
 
 ```swift
 let cookieImage = UIImage(...)
