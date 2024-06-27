@@ -1,7 +1,9 @@
+# Google AI SDK for Swift
+
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle-gemini%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/google-gemini/generative-ai-swift)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fgoogle-gemini%2Fgenerative-ai-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/google-gemini/generative-ai-swift)
 
-# Google AI SDK for Swift
+The Google AI Swift SDK is the easiest way for Swift developers to build with the Gemini API. The Gemini API gives you access to Gemini [models](https://ai.google.dev/models/gemini) created by [Google DeepMind](https://deepmind.google/technologies/gemini/#introduction). Gemini models are built from the ground up to be multimodal, so you can reason seamlessly across text, images, and code. 
 
 > [!CAUTION]
 > **The Google AI SDK for Swift is recommended for prototyping only.** If you plan to enable
@@ -9,47 +11,47 @@
 > risk potentially exposing your API key to malicious actors if you embed your API key directly in
 > your Swift app or fetch it remotely at runtime.
 
-The Google AI SDK for Swift enables developers to use Google's state-of-the-art generative AI models
-(like Gemini) to build AI-powered features and applications. This SDK supports use cases like:
-- Generate text from text-only input
-- Generate text from text-and-images input (multimodal)
-- Build multi-turn conversations (chat)
-
 For example, with just a few lines of code, you can access Gemini's multimodal capabilities to
 generate text from text-and-image input:
 
+
+## Get started with the Gemini API
+1. Go to [Google AI Studio](https://aistudio.google.com/).
+2. Login with your Google account.
+3. [Create](https://aistudio.google.com/app/apikey) an API key. Note that in Europe the free tier is not available.
+4. Check out this repository.\
+`git clone https://github.com/google/generative-ai-swift`
+5. Open and build the sample app in the `Examples` folder of this repo.
+6. Run the app once to ensure the build script generates an empty `GenerativeAI-Info.plist` file
+7. Paste your API key into the `API_KEY` property in the `GenerativeAI-Info.plist` file.
+8. Run the app
+9. For detailed instructions, try the [Swift SDK tutorial](https://ai.google.dev/tutorials/swift_quickstart) on [ai.google.dev](https://ai.google.dev).
+
+## Usage example
+
+Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to your Xcode project
+using Swift Package Manager.
+
+Import the `GoogleGenerativeAI` module
+
+```swift
+import GoogleGenerativeAI
+```
+
+Initialize the model
+
 ```swift
 let model = GenerativeModel(name: "gemini-1.5-flash-latest", apiKey: "YOUR_API_KEY")
+```
+
+Run a prompt
+
+```swift
 let cookieImage = UIImage(...)
 let prompt = "Do these look store-bought or homemade?"
 
 let response = try await model.generateContent(prompt, cookieImage)
 ```
-
-## Try out the sample Swift app
-
-This repository contains a sample app demonstrating how the SDK can access and utilize the Gemini
-model for various use cases.
-
-To try out the sample app, follow these steps:
-
-1.  Check out this repository.\
-`git clone https://github.com/google/generative-ai-swift`
-
-1.  [Obtain an API key](https://makersuite.google.com/app/apikey) to use with the Google AI SDKs.
-
-1.  Open and build the sample app in the `Examples` folder of this repo.
-
-1. Run the app once to ensure the build script generates an empty `GenerativeAI-Info.plist` file
-
-1.  Paste your API key into the `API_KEY` property in the `GenerativeAI-Info.plist` file.
-
-1.  Run the app.
-
-## Use the SDK in your app
-
-Add [`generative-ai-swift`](https://github.com/google/generative-ai-swift) to your Xcode project
-using Swift Package Manager.
 
 For detailed instructions, you can find a
 [quickstart](https://ai.google.dev/tutorials/swift_quickstart) for the Google AI SDK for Swift in the
@@ -76,14 +78,12 @@ line:
 
 ## Documentation
 
-Find complete documentation for the Google AI SDKs and the Gemini model in the Google
-documentation: https://ai.google.dev/docs
+See the [Gemini API Cookbook](https://github.com/google-gemini/gemini-api-cookbook/) or [ai.google.dev](https://ai.google.dev) for complete documentation.
 
 ## Contributing
 
 See [Contributing](https://github.com/google/generative-ai-swift/blob/main/docs/CONTRIBUTING.md)
-for more information on
-contributing to the Google AI SDK for Swift.
+for more information on contributing to the Google AI SDK for Swift.
 
 
 ## Developers who use the PaLM SDK for Swift (Deprecated)
@@ -107,3 +107,7 @@ of `generative-ai-swift`.
 
 To see the PaLM documentation and code, go to the
 [`palm` branch](https://github.com/google/generative-ai-swift/tree/palm).
+
+## License
+
+The contents of this repository are licensed under the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
