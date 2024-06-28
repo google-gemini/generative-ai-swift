@@ -46,16 +46,31 @@ public struct GenerateContentResponse {
       return nil
     }
     let textValues: [String] = candidate.content.parts.compactMap { part in
-      guard case let .text(text) = part else {
+      switch part {
+      case let .text(text):
+        return text
+      case let .executableCode(executableCode):
+        let codeBlockLanguage: String
+        if executableCode.language == "LANGUAGE_UNSPECIFIED" {
+          codeBlockLanguage = ""
+        } else {
+          codeBlockLanguage = executableCode.language.lowercased()
+        }
+        return "```\(codeBlockLanguage)\n\(executableCode.code)\n```"
+      case let .codeExecutionResult(codeExecutionResult):
+        if codeExecutionResult.output.isEmpty {
+          return nil
+        }
+        return "```\n\(codeExecutionResult.output)\n```"
+      case .data, .fileData, .functionCall, .functionResponse:
         return nil
       }
-      return text
     }
     guard textValues.count > 0 else {
       Logging.default.error("Could not get a text part from the first candidate.")
       return nil
     }
-    return textValues.joined(separator: " ")
+    return textValues.joined(separator: "\n")
   }
 
   /// Returns function calls found in any `Part`s of the first candidate of the response, if any.
