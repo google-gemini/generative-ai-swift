@@ -16,7 +16,7 @@ import Foundation
 
 /// A type that represents a remote multimodal model (like Gemini), with the ability to generate
 /// content based on various input types.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public final class GenerativeModel {
   // The prefix for a model resource in the Gemini API.
   private static let modelResourcePrefix = "models/"
@@ -370,7 +370,7 @@ public final class GenerativeModel {
 }
 
 /// An error thrown in `GenerativeModel.countTokens(_:)`.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public enum CountTokensError: Error {
   case internalError(underlying: Error)
 }

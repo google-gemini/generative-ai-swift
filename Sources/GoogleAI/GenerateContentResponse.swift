@@ -15,7 +15,7 @@
 import Foundation
 
 /// The model's response to a generate content request.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct GenerateContentResponse {
   /// Token usage metadata for processing the generate content request.
   public struct UsageMetadata {
@@ -82,7 +82,7 @@ public struct GenerateContentResponse {
 
 /// A struct representing a possible reply to a content generation prompt. Each content generation
 /// prompt may produce multiple candidate responses.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct CandidateResponse {
   /// The response's content.
   public let content: ModelContent
@@ -108,14 +108,14 @@ public struct CandidateResponse {
 }
 
 /// A collection of source attributions for a piece of content.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct CitationMetadata {
   /// A list of individual cited sources and the parts of the content to which they apply.
   public let citationSources: [Citation]
 }
 
 /// A struct describing a source attribution.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct Citation {
   /// The inclusive beginning of a sequence in a model response that derives from a cited source.
   public let startIndex: Int
@@ -131,7 +131,7 @@ public struct Citation {
 }
 
 /// A value enumerating possible reasons for a model to terminate a content generation request.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public enum FinishReason: String {
   case unknown = "FINISH_REASON_UNKNOWN"
 
@@ -156,7 +156,7 @@ public enum FinishReason: String {
 }
 
 /// A metadata struct containing any feedback the model had on the prompt it was provided.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct PromptFeedback {
   /// A type describing possible reasons to block a prompt.
   public enum BlockReason: String {
@@ -188,7 +188,7 @@ public struct PromptFeedback {
 
 // MARK: - Codable Conformances
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension GenerateContentResponse: Decodable {
   enum CodingKeys: CodingKey {
     case candidates
@@ -222,7 +222,7 @@ extension GenerateContentResponse: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension GenerateContentResponse.UsageMetadata: Decodable {
   enum CodingKeys: CodingKey {
     case promptTokenCount
@@ -239,7 +239,7 @@ extension GenerateContentResponse.UsageMetadata: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension CandidateResponse: Decodable {
   enum CodingKeys: CodingKey {
     case content
@@ -286,10 +286,10 @@ extension CandidateResponse: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension CitationMetadata: Decodable {}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension Citation: Decodable {
   enum CodingKeys: CodingKey {
     case startIndex
@@ -312,7 +312,7 @@ extension Citation: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension FinishReason: Decodable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -327,7 +327,7 @@ extension FinishReason: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension PromptFeedback.BlockReason: Decodable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -342,7 +342,7 @@ extension PromptFeedback.BlockReason: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension PromptFeedback: Decodable {
   enum CodingKeys: CodingKey {
     case blockReason

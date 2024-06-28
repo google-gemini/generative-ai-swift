@@ -18,7 +18,7 @@ import Foundation
 #endif
 
 /// Constants associated with the GenerativeAISwift SDK.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public enum GenerativeAISwift {
   /// String value of the SDK version
   public static let version = "0.5.4"

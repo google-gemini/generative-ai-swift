@@ -14,7 +14,7 @@
 
 import Foundation
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 struct GenerativeAIService {
   /// Gives permission to talk to the backend.
   private let apiKey: String
