@@ -143,7 +143,7 @@ public struct SafetySetting {
 
 // MARK: - Codable Conformances
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension SafetyRating.HarmProbability: Codable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -164,7 +164,7 @@ extension SafetyRating: Decodable {}
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension SafetyFeedback: Decodable {}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension SafetySetting.HarmCategory: Codable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -179,7 +179,7 @@ extension SafetySetting.HarmCategory: Codable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension SafetySetting.BlockThreshold: Codable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)

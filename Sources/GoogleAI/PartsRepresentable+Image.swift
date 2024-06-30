@@ -88,6 +88,7 @@ extension CGImage: ThrowingPartsRepresentable {
 }
 
 /// Enables `CIImages` to be representable as model content.
+#if !os(watchOS)
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CIImage: ThrowingPartsRepresentable {
   public func tryPartsValue() throws -> [ModelContent.Part] {
@@ -105,3 +106,4 @@ extension CIImage: ThrowingPartsRepresentable {
     throw ImageConversionError.couldNotConvertToJPEG(self)
   }
 }
+#endif

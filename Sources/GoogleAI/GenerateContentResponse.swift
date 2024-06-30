@@ -15,7 +15,7 @@
 import Foundation
 
 /// The model's response to a generate content request.
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 public struct GenerateContentResponse {
   /// Token usage metadata for processing the generate content request.
   public struct UsageMetadata {
@@ -188,7 +188,7 @@ public struct PromptFeedback {
 
 // MARK: - Codable Conformances
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension GenerateContentResponse: Decodable {
   enum CodingKeys: CodingKey {
     case candidates
@@ -222,7 +222,7 @@ extension GenerateContentResponse: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension GenerateContentResponse.UsageMetadata: Decodable {
   enum CodingKeys: CodingKey {
     case promptTokenCount
@@ -312,7 +312,7 @@ extension Citation: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension FinishReason: Decodable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
@@ -327,7 +327,7 @@ extension FinishReason: Decodable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, watchOS 7.0, *)
 extension PromptFeedback.BlockReason: Decodable {
   public init(from decoder: Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
