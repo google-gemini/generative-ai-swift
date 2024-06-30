@@ -52,7 +52,7 @@ struct GenerativeAIService {
     return try parseResponse(T.Response.self, from: data)
   }
 
-  @available(macOS 12.0, *)
+  @available(macOS 12.0, watchOS 8.0, *)
   func loadRequestStream<T: GenerativeAIRequest>(request: T)
     -> AsyncThrowingStream<T.Response, Error> {
     return AsyncThrowingStream { continuation in
@@ -161,6 +161,7 @@ struct GenerativeAIService {
     return urlRequest
   }
 
+  @available(watchOS 7.0, *)
   private func httpResponse(urlResponse: URLResponse) throws -> HTTPURLResponse {
     // Verify the status code is 200
     guard let response = urlResponse as? HTTPURLResponse else {
@@ -209,6 +210,7 @@ struct GenerativeAIService {
     }
   }
 
+  @available(watchOS 7.0, *)
   private func parseResponse<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
     do {
       return try JSONDecoder().decode(type, from: data)
@@ -222,6 +224,7 @@ struct GenerativeAIService {
   }
 
   #if DEBUG
+    @available(watchOS 7.0, *)
     private func cURLCommand(from request: URLRequest) -> String {
       var returnValue = "curl "
       if let allHeaders = request.allHTTPHeaderFields {
