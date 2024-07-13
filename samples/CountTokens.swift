@@ -98,4 +98,61 @@ final class CountTokensSnippets: XCTestCase {
       // [END tokens_multimodal_image_inline]
     }
   #endif // canImport(UIKit)
+
+  func testCountTokensSystemInstruction() async throws {
+    // [START tokens_system_instruction]
+    let generativeModel =
+      GenerativeModel(
+        // Specify a model that supports system instructions, like a Gemini 1.5 model
+        name: "gemini-1.5-flash",
+        // Access your API key from your on-demand resource .plist file (see "Set up your API key"
+        // above)
+        apiKey: APIKey.default,
+        systemInstruction: ModelContent(role: "system", parts: "You are a cat. Your name is Neko.")
+      )
+
+    let prompt = "What is your name?"
+
+    let response = try await generativeModel.countTokens(prompt)
+    print("Total Tokens: \(response.totalTokens)")
+    // [END tokens_system_instruction]
+  }
+
+  func testCountTokensTools() async throws {
+    // [START tokens_tools]
+    let generativeModel =
+      GenerativeModel(
+        // Specify a model that supports system instructions, like a Gemini 1.5 model
+        name: "gemini-1.5-flash",
+        // Access your API key from your on-demand resource .plist file (see "Set up your API key"
+        // above)
+        apiKey: APIKey.default,
+        tools: [Tool(functionDeclarations: [
+          FunctionDeclaration(
+            name: "controlLight",
+            description: "Set the brightness and color temperature of a room light.",
+            parameters: [
+              "brightness": Schema(
+                type: .number,
+                format: "double",
+                description: "Light level from 0 to 100. Zero is off and 100 is full brightness."
+              ),
+              "colorTemperature": Schema(
+                type: .string,
+                format: "enum",
+                description: "Color temperature of the light fixture.",
+                enumValues: ["daylight", "cool", "warm"]
+              ),
+            ],
+            requiredParameters: ["brightness", "colorTemperature"]
+          ),
+        ])]
+      )
+
+    let prompt = "Dim the lights so the room feels cozy and warm."
+
+    let response = try await generativeModel.countTokens(prompt)
+    print("Total Tokens: \(response.totalTokens)")
+    // [END tokens_tools]
+  }
 }
