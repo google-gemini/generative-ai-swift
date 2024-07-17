@@ -31,7 +31,7 @@ final class FunctionCallingSnippets: XCTestCase {
   }
 
   func testFunctionCalling() async throws {
-    // [BEGIN function_calling]
+    // [START function_calling]
     // Calls a hypothetical API to control a light bulb and returns the values that were set.
     func controlLight(brightness: Double, colorTemperature: String) -> JSONObject {
       return ["brightness": .number(brightness), "colorTemperature": .string(colorTemperature)]
