@@ -285,7 +285,7 @@ final class GenerativeModelTests: XCTestCase {
     let functionCalls = response.functionCalls
     XCTAssertEqual(functionCalls.count, 2)
     let text = try XCTUnwrap(response.text)
-    XCTAssertEqual(text, "The sum of [1, 2, 3] is")
+    XCTAssertEqual(text, "The sum of [1, 2,\n3] is")
   }
 
   func testGenerateContent_usageMetadata() async throws {
