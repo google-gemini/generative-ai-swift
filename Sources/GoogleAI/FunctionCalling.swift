@@ -353,13 +353,14 @@ extension CodeExecution: Encodable {}
 
 extension ExecutableCode: Codable {}
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CodeExecutionResult.Outcome: Codable {
   public init(from decoder: any Decoder) throws {
     let value = try decoder.singleValueContainer().decode(String.self)
     guard let decodedOutcome = CodeExecutionResult.Outcome(rawValue: value) else {
-      Logging.default
-        .error("[GoogleGenerativeAI] Unrecognized Outcome with value \"\(value)\".")
+      if #available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *) {
+        Logging.default
+          .error("[GoogleGenerativeAI] Unrecognized Outcome with value \"\(value)\".")
+      }
       self = .unknown
       return
     }
@@ -368,7 +369,6 @@ extension CodeExecutionResult.Outcome: Codable {
   }
 }
 
-@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 extension CodeExecutionResult: Codable {
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
