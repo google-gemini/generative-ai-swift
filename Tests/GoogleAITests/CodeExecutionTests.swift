@@ -16,6 +16,7 @@ import XCTest
 
 @testable import GoogleGenerativeAI
 
+@available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class CodeExecutionTests: XCTestCase {
   let decoder = JSONDecoder()
   let encoder = JSONEncoder()
