@@ -288,6 +288,60 @@ final class GenerativeModelTests: XCTestCase {
     XCTAssertEqual(text, "The sum of [1, 2,\n3] is")
   }
 
+  func testGenerateContent_success_codeExecution() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "unary-success-code-execution",
+        withExtension: "json"
+      )
+    let expectedText1 = """
+    To print strings in Python, you use the `print()` function. \
+    Here's how you can print \"Hello, world!\":\n\n
+    """
+    let expectedText2 = "The code successfully prints the string \"Hello, world!\". \n"
+    let expectedLanguage = "PYTHON"
+    let expectedCode = "\nprint(\"Hello, world!\")\n"
+    let expectedOutput = "Hello, world!\n"
+
+    let response = try await model.generateContent(testPrompt)
+
+    XCTAssertEqual(response.candidates.count, 1)
+    let candidate = try XCTUnwrap(response.candidates.first)
+    XCTAssertEqual(candidate.content.parts.count, 4)
+    guard case let .text(text1) = candidate.content.parts[0] else {
+      XCTFail("Expected first part to be text.")
+      return
+    }
+    XCTAssertEqual(text1, expectedText1)
+    guard case let .executableCode(executableCode) = candidate.content.parts[1] else {
+      XCTFail("Expected second part to be executable code.")
+      return
+    }
+    XCTAssertEqual(executableCode.language, expectedLanguage)
+    XCTAssertEqual(executableCode.code, expectedCode)
+    guard case let .codeExecutionResult(codeExecutionResult) = candidate.content.parts[2] else {
+      XCTFail("Expected second part to be a code execution result.")
+      return
+    }
+    XCTAssertEqual(codeExecutionResult.outcome, .ok)
+    XCTAssertEqual(codeExecutionResult.output, expectedOutput)
+    guard case let .text(text2) = candidate.content.parts[3] else {
+      XCTFail("Expected fourth part to be text.")
+      return
+    }
+    XCTAssertEqual(text2, expectedText2)
+    XCTAssertEqual(try XCTUnwrap(response.text), """
+    \(expectedText1)
+    ```\(expectedLanguage.lowercased())
+    \(expectedCode)
+    ```
+    ```
+    \(expectedOutput)
+    ```
+    \(expectedText2)
+    """)
+  }
+
   func testGenerateContent_usageMetadata() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
