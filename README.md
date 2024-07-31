@@ -10,11 +10,12 @@ the Gemini API. The Gemini API gives you access to Gemini
 Gemini models are built from the ground up to be multimodal, so you can reason
 seamlessly across text, images, and code.
 
-> [!CAUTION] **The Google AI SDK for Swift is recommended for prototyping
-> only.** If you plan to enable billing, we strongly recommend that you use a
-> backend SDK to access the Google AI Gemini API. You risk potentially exposing
-> your API key to malicious actors if you embed your API key directly in your
-> Swift app or fetch it remotely at runtime.
+> [!CAUTION]
+> **The Google AI SDK for Swift is recommended for prototyping only.** If you
+> plan to enable billing, we strongly recommend that you use a backend SDK to
+> access the Google AI Gemini API. You risk potentially exposing your API key to
+> malicious actors if you embed your API key directly in your Swift app or fetch
+> it remotely at runtime.
 
 ## Get started with the Gemini API
 
