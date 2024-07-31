@@ -872,6 +872,59 @@ final class GenerativeModelTests: XCTestCase {
       }))
   }
 
+  func testGenerateContentStream_success_codeExecution() async throws {
+    MockURLProtocol
+      .requestHandler = try httpRequestHandler(
+        forResource: "streaming-success-code-execution",
+        withExtension: "txt"
+      )
+    let expectedTexts1 = [
+      "Thoughts",
+      ": I can use the `print()` function in Python to print strings. ",
+      "\n\n",
+    ]
+    let expectedTexts2 = [
+      "OK",
+      ". I have printed \"Hello, world!\" using the `print()` function in",
+      " Python. \n",
+    ]
+    let expectedTexts = Set(expectedTexts1 + expectedTexts2)
+    let expectedLanguage = "PYTHON"
+    let expectedCode = "\nprint(\"Hello, world!\")\n"
+    let expectedOutput = "Hello, world!\n"
+
+    var textValues = [String]()
+    let stream = model.generateContentStream(testPrompt)
+    for try await content in stream {
+      let candidate = try XCTUnwrap(content.candidates.first)
+      let part = try XCTUnwrap(candidate.content.parts.first)
+      switch part {
+      case let .text(textPart):
+        XCTAssertTrue(expectedTexts.contains(textPart))
+      case let .executableCode(executableCode):
+        XCTAssertEqual(executableCode.language, expectedLanguage)
+        XCTAssertEqual(executableCode.code, expectedCode)
+      case let .codeExecutionResult(codeExecutionResult):
+        XCTAssertEqual(codeExecutionResult.outcome, .ok)
+        XCTAssertEqual(codeExecutionResult.output, expectedOutput)
+      default:
+        XCTFail("Unexpected part type: \(part)")
+      }
+      try textValues.append(XCTUnwrap(content.text))
+    }
+
+    XCTAssertEqual(textValues.joined(separator: "\n"), """
+    \(expectedTexts1.joined(separator: "\n"))
+    ```\(expectedLanguage.lowercased())
+    \(expectedCode)
+    ```
+    ```
+    \(expectedOutput)
+    ```
+    \(expectedTexts2.joined(separator: "\n"))
+    """)
+  }
+
   func testGenerateContentStream_usageMetadata() async throws {
     MockURLProtocol
       .requestHandler = try httpRequestHandler(
