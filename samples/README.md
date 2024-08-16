@@ -10,7 +10,7 @@ Each file is structured as a runnable test case, ensuring that samples are execu
 
 | File | Description |
 | ---- | ----------- |
-| [APIKey.swift](./APIKey.swift) | Seetting up your API key |
+| [APIKey.swift](./APIKey.swift) | Setting up your API key |
 | [ChatSnippets.swift](./ChatSnippets.swift) | Multi-turn chat conversations |
 | [CodeExecution.swift](./CodeExecution.swift) | Executing code |
 | [ControlledGeneration.swift](./ControlledGeneration.swift) | Generating content with output constraints (e.g. JSON mode) |
