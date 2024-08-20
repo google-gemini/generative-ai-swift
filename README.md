@@ -2,9 +2,13 @@
 
 > [!CAUTION]
 > This version (`0.3.0`) of the SDK was intended for use with the PaLM API,
-> which is now [decommissioned](https://ai.google.dev/palm_docs/deprecation) as
-> August 20, 2024. This means that users cannot use a PaLM model in a prompt,
-> tune a new PaLM model, or run inference on PaLM-tuned models.
+> which is now [decommissioned](https://ai.google.dev/palm_docs/deprecation).
+> This means that users cannot use a PaLM model in a prompt, tune a new PaLM
+> model, or run inference on PaLM-tuned models.
+>
+> Note: This is different from the
+> [Vertex AI PaLM API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text),
+> which is scheduled to be decommissioned in October 2024.
 
 To interact with models using Google AI services and tooling, use the Gemini
 API, which is now available in a stable version. For more information on
