@@ -98,6 +98,19 @@ See
 [Contributing](https://github.com/google/generative-ai-swift/blob/main/docs/CONTRIBUTING.md)
 for more information on contributing to the Google AI SDK for Swift.
 
+## Developers who use the PaLM SDK for Swift (Decommissioned)
+
+> [!IMPORTANT]
+> The PaLM API is now
+> [decommissioned](https://ai.google.dev/palm_docs/deprecation). This means that
+> users cannot use a PaLM model in a prompt, tune a new PaLM model, or run
+> inference on PaLM-tuned models.
+
+​​If you're using the PaLM SDK for Swift, migrate your code to the Gemini API
+and update your app's `generative-ai-swift` dependency to version `0.4.0` or
+higher. For more information on migrating from PaLM to Gemini, see the
+[migration guide](https://ai.google.dev/docs/migration_guide).
+
 ## License
 
 The contents of this repository are licensed under the
