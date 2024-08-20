@@ -105,6 +105,10 @@ for more information on contributing to the Google AI SDK for Swift.
 > [decommissioned](https://ai.google.dev/palm_docs/deprecation). This means that
 > users cannot use a PaLM model in a prompt, tune a new PaLM model, or run
 > inference on PaLM-tuned models.
+>
+> Note: This is different from the
+> [Vertex AI PaLM API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text),
+> which is scheduled to be decommissioned in October 2024.
 
 ​​If you're using the PaLM SDK for Swift, migrate your code to the Gemini API
 and update your app's `generative-ai-swift` dependency to version `0.4.0` or
