@@ -98,29 +98,22 @@ See
 [Contributing](https://github.com/google/generative-ai-swift/blob/main/docs/CONTRIBUTING.md)
 for more information on contributing to the Google AI SDK for Swift.
 
-## Developers who use the PaLM SDK for Swift (Deprecated)
+## Developers who use the PaLM SDK for Swift (Decommissioned)
 
-> [!IMPORTANT] The PaLM API is deprecated for use with Google AI services and
-> tools (but *not* for Vertex AI). Learn more about this deprecation, its
-> timeline, and how to migrate to use Gemini in the
-> [PaLM API deprecation guide](http://ai.google.dev/palm_docs/deprecation).
+> [!IMPORTANT]
+> The PaLM API is now
+> [decommissioned](https://ai.google.dev/palm_docs/deprecation). This means that
+> users cannot use a PaLM model in a prompt, tune a new PaLM model, or run
+> inference on PaLM-tuned models.
+>
+> Note: This is different from the
+> [Vertex AI PaLM API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text),
+> which is scheduled to be decommissioned in October 2024.
 
-​​If you're using the PaLM SDK for Swift, review the information below to
-continue using the **deprecated** PaLM SDK until you've migrated to the new
-version that allows you to use Gemini.
-
--   To continue using PaLM models, make sure your app depends on version
-    [`0.3.0`](https://github.com/google/generative-ai-swift/releases/tag/0.3.0)
-    *up to* the next minor version
-    ([`0.4.0`](https://github.com/google/generative-ai-swift/releases/tag/0.4.0))
-    of `generative-ai-swift`.
-
--   When you're ready to use Gemini models, migrate your code to the Gemini API
-    and update your app's `generative-ai-swift` dependency to version `0.4.0` or
-    higher.
-
-To see the PaLM documentation and code, go to the
-[`palm` branch](https://github.com/google/generative-ai-swift/tree/palm).
+​​If you're using the PaLM SDK for Swift, migrate your code to the Gemini API
+and update your app's `generative-ai-swift` dependency to version `0.4.0` or
+higher. For more information on migrating from PaLM to Gemini, see the
+[migration guide](https://ai.google.dev/docs/migration_guide).
 
 ## License
 
