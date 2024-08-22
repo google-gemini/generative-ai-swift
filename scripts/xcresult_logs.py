@@ -110,6 +110,10 @@ def project_from_workspace_path(path):
   if ext == '.xcworkspace':
     _logger.debug('Using project %s from workspace %s', root, path)
     return root
+  elif path == '.':
+    project = 'generative-ai-swift'
+    _logger.debug(f'Using project {project} from workspace {path}')
+    return project
 
   raise ValueError('%s is not a valid workspace path' % path)
 
