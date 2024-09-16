@@ -33,6 +33,7 @@ import XCTest
 
     func testTextOnlyPrompt() async throws {
       // [START text_gen_text_only_prompt]
+      import GoogleGenerativeAI
       let generativeModel =
         GenerativeModel(
           // Specify a Gemini model appropriate for your use case
