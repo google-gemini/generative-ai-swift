@@ -26,7 +26,7 @@ extension CountTokensRequest: GenerativeAIRequest {
   typealias Response = CountTokensResponse
 
   var url: URL {
-    URL(string: "\(GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model):countTokens")!
+    URL(string: "\(options.baseURL ?? GenerativeAISwift.baseURL)/\(options.apiVersion)/\(model):countTokens")!
   }
 }
 
