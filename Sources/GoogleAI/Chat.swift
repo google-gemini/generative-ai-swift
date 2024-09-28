@@ -160,7 +160,8 @@ public class Chat {
         case let .text(str):
           combinedText += str
 
-        case .data, .fileData, .functionCall, .functionResponse:
+        case .data, .fileData, .functionCall, .functionResponse, .executableCode,
+             .codeExecutionResult:
           // Don't combine it, just add to the content. If there's any text pending, add that as
           // a part.
           if !combinedText.isEmpty {

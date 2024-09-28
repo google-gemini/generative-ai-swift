@@ -18,7 +18,7 @@ jobs:
         os: [macos-13]
         include:
           - os: macos-13
-            xcode: Xcode_15.0.1
+            xcode: Xcode_15.1
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4

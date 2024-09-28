@@ -33,7 +33,11 @@ extension PromptLiteral {
                 TODO.unimplemented
             case .functionResponse:
                 TODO.unimplemented
-        }
+            case .executableCode(_):
+                TODO.unimplemented
+            case .codeExecutionResult(_):
+                TODO.unimplemented
+            }
     }
 }
 
