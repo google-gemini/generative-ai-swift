@@ -25,9 +25,9 @@ extension ModelContent {
                     let mimeType = response.mimeType ?? "image/png"
                     parts.append(.data(mimetype: mimeType, data))
                 }
-            case .functionCall:
+            case .functionCall(_):
                 TODO.unimplemented
-            case .functionInvocation:
+            case .resultOfFunctionCall(_):
                 TODO.unimplemented
             }
         }
