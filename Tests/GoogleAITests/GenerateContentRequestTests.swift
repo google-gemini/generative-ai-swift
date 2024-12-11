@@ -16,6 +16,7 @@ import Foundation
 import XCTest
 
 @testable import Gemini
+@testable import GoogleGenerativeAI
 
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
 final class GenerateContentRequestTests: XCTestCase {

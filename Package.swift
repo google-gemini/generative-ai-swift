@@ -27,7 +27,8 @@ let package = Package(
         .library(
             name: "Gemini",
             targets: [
-                "Gemini"
+                "Gemini",
+                "GoogleGenerativeAI",
             ]
         ),
     ],
@@ -40,12 +41,20 @@ let package = Package(
             dependencies: [
                 "AI"
             ],
-            path: "Sources"
+            path: "Sources/GoogleAI"
+        ),
+        .target(
+            name: "GoogleGenerativeAI",
+            dependencies: [
+                "Gemini"
+            ],
+            path: "Sources/GoogleGenerativeAI"
         ),
         .testTarget(
             name: "GeminiTests",
             dependencies: [
-                "Gemini"
+                "Gemini",
+                "GoogleGenerativeAI",
             ],
             path: "Tests",
             resources: [

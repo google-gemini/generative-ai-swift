@@ -14,7 +14,7 @@
 
 import CoreGraphics
 import CoreImage
-import Gemini
+import GoogleGenerativeAI
 import XCTest
 #if canImport(UIKit)
   import UIKit

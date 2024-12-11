@@ -14,11 +14,11 @@
 
 import AI
 import Gemini
-import XCTest
 import SwiftUIX
+import XCTest
 
-final class GoogleLLMRequestHandlingTestCase: XCTestCase {
-    let client: any LLMRequestHandling = Gemini.Client(apiKey: "AIzaSyB-HamvuejgTbWm6gRy1Bb_PnCclMWUloc")
+final class PreternaturalAI_Tests: XCTestCase {
+    let client: any LLMRequestHandling = Gemini.Client(apiKey: "API_KEY")
     
     func testAvailableModels() {
         let models = client._availableModels
@@ -122,9 +122,17 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
             Remember to ALWAYS respond in accordance to the testing rules.
             """
         
-        let parameters: AbstractLLM.ChatCompletionParameters = .init()
+        let parameters = AbstractLLM.ChatCompletionParameters()
+        let imageConfiguration = AppKitOrUIKitImage.SymbolConfiguration(
+            pointSize: 64
+        )
+        let image = AppKitOrUIKitImage(
+            _SwiftUIX_systemName: "arrow.up",
+            withConfiguration: imageConfiguration.applying(.init(hierarchicalColor: .blue))
+        )!
         
-        let image = AppKitOrUIKitImage(systemSymbolName: "arrow.right", accessibilityDescription: nil)!
+        image.backgroundColor = AppKitOrUIKitColor.white
+        
         let imageLiteral = try PromptLiteral(image: image)
         
         let messagesWithSystemPrompt: [AbstractLLM.ChatMessage] = [
@@ -148,7 +156,7 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
             let completion1: String = try await client.complete(
                 messagesWithSystemPrompt,
                 parameters: parameters,
-                model: Gemini.Model.gemini_1_5_flash,
+                model: Gemini.Model.gemini_2_0_flash_exp,
                 as: .string
             )
             
@@ -157,7 +165,7 @@ final class GoogleLLMRequestHandlingTestCase: XCTestCase {
             let completion2: String = try await client.complete(
                 messagesWithOutPrompt,
                 parameters: parameters,
-                model: Gemini.Model.gemini_1_5_flash,
+                model: Gemini.Model.gemini_2_0_flash_exp,
                 as: .string
             )
             

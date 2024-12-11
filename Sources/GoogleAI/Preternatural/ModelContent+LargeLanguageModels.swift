@@ -3,6 +3,7 @@
 //
 
 @_spi(Internal) import LargeLanguageModels
+import FoundationX
 import Swallow
 import SwiftUIX
 
@@ -17,18 +18,28 @@ extension ModelContent {
         
         for component in messageContent.components {
             switch component.payload {
-            case .string(let string):
-                parts.append(.text(string))
-            case .image(let image):
-                if case .url(let url) = image {
-                    let (data, response) = try await URLSession.shared.data(from: url)
-                    let mimeType = response.mimeType ?? "image/png"
-                    parts.append(.data(mimetype: mimeType, data))
-                }
-            case .functionCall(_):
-                TODO.unimplemented
-            case .resultOfFunctionCall(_):
-                TODO.unimplemented
+                case .string(let string):
+                    parts.append(.text(string))
+                case .image(let image):
+                    switch image {
+                        case .url(let url): do {
+                            let (data, response) = try await URLSession.shared.data(from: url)
+                            let mimeType: String = response.mimeType ?? "image/png"
+                            
+                            parts.append(.data(mimetype: mimeType, data))
+                        }
+                        case .image(let image):
+                            let data: Data = try image.jpegData.unwrap()
+                            let mimeType: String = _MediaAssetFileType.jpeg.mimeType
+                           
+                            parts.append(.data(mimetype: mimeType, data))
+                        case .base64DataURL:
+                            TODO.unimplemented
+                    }
+                case .functionCall(_):
+                    TODO.unimplemented
+                case .resultOfFunctionCall(_):
+                    TODO.unimplemented
             }
         }
         
