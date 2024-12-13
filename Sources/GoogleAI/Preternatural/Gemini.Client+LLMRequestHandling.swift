@@ -90,25 +90,24 @@ extension Gemini.Client: LLMRequestHandling {
         model: Gemini.Model,
         as type: AbstractLLM.ChatFunctionCall.Type
     ) async throws -> [FunctionCall] {
-        
-        //FIXME: This should ideally be AbstractLLM.ChatFunctionCall.
-
         let service = GenerativeAIService(
             apiKey: configuration.apiKey,
             urlSession: .shared
         )
         
         let functionDeclarations: [FunctionDeclaration] = functions.map { function in
-            FunctionDeclaration(
+            let parameterSchemas = function.parameters.properties?.reduce(into: [String: Schema]()) { result, property in
+                result[property.key] = Schema(
+                    type: .string,
+                    description: property.value.description
+                )
+            } ?? [:]
+            
+            return FunctionDeclaration(
                 name: function.name.rawValue,
                 description: function.context,
-                parameters: [
-                    function.name.rawValue == "set_light_color" ? "rgb_hex" : "dummy": Schema(
-                        type: .string,
-                        description: function.parameters.properties?.first?.value.description ?? "Placeholder parameter"
-                    )
-                ],
-                requiredParameters: function.name.rawValue == "set_light_color" ? ["rgb_hex"] : nil
+                parameters: parameterSchemas,
+                requiredParameters: function.parameters.required
             )
         }
         
@@ -138,11 +137,7 @@ extension Gemini.Client: LLMRequestHandling {
             options: RequestOptions()
         )
         
-        //FIXME: This should ideally be AbstractLLM.ChatFunctionCall.
-
         let response = try await service.loadRequest(request: request)
-        
-        dump(response)
         
         let functionCalls = response.candidates.first?.content.parts.compactMap { part -> FunctionCall? in
             if case .functionCall(let functionCall) = part {

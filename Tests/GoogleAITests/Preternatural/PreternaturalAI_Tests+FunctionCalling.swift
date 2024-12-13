@@ -87,14 +87,14 @@ import Testing
     
     @Test
     func testDirectFunctionCalling() async throws {
-        // Define function declarations with proper empty object structure
+
         let functionDeclarations = [
             FunctionDeclaration(
                 name: "enable_lights",
                 description: "Turn on the lighting system.",
                 parameters: [
                     "dummy": Schema(
-                        type: .string,  // Changed from .object to .string
+                        type: .string,
                         description: "Placeholder parameter"
                     )
                 ]
