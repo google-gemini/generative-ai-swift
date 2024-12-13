@@ -23,7 +23,6 @@ import Testing
             }
         ]
         
-        // Define functions with correct structure
         let functions = [
             AbstractLLM.ChatFunctionDefinition(
                 name: "enable_lights",
