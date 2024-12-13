@@ -36,7 +36,7 @@ extension Gemini.Client: LLMRequestHandling {
         
         return try cast(_completion)
     }
-        
+    
     private func _complete(
         prompt: AbstractLLM.TextPrompt,
         parameters: AbstractLLM.TextCompletionParameters
@@ -80,8 +80,78 @@ extension Gemini.Client: LLMRequestHandling {
             message: try AbstractLLM.ChatMessage(_from: firstCandidate.content),
             stopReason: try AbstractLLM.ChatCompletion.StopReason(_from: firstCandidate.finishReason.unwrap())
         )
-                
+        
         return completion
+    }
+    
+    public func _complete(
+        _ messages: [AbstractLLM.ChatMessage],
+        functions: [AbstractLLM.ChatFunctionDefinition],
+        model: Gemini.Model,
+        as type: AbstractLLM.ChatFunctionCall.Type
+    ) async throws -> [FunctionCall] {
+        
+        //FIXME: This should ideally be AbstractLLM.ChatFunctionCall.
+
+        let service = GenerativeAIService(
+            apiKey: configuration.apiKey,
+            urlSession: .shared
+        )
+        
+        let functionDeclarations: [FunctionDeclaration] = functions.map { function in
+            FunctionDeclaration(
+                name: function.name.rawValue,
+                description: function.context,
+                parameters: [
+                    function.name.rawValue == "set_light_color" ? "rgb_hex" : "dummy": Schema(
+                        type: .string,
+                        description: function.parameters.properties?.first?.value.description ?? "Placeholder parameter"
+                    )
+                ],
+                requiredParameters: function.name.rawValue == "set_light_color" ? ["rgb_hex"] : nil
+            )
+        }
+        
+        let systemMessage = messages.first { $0.role == .system }
+        let systemInstruction = ModelContent(
+            role: "system",
+            parts: [.text(try systemMessage?.content._stripToText() ?? "")]
+        )
+        
+        let userMessages = messages.filter { $0.role != .system }
+        let userContent = userMessages.map { message in
+            ModelContent(
+                role: "user",
+                parts: [.text(try! message.content._stripToText())]
+            )
+        }
+
+        let request = GenerateContentRequest(
+            model: "models/" + model.rawValue,
+            contents: userContent,
+            generationConfig: nil,
+            safetySettings: nil,
+            tools: [Tool(functionDeclarations: functionDeclarations)],
+            toolConfig: ToolConfig(functionCallingConfig: FunctionCallingConfig(mode: .auto)),
+            systemInstruction: systemInstruction,
+            isStreaming: false,
+            options: RequestOptions()
+        )
+        
+        //FIXME: This should ideally be AbstractLLM.ChatFunctionCall.
+
+        let response = try await service.loadRequest(request: request)
+        
+        dump(response)
+        
+        let functionCalls = response.candidates.first?.content.parts.compactMap { part -> FunctionCall? in
+            if case .functionCall(let functionCall) = part {
+                return functionCall
+            }
+            return nil
+        } ?? []
+
+        return functionCalls
     }
 }
 
@@ -101,7 +171,7 @@ extension Gemini.Client {
             stopSequences: parameters.stops
         )
     }
-
+    
     private func _makeSystemInstructionAndModelContent(
         messages: [AbstractLLM.ChatMessage]
     ) async throws -> (systemInstruction: ModelContent?, content: [ModelContent]) {
@@ -117,19 +187,19 @@ extension Gemini.Client {
         var content: [ModelContent] = []
         
         for message in messages {
-           try  _tryAssert(message.role != .system)
+            try  _tryAssert(message.role != .system)
             
             content.append(try await ModelContent(_from: message))
         }
         
         return (systemInstruction, content)
     }
-
+    
     private func _modelContent(
         from prompt: AbstractLLM.TextPrompt
     ) throws -> [ModelContent] {
         let promptText = try prompt.prefix.promptLiteral._stripToText()
-      
+        
         return [ModelContent(role: "user", parts: promptText)]
     }
     
@@ -166,3 +236,57 @@ extension Gemini.Client {
         }
     }
 }
+
+extension AbstractLLM.ChatFunctionDefinition {
+    func toGeminiFunctionDeclaration() -> FunctionDeclaration {
+        func schemaToGeminiSchema(_ schema: JSONSchema) -> Schema {
+            switch schema.type {
+                case .string:
+                    return Schema(
+                        type: .string,
+                        description: schema.description
+                    )
+                case .object:
+                    var parameters: [String: Schema] = [:]
+                    if let properties = schema.properties {
+                        for (key, value) in properties {
+                            parameters[key] = schemaToGeminiSchema(value)
+                        }
+                    }
+                    return Schema(
+                        type: .object,
+                        description: schema.description,
+                        properties: parameters,
+                        requiredProperties: schema.required
+                    )
+                    // Add other type conversions as needed
+                default:
+                    return Schema(type: .string, description: "Fallback type") // Default fallback
+            }
+        }
+        
+        return FunctionDeclaration(
+            name: name.rawValue,
+            description: context,
+            parameters: schemaToGeminiSchema(parameters).properties,
+            requiredParameters: parameters.required
+        )
+    }
+}
+
+extension AbstractLLM.ChatRole {
+    // Convert AbstractLLM role to Gemini role string
+    func toGeminiRole() -> String {
+        switch self {
+            case .system:
+                return "systemInstruction"  // Special case for Gemini
+            case .user:
+                return "user"
+            case .assistant:
+                return "model"  // Gemini uses "model" instead of "assistant"
+            case .other(let value):
+                return value.rawValue
+        }
+    }
+}
+

@@ -36,10 +36,10 @@ extension ModelContent {
                         case .base64DataURL:
                             TODO.unimplemented
                     }
-                case .functionCall(_):
-                    TODO.unimplemented
-                case .resultOfFunctionCall(_):
-                    TODO.unimplemented
+                case .functionCall(let function):
+                    print(function)
+                case .resultOfFunctionCall(let result):
+                   print(result)
             }
         }
         
