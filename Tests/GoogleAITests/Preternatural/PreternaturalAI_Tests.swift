@@ -18,8 +18,6 @@ import SwiftUIX
 import XCTest
 
 final class PreternaturalAI_Tests: XCTestCase {
-    let client: any LLMRequestHandling = Gemini.Client(apiKey: "API_KEY")
-    
     func testAvailableModels() {
         let models = client._availableModels
         

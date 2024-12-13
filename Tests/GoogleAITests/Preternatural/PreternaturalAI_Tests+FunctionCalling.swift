@@ -11,8 +11,6 @@ import Gemini
 import Testing
 
 @Suite struct GeminiLightingSystemTests {
-    let apiKey = ""
-    let llm = Gemini.Client(apiKey: "")
     
     @Test
     func testLightingSystem() async throws {
@@ -71,7 +69,7 @@ import Testing
         
         //FIXME: This should ideally be returning or working with something from AbstractLLM.
 
-        let functionCalls: [FunctionCall] = try await llm._complete(
+        let functionCalls: [FunctionCall] = try await client._complete(
             messages,
             functions: functions,
             model: Gemini.Model.gemini_1_5_pro_latest,

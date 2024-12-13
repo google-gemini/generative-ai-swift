@@ -84,6 +84,8 @@ extension Gemini.Client: LLMRequestHandling {
         return completion
     }
     
+    
+    // Function Calling
     public func _complete(
         _ messages: [AbstractLLM.ChatMessage],
         functions: [AbstractLLM.ChatFunctionDefinition],
@@ -147,6 +149,34 @@ extension Gemini.Client: LLMRequestHandling {
         } ?? []
 
         return functionCalls
+    }
+    
+    // Code Execution
+    public func _complete(
+        _ messages: [AbstractLLM.ChatMessage],
+        codeExecution: Bool,
+        model: Gemini.Model
+    ) async throws -> AbstractLLM.ChatCompletion {
+        let (systemInstruction, modelContent) = try await _makeSystemInstructionAndModelContent(messages: messages)
+        
+        let generativeModel = GenerativeModel(
+            name: model.rawValue,
+            apiKey: configuration.apiKey,
+            generationConfig: nil,
+            tools: codeExecution ? [Tool(codeExecution: CodeExecution())] : nil,
+            systemInstruction: systemInstruction
+        )
+        
+        let response: GenerateContentResponse = try await generativeModel.generateContent(modelContent)
+        let firstCandidate: CandidateResponse = try response.candidates.toCollectionOfOne().value
+        
+        let completion = AbstractLLM.ChatCompletion(
+            prompt: AbstractLLM.ChatPrompt(messages: messages),
+            message: try AbstractLLM.ChatMessage(_from: firstCandidate.content),
+            stopReason: try AbstractLLM.ChatCompletion.StopReason(_from: firstCandidate.finishReason.unwrap())
+        )
+        
+        return completion
     }
 }
 

@@ -25,19 +25,35 @@ extension PromptLiteral {
         switch part {
             case .text(let value):
                 self.init(stringLiteral: value)
-            case .data:
-                TODO.unimplemented
-            case .fileData:
-                TODO.unimplemented
-            case .functionCall:
-                TODO.unimplemented
-            case .functionResponse:
-                TODO.unimplemented
-            case .executableCode(_):
-                TODO.unimplemented
-            case .codeExecutionResult(_):
-                TODO.unimplemented
-            }
+            case .data(let mimetype, _):
+
+                self.init(stringLiteral: "[Data: \(mimetype)]")
+            case .fileData(let mimetype, let uri):
+
+                self.init(stringLiteral: "[File: \(mimetype) at \(uri)]")
+            case .functionCall(let functionCall):
+
+                self.init(stringLiteral: "Function Call: \(functionCall.name)")
+            case .functionResponse(let functionResponse):
+                
+                self.init(stringLiteral: "Function Response: \(functionResponse.name)")
+            case .executableCode(let executableCode):
+                
+                self.init(stringLiteral: """
+                ```\(executableCode.language.lowercased())
+                \(executableCode.code)
+                ```
+                """)
+            case .codeExecutionResult(let result):
+
+                let status = result.outcome == .ok ? "Success" : "Error"
+                self.init(stringLiteral: """
+                Execution Result (\(status)):
+                ```
+                \(result.output)
+                ```
+                """)
+        }
     }
 }
 
