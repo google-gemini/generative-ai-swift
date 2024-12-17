@@ -1113,8 +1113,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
 			requirement = {
-				kind = revision;
-				revision = 5df8a4adedd6ae4eb2455ef60ff75183984daeb8;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		DEA09AC32B1FCE22001962D9 /* XCRemoteSwiftPackageReference "NetworkImage" */ = {
