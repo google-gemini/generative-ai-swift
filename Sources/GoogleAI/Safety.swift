@@ -25,7 +25,7 @@ public struct SafetyRating: Equatable, Hashable {
 
   /// The model-generated probability that a given piece of content falls under the harm category
   /// described in ``category``. This does not
-  /// indiciate the severity of harm for a piece of content. See ``HarmProbability`` for a list of
+  /// indicate the severity of harm for a piece of content. See ``HarmProbability`` for a list of
   /// possible values.
   public let probability: HarmProbability
 
