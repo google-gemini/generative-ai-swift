@@ -16,7 +16,7 @@ import Foundation
 
 /// Errors that occur when generating content from a model.
 @available(iOS 15.0, macOS 11.0, macCatalyst 15.0, *)
-public enum GenerateContentError: Error {
+public enum GenerateContentError: CustomStringConvertible, Error {
   /// An error occurred when constructing the prompt. Examine the related error for details.
   case promptImageContentError(underlying: ImageConversionError)
 
@@ -41,4 +41,21 @@ public enum GenerateContentError: Error {
   /// - Important: The API is only available in
   /// [specific regions](https://ai.google.dev/available_regions#available_regions).
   case unsupportedUserLocation
+    
+    public var description: String {
+        switch self {
+        case .internalError(underlying: let error):
+            return "An internal error occurred: \(error.localizedDescription)"
+        case .promptImageContentError(underlying: let underlying):
+            return "An error occurred when constructing the prompt - Image Content Error: \(underlying.localizedDescription)"
+        case .promptBlocked(response: let response):
+            return "A prompt was blocked: \(String(describing: response.promptFeedback?.blockReason.debugDescription ?? response.text?.debugDescription))"
+        case .responseStoppedEarly(reason: let reason, response: let response):
+            return "A response didn't fully complete: \(reason.rawValue), \(response.text ?? "")"
+        case .invalidAPIKey(message: let message):
+            return "The provided API key is invalid.: \(message)"
+        case .unsupportedUserLocation:
+            return "The user's location (region) is not supported by the API."
+        }
+    }
 }

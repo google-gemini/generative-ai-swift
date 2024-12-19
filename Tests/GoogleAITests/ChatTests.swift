@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Foundation
+@testable import Gemini
 @testable import GoogleGenerativeAI
 import XCTest
 
